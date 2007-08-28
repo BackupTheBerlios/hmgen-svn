@@ -1,0 +1,42 @@
+Requirements:
+=============
+
+Mandatory:
+
+C compiler
+
+Optional:
+
+pkg-config
+gtk+-2.0 + gdk-pixbuf + development files
+
+
+Building:
+=========
+
+One-time build:
+    make all
+
+To build without the GTK+-2.0 GUI, type:
+    make hmgen
+
+Developer build:
+    make dep verbose
+    or
+    make dep hmgen-verbose
+    etc...
+
+Clean up:
+    make clean
+
+Cleaner up:
+    make distclean
+    make mrproper
+
+The default target is linux-gcc. To change that, use:
+    make TARGET=linux-suncc all
+
+Porting to another target can be done by adding it to target.mak.
+
+Yeah, I am too lazy to copy & paste & adjust a proper configure script.
+Send a patch if you want. I will not accept any autotools stuff though.
