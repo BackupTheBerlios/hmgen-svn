@@ -1,5 +1,21 @@
 
-include target.mak
+# Makefile with built-in configure experiment
+# Needs GNU Make to run properly
+
+# ---------- CONFIGURE PREAMBLE ----------
+
+-include config.mak
+
+MAKEFLAGS += --no-print-directory
+
+ifneq ($(CONFIGURE_DONE),yes)
+DEFGOAL=$(filter-out clean distclean configure, $(MAKECMDGOALS))
+$(DEFGOAL) all::
+	@make configure
+	@make $(MAKECMDGOALS)
+else
+
+# ---------- PROJECT ----------
 
 .SUFFIXES:
 .SUFFIXES: $(OBJSUF) .c
@@ -66,14 +82,6 @@ $(LIBHMGEN): $(LIBHMGEN_OBJS)
 .c.o:
 	$(call SILENT_EXEC,$(CC) -c -o $@ $< $(CFLAGS),CC $<)
 
-clean:
-	rm -f $(CLI) $(CLIg) $(CLI_OBJS)
-	rm -f $(LIBHMGEN) $(LIBHMGEN_OBJS)
-	rm -f $(GUI) $(GUIg) $(GUI_OBJS)
-
-mrproper distclean: clean
-	rm -f *~ .depend *.pgm *.ppm
-
 depend-verbose dep-verbose: SILENT=no
 depend-verbose dep-verbose: dep
 depend dep: $(CLI_SRCS) $(LIBHMGEN_SRCS) $(GUI_SRCS)
@@ -85,7 +93,138 @@ size:
 size-long:
 	@wc -l *.[ch] Makefile *.mak
 
-.PHONY:	all dep depend clean distclean mrproper verbose $(CLI)-verbose size
+endif	# END CONFIGURE PREAMBLE
+
+# ---------- CLEAN UP ----------
+
+clean:
+	rm -f $(CLI) $(CLIg) $(CLI_OBJS)
+	rm -f $(LIBHMGEN) $(LIBHMGEN_OBJS)
+	rm -f $(GUI) $(GUIg) $(GUI_OBJS)
+
+mrproper distclean: clean
+	rm -f *~ .depend *.pgm *.ppm config.mak
+
+.PHONY: all dep depend clean distclean mrproper verbose $(CLI)-verbose size
 .PHONY: $(GUI)-verbose $(LIBHMGEN)-verbose depend-verbose dep-verbose size-long
+
+# ---------- CONFIGURE ----------
+
+clean-config.mak:
+	@> config.mak
+
+config-cc:
+	@echo C compiler... $(CC)
+	@echo CC=$(CC) >> config.mak
+	@echo CC_DEP=$(CC) >> config.mak
+
+config-cc-vendor-and-version:	config-cc
+	@CC_VENDOR=`$(CC) --help 2>/dev/null | grep -q gcc && echo gnu` ; \
+	if test "$$CC_VENDOR" = "gnu" ; then \
+		CC_VERSION=`$(CC) -dumpversion` ; \
+	else \
+		CC_VENDOR=`$(CC) -flags 2>/dev/null | grep -q sunperf && echo sun` ; \
+		if test "$$CC_VENDOR" = "sun" ; then \
+			CC_VERSION=`echo | $(CC) -E - | grep ident | cut -d ' ' -f 5` ; \
+		else \
+			CC_VENDOR=unknown; \
+		fi ; \
+	fi ; \
+	echo CC_VENDOR=$$CC_VENDOR >> config.mak ; \
+	echo CC_VERSION=$$CC_VERSION >> config.mak ; \
+	echo CC_VERSION_MAJOR=`echo $$CC_VERSION | cut -d '.' -f 1` \
+		>>config.mak ;\
+	echo CC_VERSION_MINOR=`echo $$CC_VERSION | cut -d '.' -f 2` \
+		>>config.mak ;\
+	echo CC_VERSION_SUBMINOR=`echo $$CC_VERSION | cut -d '.' -f 3` \
+		>>config.mak ;\
+	echo Vendor... $$CC_VENDOR ; \
+	echo Version... $$CC_VERSION
+
+config-cc-vendor-and-version-restrict:	config-cc-vendor-and-version
+	@. config.mak ; \
+	if test "$$CC_VENDOR" = gnu ; then \
+		if test "$$CC_VERSION_MAJOR" -le 2 ; then \
+			echo "gcc version < 3.x is not supported" ; \
+			exit 1 ; \
+		fi ; \
+	fi ;
+
+config-cc-flags: 	config-cc-vendor-and-version-restrict
+	@. config.mak ; \
+	case $$CC_VENDOR in \
+		gnu) \
+			WARN_FLAGS="-Wall -W" ; \
+			OPT_FLAGS="-O3" ; \
+			STD_FLAGS="-std=c99" ; \
+			DEBUG_FLAGS="-g" ; \
+			DEP_FLAGS="-MM" ; \
+			;; \
+		sun) \
+			WARN_FLAGS= ; \
+			OPT_FLAGS="-xO5" ; \
+			STD_FLAGS="-Xc" ; \
+			DEBUG_FLAGS="-g" ; \
+			DEP_FLAGS="-xM" ; \
+			;; \
+	esac ; \
+	echo WARN_FLAGS=$$WARN_FLAGS >> config.mak ; \
+	echo OPT_FLAGS=$$OPT_FLAGS >> config.mak ; \
+	echo STD_FLAGS=$$STD_FLAGS >> config.mak ; \
+	echo DEBUG_FLAGS=$$DEBUG_FLAGS >> config.mak ; \
+	echo DEP_FLAGS=$$DEP_FLAGS >> config.mak ; \
+	echo Warnings... $$WARN_FLAGS ; \
+	echo Optimize... $$OPT_FLAGS ; \
+	echo Standards... $$STD_FLAGS ; \
+	echo Debug... $$DEBUG_FLAGS ; \
+	echo Dependencies... $$DEP_FLAGS ;
+
+config-pkg-config:
+	@TMP=`pkg-config --version 2>/dev/null 1>&2 && echo yes || echo no` ; \
+	echo pkg-config... $$TMP ; \
+	if test "$$TMP" != "yes" ; then \
+		echo "pkg-config not found" ; \
+		exit 1 ; \
+	fi ; \
+
+NOERR=2>/dev/null
+
+define CONFIG_PKG_CONFIG_PKG
+	@TMP=`pkg-config --atleast-version=$(4) $(1) $(NOERR) && echo yes || echo no` ;\
+	echo $(1)... $$TMP ; \
+	if test "$$TMP" != "yes" ; then \
+		echo "$(1), at least version $(4), not found." ; \
+		echo "Perhaps you need to install the dev(el) packages?" ; \
+		exit 1 ; \
+	fi ; \
+	TVARC=`pkg-config --cflags $(1) $(NOERR)` ; \
+	TVARL=`pkg-config --static --libs $(1) $(NOERR)` ; \
+	echo $(2)=$$TVARC >> config.mak ; \
+	echo $(3)=$$TVARL >> config.mak ;
+endef
+
+config-gtk-flags: config-pkg-config
+	$(call CONFIG_PKG_CONFIG_PKG,gtk+-2.0,GTK_CFLAGS,GTK_LDFLAGS,2.0)
+
+config-gthread-flags: config-pkg-config
+	$(call CONFIG_PKG_CONFIG_PKG,gthread-2.0,GTHREAD_CFLAGS,GTHREAD_LDFLAGS,2.0)
+
+configure: clean-config.mak \
+           config-cc-flags \
+           config-gtk-flags \
+           config-gthread-flags
+	@echo AR?=ar >> config.mak
+	@echo RANLIB?=ranlib >> config.mak
+	@echo STRIP?=strip >> config.mak
+	@echo EXESUF= >> config.mak
+	@echo OBJSUF=.o >> config.mak
+	@echo AR_FLAGS=cru >> config.mak
+	@echo CONFIGURE_DONE=yes >> config.mak
+
+.PHONY: clean-config.mak configure config-cc config-cc-vendor-and-version \
+        config-cc-flags config-cc-vendor-and-version-restrict \
+        config-pkg-config config-gtk-flags config-gthread-flags
+
+# ---------- DEPENDENCIES ----------
 
 -include .depend
