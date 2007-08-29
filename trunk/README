@@ -33,10 +33,10 @@ Cleaner up:
     make distclean
     make mrproper
 
-The default target is linux-gcc. To change that, use:
-    make TARGET=linux-suncc all
+Just configure:
+    make configure
 
-Porting to another target can be done by adding it to target.mak.
-
-Yeah, I am too lazy to copy & paste & adjust a proper configure script.
-Send a patch if you want. I will not accept any autotools stuff though.
+Or specify a different C compiler:
+    make CC=suncc configure
+    or
+    make CC=suncc all
