@@ -23,7 +23,7 @@ LIBHMGEN_OBJS = $(addsuffix $(OBJSUF), $(LIBHMGEN_BASENAMES))
 LIBHMGEN_SRCS = $(addsuffix .c, $(LIBHMGEN_BASENAMES))
 
 SILENT ?= yes
-SILENT_EXEC = @test "$(SILENT)" = "yes" && echo "$(2)" || echo $(1); $(1)
+SILENT_EXEC = @test "$(SILENT)" = "yes" && echo "$(2)" || echo "$(1)"; $(1)
 
 all: $(GUI) $(CLI)
 
@@ -47,8 +47,8 @@ $(GUI): $(GUIg)
 	$(call SILENT_EXEC,cp $(GUIg) $@,CP $(GUIg) $@)
 	$(call SILENT_EXEC,$(STRIP) $@,STRIP $@)
 
-$(GUIg): CFLAGS = $(GTK_CFLAGS) $(DEF_CFLAGS)
-$(GUIg): LDFLAGS = $(GTK_LDFLAGS) $(DEF_LDFLAGS)
+$(GUIg): CFLAGS = $(GTK_CFLAGS) $(GTHREAD_CFLAGS) $(DEF_CFLAGS)
+$(GUIg): LDFLAGS = $(GTK_LDFLAGS) $(GTHREAD_LDFLAGS) $(DEF_LDFLAGS)
 $(GUIg): $(LIBHMGEN) $(GUI_OBJS)
 	$(call SILENT_EXEC,$(CC) -o $@ $(GUI_OBJS) $(LIBHMGEN) $(LDFLAGS),LD $@)
 
@@ -74,7 +74,7 @@ mrproper distclean: clean
 depend-verbose dep-verbose: SILENT=no
 depend-verbose dep-verbose: dep
 depend dep: $(CLI_SRCS) $(LIBHMGEN_SRCS) $(GUI_SRCS)
-	$(call SILENT_EXEC,$(CC_DEP) $(DEP_FLAGS) $(DEF_CFLAGS) $(GTK_CFLAGS) $^ 1>.depend,CCDEP >.depend)
+	$(call SILENT_EXEC,$(CC_DEP) $(DEP_FLAGS) $(DEF_CFLAGS) $(GTK_CFLAGS) $(GTHREAD_CFLAGS) $^ 1>.depend,CCDEP >.depend)
 
 size:
 	@wc -l *.[ch] Makefile *.mak | tail -1
