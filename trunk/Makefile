@@ -1,6 +1,9 @@
 
 include target.mak
 
+.SUFFIXES:
+.SUFFIXES: $(OBJSUF) .c
+
 DEF_CFLAGS = $(STD_FLAGS) $(WARN_FLAGS) $(OPT_FLAGS) $(DEBUG_FLAGS)
 DEF_LDFLAGS = -lm $(DEBUG_FLAGS)
 
