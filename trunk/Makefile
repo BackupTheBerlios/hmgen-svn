@@ -108,11 +108,15 @@ endif	# END CONFIGURE PREAMBLE
 
 # ---------- CONFIGURE ----------
 
+define config-print-result
+	printf "%-16s : %s\n" "$(1)" "$(2)"
+endef
+
 clean-config.mak:
 	@> config.mak
 
 config-cc:
-	@echo C compiler... $(CC)
+	@$(call config-print-result,C Compiler,$(CC))
 	@echo CC=$(CC) >> config.mak
 	@echo CC_DEP=$(CC) >> config.mak
 
@@ -136,8 +140,8 @@ config-cc-vendor-and-version:	config-cc
 		>>config.mak ;\
 	echo CC_VERSION_SUBMINOR=`echo $$CC_VERSION | cut -d '.' -f 3` \
 		>>config.mak ;\
-	echo Vendor... $$CC_VENDOR ; \
-	echo Version... $$CC_VERSION
+	$(call config-print-result,Vendor,$$CC_VENDOR) ; \
+	$(call config-print-result,Version,$$CC_VERSION)
 
 config-cc-vendor-and-version-restrict:	config-cc-vendor-and-version
 	@. config.mak ; \
@@ -171,15 +175,15 @@ config-cc-flags: 	config-cc-vendor-and-version-restrict
 	echo STD_FLAGS=$$STD_FLAGS >> config.mak ; \
 	echo DEBUG_FLAGS=$$DEBUG_FLAGS >> config.mak ; \
 	echo DEP_FLAGS=$$DEP_FLAGS >> config.mak ; \
-	echo Warnings... $$WARN_FLAGS ; \
-	echo Optimize... $$OPT_FLAGS ; \
-	echo Standards... $$STD_FLAGS ; \
-	echo Debug... $$DEBUG_FLAGS ; \
-	echo Dependencies... $$DEP_FLAGS ;
+	$(call config-print-result,Warnings,$$WARN_FLAGS) ; \
+	$(call config-print-result,Optimize,$$OPT_FLAGS) ; \
+	$(call config-print-result,Standards,$$STD_FLAGS) ; \
+	$(call config-print-result,Debug,$$DEBUG_FLAGS) ; \
+	$(call config-print-result,Dependencies,$$DEP_FLAGS) ;
 
 config-pkg-config:
 	@TMP=`pkg-config --version 2>/dev/null 1>&2 && echo yes || echo no` ; \
-	echo pkg-config... $$TMP ; \
+	$(call config-print-result,pkg-config,$$TMP) ; \
 	if test "$$TMP" != "yes" ; then \
 		echo "pkg-config not found" ; \
 		exit 1 ; \
@@ -190,7 +194,7 @@ NOERR=2>/dev/null
 define CONFIG_PKG_CONFIG_PKG
 	@TMP=`pkg-config --atleast-version=$(4) $(1) $(NOERR) && \
 		echo yes || echo no` ;\
-	echo $(1)... $$TMP ; \
+	$(call config-print-result,$(1),$$TMP) ; \
 	if test "$$TMP" != "yes" ; then \
 		echo "$(1), at least version $(4), not found." ; \
 		echo "Perhaps you need to install the dev(el) packages?" ; \
