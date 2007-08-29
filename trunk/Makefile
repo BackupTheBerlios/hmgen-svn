@@ -13,6 +13,9 @@ DEFGOAL=$(filter-out clean distclean configure, $(MAKECMDGOALS))
 $(DEFGOAL) all::
 	@make configure
 	@make $(MAKECMDGOALS)
+
+clean:
+
 else
 
 # ---------- PROJECT ----------
@@ -93,20 +96,15 @@ size:
 size-long:
 	@wc -l *.[ch] Makefile *.mak
 
-endif	# END CONFIGURE PREAMBLE
-
-# ---------- CLEAN UP ----------
-
 clean:
 	rm -f $(CLI) $(CLIg) $(CLI_OBJS)
 	rm -f $(LIBHMGEN) $(LIBHMGEN_OBJS)
 	rm -f $(GUI) $(GUIg) $(GUI_OBJS)
 
-mrproper distclean: clean
-	rm -f *~ .depend *.pgm *.ppm config.mak
+.PHONY: all dep depend clean verbose $(CLI)-verbose size \
+        $(GUI)-verbose $(LIBHMGEN)-verbose depend-verbose dep-verbose size-long
 
-.PHONY: all dep depend clean distclean mrproper verbose $(CLI)-verbose size
-.PHONY: $(GUI)-verbose $(LIBHMGEN)-verbose depend-verbose dep-verbose size-long
+endif	# END CONFIGURE PREAMBLE
 
 # ---------- CONFIGURE ----------
 
@@ -221,7 +219,11 @@ configure: clean-config.mak \
 	@echo AR_FLAGS=cru >> config.mak
 	@echo CONFIGURE_DONE=yes >> config.mak
 
-.PHONY: clean-config.mak configure config-cc config-cc-vendor-and-version \
+mrproper distclean: clean
+	rm -f *~ .depend *.pgm *.ppm config.mak
+
+.PHONY: mrproper distclean clean-config.mak configure config-cc \
+        config-cc-vendor-and-version \
         config-cc-flags config-cc-vendor-and-version-restrict \
         config-pkg-config config-gtk-flags config-gthread-flags
 
