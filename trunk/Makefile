@@ -212,10 +212,19 @@ config-gtk-flags: config-pkg-config
 config-gthread-flags: config-pkg-config
 	$(call CONFIG_PKG_CONFIG_PKG,gthread-2.0,GTHREAD_CFLAGS,GTHREAD_LDFLAGS,2.0)
 
+config-suncc-flags-fix: config-cc-vendor-and-version config-gthread-flags
+	@if grep -q CC_VENDOR=sun config.mak ; then \
+		GTHREAD_CFLAGS=`grep GTHREAD_CFLAGS= config.mak | sed 's/-pthread//'` ; \
+		GTHREAD_LDFLAGS=`grep GTHREAD_LDFLAGS= config.mak | sed 's/-pthread//'` ; \
+		echo $$GTHREAD_CFLAGS >> config.mak ; \
+		echo $$GTHREAD_LDFLAGS >> config.mak ; \
+	fi ;
+
 configure: clean-config.mak \
            config-cc-flags \
            config-gtk-flags \
-           config-gthread-flags
+           config-gthread-flags \
+           config-suncc-flags-fix
 	@echo AR?=ar >> config.mak
 	@echo RANLIB?=ranlib >> config.mak
 	@echo STRIP?=strip >> config.mak
