@@ -188,7 +188,8 @@ config-pkg-config:
 NOERR=2>/dev/null
 
 define CONFIG_PKG_CONFIG_PKG
-	@TMP=`pkg-config --atleast-version=$(4) $(1) $(NOERR) && echo yes || echo no` ;\
+	@TMP=`pkg-config --atleast-version=$(4) $(1) $(NOERR) && \
+		echo yes || echo no` ;\
 	echo $(1)... $$TMP ; \
 	if test "$$TMP" != "yes" ; then \
 		echo "$(1), at least version $(4), not found." ; \
