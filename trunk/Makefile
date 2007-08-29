@@ -116,7 +116,7 @@ clean-config.mak:
 	@> config.mak
 
 config-cc:
-	@$(call config-print-result,C Compiler,$(CC))
+	@$(call config-print-result,compiler,$(CC))
 	@echo CC=$(CC) >> config.mak
 	@echo CC_DEP=$(CC) >> config.mak
 
@@ -140,8 +140,8 @@ config-cc-vendor-and-version:	config-cc
 		>>config.mak ;\
 	echo CC_VERSION_SUBMINOR=`echo $$CC_VERSION | cut -d '.' -f 3` \
 		>>config.mak ;\
-	$(call config-print-result,Vendor,$$CC_VENDOR) ; \
-	$(call config-print-result,Version,$$CC_VERSION)
+	$(call config-print-result,vendor,$$CC_VENDOR) ; \
+	$(call config-print-result,version,$$CC_VERSION)
 
 config-cc-vendor-and-version-restrict:	config-cc-vendor-and-version
 	@. config.mak ; \
@@ -175,11 +175,11 @@ config-cc-flags: 	config-cc-vendor-and-version-restrict
 	echo STD_FLAGS=$$STD_FLAGS >> config.mak ; \
 	echo DEBUG_FLAGS=$$DEBUG_FLAGS >> config.mak ; \
 	echo DEP_FLAGS=$$DEP_FLAGS >> config.mak ; \
-	$(call config-print-result,Warnings,$$WARN_FLAGS) ; \
-	$(call config-print-result,Optimize,$$OPT_FLAGS) ; \
-	$(call config-print-result,Standards,$$STD_FLAGS) ; \
-	$(call config-print-result,Debug,$$DEBUG_FLAGS) ; \
-	$(call config-print-result,Dependencies,$$DEP_FLAGS) ;
+	$(call config-print-result,warnings,$$WARN_FLAGS) ; \
+	$(call config-print-result,optimize,$$OPT_FLAGS) ; \
+	$(call config-print-result,standards,$$STD_FLAGS) ; \
+	$(call config-print-result,debug,$$DEBUG_FLAGS) ; \
+	$(call config-print-result,dependencies,$$DEP_FLAGS) ;
 
 config-pkg-config:
 	@TMP=`pkg-config --version 2>/dev/null 1>&2 && echo yes || echo no` ; \
