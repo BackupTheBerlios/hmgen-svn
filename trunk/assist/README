@@ -1,0 +1,3 @@
+This file and glade-2.0 was used to bootstrap the GUI. However, I do not use
+any of the buildtools or libglade. Current interface/callbacks/etc. files
+are modified versions.
