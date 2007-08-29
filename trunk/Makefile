@@ -1,6 +1,9 @@
 
 include target.mak
 
+DEF_CFLAGS = $(STD_FLAGS) $(WARN_FLAGS) $(OPT_FLAGS) $(DEBUG_FLAGS)
+DEF_LDFLAGS = -lm $(DEBUG_FLAGS)
+
 CLI = hmgen$(EXESUF)
 CLIg = hmgen_g$(EXESUF)
 CLI_BASENAMES = cli_main
