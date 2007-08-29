@@ -20,7 +20,7 @@ LIBHMGEN_OBJS = $(addsuffix $(OBJSUF), $(LIBHMGEN_BASENAMES))
 LIBHMGEN_SRCS = $(addsuffix .c, $(LIBHMGEN_BASENAMES))
 
 SILENT ?= yes
-SILENT_EXEC = test "$(SILENT)" = "yes" && echo $$SHORT || echo $$LONG; $$LONG
+SILENT_EXEC = @test "$(SILENT)" = "yes" && echo "$(2)" || echo $(1); $(1)
 
 all: $(GUI) $(CLI)
 
@@ -30,37 +30,35 @@ verbose: all
 $(CLI)-verbose: SILENT=no
 $(CLI)-verbose: $(CLI)
 $(CLI): $(CLIg)
-	@LONG="cp $(CLIg) $@"; SHORT="CP $(CLIg) $@"; $(SILENT_EXEC)
-	@LONG="$(STRIP) $@"; SHORT="STRIP $@"; $(SILENT_EXEC)
+	$(call SILENT_EXEC,cp $(CLIg) $@,CP $(CLIg) $@)
+	$(call SILENT_EXEC,$(STRIP) $@,STRIP $@)
 
 $(CLIg): CFLAGS = $(DEF_CFLAGS)
 $(CLIg): LDFLAGS = $(DEF_LDFLAGS)
 $(CLIg): $(LIBHMGEN) $(CLI_OBJS)
-	@LONG="$(CC) -o $@ $(CLI_OBJS) $(LIBHMGEN) $(LDFLAGS)"; SHORT="LD $@"; \
-		$(SILENT_EXEC)
+	$(call SILENT_EXEC,$(CC) -o $@ $(CLI_OBJS) $(LIBHMGEN) $(LDFLAGS),LD $@)
 
 $(GUI)-verbose: SILENT=no
 $(GUI)-verbose: $(GUI)
 $(GUI): $(GUIg)
-	@LONG="cp $(GUIg) $@"; SHORT="CP $(GUIg) $@"; $(SILENT_EXEC)
-	@LONG="$(STRIP) $@"; SHORT="STRIP $@"; $(SILENT_EXEC)
+	$(call SILENT_EXEC,cp $(GUIg) $@,CP $(GUIg) $@)
+	$(call SILENT_EXEC,$(STRIP) $@,STRIP $@)
 
 $(GUIg): CFLAGS = $(GTK_CFLAGS) $(DEF_CFLAGS)
 $(GUIg): LDFLAGS = $(GTK_LDFLAGS) $(DEF_LDFLAGS)
 $(GUIg): $(LIBHMGEN) $(GUI_OBJS)
-	@LONG="$(CC) -o $@ $(GUI_OBJS) $(LIBHMGEN) $(LDFLAGS)"; SHORT="LD $@"; \
-		$(SILENT_EXEC)
+	$(call SILENT_EXEC,$(CC) -o $@ $(GUI_OBJS) $(LIBHMGEN) $(LDFLAGS),LD $@)
 
 $(LIBHMGEN)-verbose: SILENT=no
 $(LIBHMGEN)-verbose: $(LIBHMGEN)
 $(LIBHMGEN): CFLAGS = $(DEF_CFLAGS)
 $(LIBHMGEN): LDFLAGS = $(DEF_LDFLAGS)
 $(LIBHMGEN): $(LIBHMGEN_OBJS)
-	@LONG="$(AR) $(AR_FLAGS) $@ $^"; SHORT="AR $@"; $(SILENT_EXEC)
-	@LONG="$(RANLIB) $@"; SHORT="RANLIB $@"; $(SILENT_EXEC)
+	$(call SILENT_EXEC,$(AR) $(AR_FLAGS) $@ $^,AR $@)
+	$(call SILENT_EXEC,$(RANLIB) $@,RANLIB $@)
 
 .c.o:
-	@LONG="$(CC) -c -o $@ $< $(CFLAGS)"; SHORT="CC $<"; $(SILENT_EXEC)
+	$(call SILENT_EXEC,$(CC) -c -o $@ $< $(CFLAGS),CC $<)
 
 clean:
 	rm -f $(CLI) $(CLIg) $(CLI_OBJS)
@@ -73,8 +71,7 @@ mrproper distclean: clean
 depend-verbose dep-verbose: SILENT=no
 depend-verbose dep-verbose: dep
 depend dep: $(CLI_SRCS) $(LIBHMGEN_SRCS) $(GUI_SRCS)
-	@LONG="$(CC_DEP) $(DEP_FLAGS) $(DEF_CFLAGS) $(GTK_CFLAGS) $^"; \
-		SHORT="CCDEP >.depend"; $(SILENT_EXEC) 1>.depend
+	$(call SILENT_EXEC,$(CC_DEP) $(DEP_FLAGS) $(DEF_CFLAGS) $(GTK_CFLAGS) $^ 1>.depend,CCDEP >.depend)
 
 size:
 	@wc -l *.[ch] Makefile *.mak | tail -1
