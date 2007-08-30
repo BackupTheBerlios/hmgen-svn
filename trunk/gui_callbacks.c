@@ -272,9 +272,12 @@ static void *generate_thread(void *args) {
     if (inv)
         hmg_invert(map, map_width, map_height);
 
+/* hmmm, some "sidebar" commands may need tempmap, like gaussian blur
+ * FIXME increases memory requirements
     if (tempmap)
         free(tempmap);
     tempmap = NULL;
+*/
 
     render_map(args);
 
@@ -366,11 +369,50 @@ static void *new_create_thread(void *args) {
     return NULL;
 }
 
-static void *new_invert_thread(void *args) {
+static void *invert2_thread(void *args) {
     set_main_progressbar(args);
     hmg_progress_meter = gui_progress_meter;
 
     hmg_invert(map, map_width, map_height);
+    render_map(args);
+
+    activate_main_notebook(args);
+    return NULL;
+}
+
+static void *norm2_thread(void *args) {
+    unsigned int normmin, normmax;
+
+    set_main_progressbar(args);
+    hmg_progress_meter = gui_progress_meter;
+
+    gdk_threads_enter();
+        normmin = get_spin_button_int  (args, "norm2_min_spinbutton");
+        normmax = get_spin_button_int  (args, "norm2_max_spinbutton");
+    gdk_threads_leave();
+
+    hmg_normalize(map, normmin, normmax, map_width, map_height);
+    render_map(args);
+
+    activate_main_notebook(args);
+    return NULL;
+}
+
+static void *blur2_thread(void *args) {
+    unsigned int blurx, blury;
+    double blursigma;
+
+    set_main_progressbar(args);
+    hmg_progress_meter = gui_progress_meter;
+
+    gdk_threads_enter();
+        blurx     = get_spin_button_int  (args, "blur2_xrad_spinbutton");
+        blury     = get_spin_button_int  (args, "blur2_yrad_spinbutton");
+        blursigma = get_spin_button_float(args, "blur2_sigma_spinbutton");
+    gdk_threads_leave();
+
+    hmg_gaussian_blur(map, tempmap, blurx, blury, blursigma, map_width,
+                                                                map_height);
     render_map(args);
 
     activate_main_notebook(args);
@@ -385,16 +427,20 @@ void on_new_create_button_clicked(GtkButton *button,
 
 void on_norm2_button_clicked(GtkButton *button,
                              gpointer user_data HMG_ATTR_UNUSED) {
+    deactivate_main_notebook(button);
+    g_thread_create(norm2_thread, button, FALSE, NULL);
 }
 
 void on_blur2_button_clicked(GtkButton *button,
                              gpointer user_data HMG_ATTR_UNUSED) {
+    deactivate_main_notebook(button);
+    g_thread_create(blur2_thread, button, FALSE, NULL);
 }
 
 void on_invert2_button_clicked(GtkButton *button,
                                gpointer user_data HMG_ATTR_UNUSED) {
     deactivate_main_notebook(button);
-    g_thread_create(new_invert_thread, button, FALSE, NULL);
+    g_thread_create(invert2_thread, button, FALSE, NULL);
 }
 
 gboolean on_colormap_display_expose_event(GtkWidget *widget,
