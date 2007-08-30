@@ -37,7 +37,7 @@ else
 .SUFFIXES:
 .SUFFIXES: $(OBJSUF) .c
 
-DEF_CFLAGS = $(STD_FLAGS) $(WARN_FLAGS) $(OPT_FLAGS) $(DEBUG_FLAGS)
+DEF_CFLAGS = $(STD_FLAGS) $(WARN_FLAGS) $(OPT_FLAGS) $(DEBUG_FLAGS) $(DEFINES)
 DEF_LDFLAGS = -lm $(DEBUG_FLAGS)
 
 CLI = hmgen$(EXESUF)
@@ -243,11 +243,29 @@ config-suncc-flags-fix: config-cc-vendor-and-version config-gthread-flags
 		echo $$GTHREAD_LDFLAGS >> config.mak ; \
 	fi ;
 
+config-define-none:
+	@echo DEFINES= >> config.mak
+
+config-define-svnrev: config-define-none
+	@svn_rev=`LC_ALL=C svn info * 2>/dev/null | grep ^Revision: \
+		| cut -d ' ' -f 2 | xargs -n 1 -I '{}' printf "%05i\n" '{}' \
+		| sort -r | head -n 1 | sed 's/^0//' | sed 's/^0//' \
+		| sed 's/^0//'` ; \
+	test $$svn_rev || svn_rev=`grep revision .svn/entries 2>/dev/null \
+		| cut -d '"' -f 2` | xargs -n 1 -I '{}' printf "%05i\n" '{}' \
+		| sort -r | head -n 1 | sed 's/^0//' | sed 's/^0//' \
+		| sed 's/^0//' ; \
+	test $$svn_rev || svn_rev=`sed -n -e '/^dir$/{n;p;q;}' \
+		.svn/entries 2>/dev/null` ; \
+	test $$svn_rev || svn_rev=0 ; \
+	echo DEFINES=-DSVN_REVISION=$$svn_rev >> config.mak
+
 configure: clean-config.mak \
            config-cc-flags \
            config-gtk-flags \
            config-gthread-flags \
-           config-suncc-flags-fix
+           config-suncc-flags-fix \
+           config-define-svnrev
 	@echo AR?=ar >> config.mak
 	@echo RANLIB?=ranlib >> config.mak
 	@echo STRIP?=strip >> config.mak

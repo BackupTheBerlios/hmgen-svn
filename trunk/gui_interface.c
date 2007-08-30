@@ -8,6 +8,7 @@
 #include "gui_callbacks.h"
 #include "gui_interface.h"
 #include "gui_support.h"
+#include "version.h"
 
 #define GLADE_HOOKUP_OBJECT(component,widget,name) \
   g_object_set_data_full (G_OBJECT (component), name, \
@@ -879,7 +880,7 @@ GtkWidget * create_hmgengui(void) {
   gtk_widget_show (image3);
   gtk_box_pack_start (GTK_BOX (vbox4), image3, FALSE, FALSE, 64);
 
-  about_message = gtk_label_new("\nVersion 0.9.0");
+  about_message = gtk_label_new(HMG_VERSION_STRING);
   gtk_widget_show (about_message);
   gtk_box_pack_start (GTK_BOX (vbox4), about_message, FALSE, FALSE, 0);
   gtk_label_set_justify (GTK_LABEL (about_message), GTK_JUSTIFY_CENTER);

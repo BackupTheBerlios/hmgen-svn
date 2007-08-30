@@ -30,7 +30,7 @@ static unsigned char *map, *tempmap;
 
 static void help_message(char **argv) {
     fprintf(stderr,
-"\nHeight Map Generator - Version %s - %s\n\n"
+"\nHeight Map Generator - %s - %s\n\n"
 "usage: %s [options]\n\n"
 "-s INT         size, 2^VAL+1 [default: 8]\n"
 "-o FILE        output filename [default: output.pgm]\n"
@@ -68,7 +68,7 @@ static void help_message(char **argv) {
 "-bs FLOAT      blur sigma [default: %0.2f]\n"
 "-i             postprocess, invert heightmap [default: no]\n"
 "\n",
-        VERSION_STRING, COPYRIGHT_STRING, argv[0],
+        HMG_VERSION_STRING, HMG_COPYRIGHT_STRING, argv[0],
         DEF_NORMMIN, DEF_NORMMAX,
         DEF_BLURX, DEF_BLURY, DEF_BLURSIGMA);
     exit(0);
