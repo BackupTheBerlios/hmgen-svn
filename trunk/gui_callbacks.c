@@ -92,7 +92,8 @@ static void generate_button_sensitivity(GtkComboBox *cb) {
     }
 }
 
-void on_algorithm_combobox_changed(GtkComboBox *combobox, gpointer user_data) {
+void on_algorithm_combobox_changed(GtkComboBox *combobox,
+                                   gpointer user_data HMG_ATTR_UNUSED) {
     gint active;
     GtkWidget *w;
 
@@ -105,7 +106,8 @@ void on_algorithm_combobox_changed(GtkComboBox *combobox, gpointer user_data) {
     gtk_notebook_set_current_page(GTK_NOTEBOOK(w), active);
 }
 
-void on_size_combobox_changed(GtkComboBox *combobox, gpointer user_data) {
+void on_size_combobox_changed(GtkComboBox *combobox,
+                              gpointer user_data HMG_ATTR_UNUSED) {
     size_combo_set = 1;
     generate_button_sensitivity(combobox);
 }
@@ -287,21 +289,24 @@ static void deactivate_main_notebook(void *args) {
     gtk_widget_set_sensitive (widget, FALSE);
 }
 
-void on_generate_button_clicked(GtkButton *button, gpointer user_data) {
+void on_generate_button_clicked(GtkButton *button,
+                                gpointer user_data HMG_ATTR_UNUSED) {
     deactivate_main_notebook(button);
     g_thread_create(generate_thread, button, FALSE, NULL);
 }
 
-void on_pgm_save_as_button_clicked(GtkButton *button, gpointer user_data) {
+void on_pgm_save_as_button_clicked(GtkButton *button,
+                                   gpointer user_data HMG_ATTR_UNUSED) {
 }
 
 
-void on_ppm_save_as_button_clicked(GtkButton *button, gpointer user_data) {
+void on_ppm_save_as_button_clicked(GtkButton *button,
+                                   gpointer user_data HMG_ATTR_UNUSED) {
 }
 
 gboolean on_view_drawingarea_expose_event(GtkWidget *widget,
-                                          GdkEventExpose *event,
-                                          gpointer user_data) {
+                                          GdkEventExpose *event HMG_ATTR_UNUSED,
+                                          gpointer user_data HMG_ATTR_UNUSED) {
     GdkDrawable *drawable = widget->window;
     GdkGC *gc = widget->style->fg_gc[GTK_WIDGET_STATE (widget)];
     gint width, height;
@@ -320,7 +325,8 @@ gboolean on_view_drawingarea_expose_event(GtkWidget *widget,
     return FALSE;
 }
 
-void gui_quit(GtkWidget *widget, gpointer user_data) {
+void gui_quit(GtkWidget *widget HMG_ATTR_UNUSED,
+              gpointer user_data HMG_ATTR_UNUSED) {
     if (map_pixbuf)
         g_object_unref(map_pixbuf);
     if (map)
@@ -371,25 +377,29 @@ static void *new_invert_thread(void *args) {
     return NULL;
 }
 
-void on_new_create_button_clicked(GtkButton *button, gpointer user_data) {
+void on_new_create_button_clicked(GtkButton *button,
+                                  gpointer user_data HMG_ATTR_UNUSED) {
     deactivate_main_notebook(button);
     g_thread_create(new_create_thread, button, FALSE, NULL);
 }
 
-void on_norm2_button_clicked(GtkButton *button, gpointer user_data) {
+void on_norm2_button_clicked(GtkButton *button,
+                             gpointer user_data HMG_ATTR_UNUSED) {
 }
 
-void on_blur2_button_clicked(GtkButton *button, gpointer user_data) {
+void on_blur2_button_clicked(GtkButton *button,
+                             gpointer user_data HMG_ATTR_UNUSED) {
 }
 
-void on_invert2_button_clicked(GtkButton *button, gpointer user_data) {
+void on_invert2_button_clicked(GtkButton *button,
+                               gpointer user_data HMG_ATTR_UNUSED) {
     deactivate_main_notebook(button);
     g_thread_create(new_invert_thread, button, FALSE, NULL);
 }
 
 gboolean on_colormap_display_expose_event(GtkWidget *widget,
-                                          GdkEventExpose *event,
-                                          gpointer user_data) {
+                                          GdkEventExpose *event HMG_ATTR_UNUSED,
+                                          gpointer user_data HMG_ATTR_UNUSED) {
     GdkDrawable *drawable = widget->window;
     GdkGC *gc = gdk_gc_new(drawable);
     unsigned int width = 514, height = 32, x;
