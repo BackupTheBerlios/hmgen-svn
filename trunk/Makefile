@@ -10,8 +10,8 @@ Boff = "[0m"
 Red = "[31m"
 Green = "[32m"
 else
-Bon = "["
-Boff = "]"
+Bon =
+Boff =
 Red =
 Green =
 endif
