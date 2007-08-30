@@ -41,15 +41,20 @@ static void gui_progress_meter(char *context, int p) {
     }
 }
 
-static void render_map(GtkWidget *widget) {
-    unsigned int x, y, stride;
-    unsigned char *p, *m;
-
+static void unref_map_pixbuf(void) {
     if (map_pixbuf) {
         gdk_threads_enter();
             g_object_unref(map_pixbuf);
         gdk_threads_leave();
+        map_pixbuf = NULL;
     }
+}
+
+static void render_map(GtkWidget *widget) {
+    unsigned int x, y, stride;
+    unsigned char *p, *m;
+
+    unref_map_pixbuf();
 
     gdk_threads_enter();
         map_pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8, map_width, map_height);
@@ -178,6 +183,27 @@ static char *retrieve_settings(GtkWidget *widget, int which) {
     return settings;
 }
 
+static void set_main_progressbar(void *args) {
+    GtkWidget *widget;
+
+    if (!main_progressbar) {
+        gdk_threads_enter();
+            widget = lookup_widget(GTK_WIDGET(args), "main_progressbar");
+            main_progressbar = GTK_PROGRESS_BAR(widget);
+        gdk_threads_leave();
+    }
+}
+ 
+static void activate_main_notebook(void *args) {
+    GtkWidget *widget;
+
+    gdk_threads_enter();
+        widget = lookup_widget(GTK_WIDGET(args), "main_notebook");
+        gtk_widget_set_sensitive (widget, TRUE);
+        gtk_notebook_set_current_page(GTK_NOTEBOOK(widget), 0);
+    gdk_threads_leave();
+}
+
 static void *generate_thread(void *args) {
     GtkWidget *widget;
     gint active;
@@ -187,26 +213,17 @@ static void *generate_thread(void *args) {
     double blursigma;
     char *settings;
  
-    if (!main_progressbar) {
-        gdk_threads_enter();
-            widget = lookup_widget(GTK_WIDGET(args), "main_progressbar");
-            main_progressbar = GTK_PROGRESS_BAR(widget);
-        gdk_threads_leave();
-    }
- 
+    set_main_progressbar(args);
+
     hmg_progress_meter = gui_progress_meter;
+
     gdk_threads_enter();
         widget = lookup_widget(GTK_WIDGET(args), "size_combobox");
         active = gtk_combo_box_get_active(GTK_COMBO_BOX(widget));
     gdk_threads_leave();
     map_width = map_height = dims[active];
 
-    if (map_pixbuf) {
-        gdk_threads_enter();
-            g_object_unref(map_pixbuf);
-            map_pixbuf = NULL;
-        gdk_threads_leave();
-    }
+    unref_map_pixbuf();
 
     map     = realloc(map,     map_width * map_height);
     tempmap = realloc(tempmap, map_width * map_height);
@@ -267,20 +284,18 @@ static void *generate_thread(void *args) {
     render_map(args);
 
 stopit:
-    gdk_threads_enter();
-        widget = lookup_widget(GTK_WIDGET(args), "main_notebook");
-        gtk_widget_set_sensitive (widget, TRUE);
-        gtk_notebook_set_current_page(GTK_NOTEBOOK(widget), 0);
-    gdk_threads_leave();
-
+    activate_main_notebook(args);
     return NULL;
 }
 
-void on_generate_button_clicked(GtkButton *button, gpointer user_data) {
-    GtkWidget *widget = lookup_widget(GTK_WIDGET(button), "main_notebook");
+static void deactivate_main_notebook(void *args) {
+    GtkWidget *widget = lookup_widget(GTK_WIDGET(args), "main_notebook");
 
     gtk_widget_set_sensitive (widget, FALSE);
+}
 
+void on_generate_button_clicked(GtkButton *button, gpointer user_data) {
+    deactivate_main_notebook(button);
     g_thread_create(generate_thread, button, FALSE, NULL);
 }
 
@@ -323,7 +338,45 @@ void gui_quit(GtkWidget *widget, gpointer user_data) {
     gtk_main_quit();
 }
 
+static void *new_create_thread(void *args) {
+    GtkWidget *widget;
+    unsigned int level;
+
+    set_main_progressbar(args);
+
+    hmg_progress_meter = gui_progress_meter;
+
+    gdk_threads_enter();
+        widget = lookup_widget(GTK_WIDGET(args), "new_width_spinbutton");
+        map_width = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(widget));
+        widget = lookup_widget(GTK_WIDGET(args), "new_height_spinbutton");
+        map_height = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(widget));
+        widget = lookup_widget(GTK_WIDGET(args), "new_level_spinbutton");
+        level = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(widget));
+    gdk_threads_leave();
+
+    unref_map_pixbuf();
+
+    map     = realloc(map,     map_width * map_height);
+    tempmap = realloc(tempmap, map_width * map_height);
+
+    if (!map || !tempmap) {
+        gui_progress_meter("Out of memory!", 42);
+        goto stopit;
+    }
+
+    memset(map, level, map_width * map_height);
+
+    render_map(args);
+
+stopit:
+    activate_main_notebook(args);
+    return NULL;
+}
+
 void on_new_create_button_clicked(GtkButton *button, gpointer user_data) {
+    deactivate_main_notebook(button);
+    g_thread_create(new_create_thread, button, FALSE, NULL);
 }
 
 void on_norm2_button_clicked(GtkButton *button, gpointer user_data) {
