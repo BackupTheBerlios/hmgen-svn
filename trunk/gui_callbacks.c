@@ -109,21 +109,27 @@ void on_size_combobox_changed(GtkComboBox *combobox, gpointer user_data) {
     generate_button_sensitivity(combobox);
 }
 
-static void retrieve_settings_ff(GtkWidget *widget, char *buf, int len) {
+/* not thread safe; wrap it yourself */
+static int get_spin_button_int(void *widget, const char *name) {
     GtkWidget *w;
+    w = lookup_widget(GTK_WIDGET(widget), name);
+    return gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(w));
+}
+static float get_spin_button_float(void *widget, const char *name) {
+    GtkWidget *w;
+    w = lookup_widget(GTK_WIDGET(widget), name);
+    return gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(w));
+}
+
+static void retrieve_settings_ff(GtkWidget *widget, char *buf, int len) {
     unsigned int seed, init, nplates, up, down;
 
     gdk_threads_enter();
-        w = lookup_widget(widget, "ff_seed_spinbutton");
-        seed = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(w));
-        w = lookup_widget(widget, "ff_init_spinbutton");
-        init = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(w));
-        w = lookup_widget(widget, "ff_nplates_spinbutton");
-        nplates = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(w));
-        w = lookup_widget(widget, "ff_upfactor_spinbutton");
-        up = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(w));
-        w = lookup_widget(widget, "ff_downfactor_spinbutton");
-        down = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(w));
+        seed    = get_spin_button_int(widget, "ff_seed_spinbutton");
+        init    = get_spin_button_int(widget, "ff_init_spinbutton");
+        nplates = get_spin_button_int(widget, "ff_nplates_spinbutton");
+        up      = get_spin_button_int(widget, "ff_upfactor_spinbutton");
+        down    = get_spin_button_int(widget, "ff_downfactor_spinbutton");
     gdk_threads_leave();
 
     snprintf(buf, len, "seed=%u:init=%u:n=%u:up=%u:down=%u", seed, init,
@@ -131,25 +137,17 @@ static void retrieve_settings_ff(GtkWidget *widget, char *buf, int len) {
 }
 
 static void retrieve_settings_mpd(GtkWidget *widget, char *buf, int len) {
-    GtkWidget *w;
     unsigned int seed, tl, tr, bl, br, d;
     float r;
 
     gdk_threads_enter();
-        w = lookup_widget(widget, "mpd_seed_spinbutton");
-        seed = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(w));
-        w = lookup_widget(widget, "mpd_tl_spinbutton");
-        tl = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(w));
-        w = lookup_widget(widget, "mpd_tr_spinbutton");
-        tr = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(w));
-        w = lookup_widget(widget, "mpd_bl_spinbutton");
-        bl = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(w));
-        w = lookup_widget(widget, "mpd_br_spinbutton");
-        br = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(w));
-        w = lookup_widget(widget, "mpd_displacement_spinbutton");
-        d = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(w));
-        w = lookup_widget(widget, "mpd_roughness_spinbutton");
-        r = gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(w));
+        seed = get_spin_button_int  (widget, "mpd_seed_spinbutton");
+        tl   = get_spin_button_int  (widget, "mpd_tl_spinbutton");
+        tr   = get_spin_button_int  (widget, "mpd_tr_spinbutton");
+        bl   = get_spin_button_int  (widget, "mpd_bl_spinbutton");
+        br   = get_spin_button_int  (widget, "mpd_br_spinbutton");
+        d    = get_spin_button_int  (widget, "mpd_displacement_spinbutton");
+        r    = get_spin_button_float(widget, "mpd_roughness_spinbutton");
     gdk_threads_leave();
 
     snprintf(buf, len, "seed=%u:tl=%u:tr=%u:bl=%u:br=%u:d=%u:r=%0.2f", seed,
@@ -157,17 +155,13 @@ static void retrieve_settings_mpd(GtkWidget *widget, char *buf, int len) {
 }
 
 static void retrieve_settings_forge(GtkWidget *widget, char *buf, int len) {
-    GtkWidget *w;
     unsigned int seed;
     float fracdim, powscale;
 
     gdk_threads_enter();
-        w = lookup_widget(widget, "forge_seed_spinbutton");
-        seed = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(w));
-        w = lookup_widget(widget, "forge_fracdim_spinbutton");
-        fracdim = gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(w));
-        w = lookup_widget(widget, "forge_powscale_spinbutton");
-        powscale = gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(w));
+        seed     = get_spin_button_int  (widget, "forge_seed_spinbutton");
+        fracdim  = get_spin_button_float(widget, "forge_fracdim_spinbutton");
+        powscale = get_spin_button_float(widget, "forge_powscale_spinbutton");
     gdk_threads_leave();
 
     snprintf(buf, len, "seed=%u:fracdim=%0.2f:powscale=%0.2f", seed, fracdim,
@@ -252,20 +246,15 @@ static void *generate_thread(void *args) {
         normfirst = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
         widget = lookup_widget(GTK_WIDGET(args), "norm_last_checkbutton");
         normlast = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
-        widget = lookup_widget(GTK_WIDGET(args), "norm_min_spinbutton");
-        normmin = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(widget));
-        widget = lookup_widget(GTK_WIDGET(args), "norm_max_spinbutton");
-        normmax = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(widget));
+        normmin = get_spin_button_int(args, "norm_min_spinbutton");
+        normmax = get_spin_button_int(args, "norm_max_spinbutton");
         widget = lookup_widget(GTK_WIDGET(args), "invert_checkbutton");
         inv = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
         widget = lookup_widget(GTK_WIDGET(args), "blur_checkbutton");
         blur = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
-        widget = lookup_widget(GTK_WIDGET(args), "blur_xradius_spinbutton");
-        blurx = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(widget));
-        widget = lookup_widget(GTK_WIDGET(args), "blur_yradius_spinbutton");
-        blury = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(widget));
-        widget = lookup_widget(GTK_WIDGET(args), "blur_sigma_spinbutton");
-        blursigma = gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(widget));
+        blurx     = get_spin_button_int  (args, "blur_xradius_spinbutton");
+        blury     = get_spin_button_int  (args, "blur_yradius_spinbutton");
+        blursigma = get_spin_button_float(args, "blur_sigma_spinbutton");
     gdk_threads_leave();
 
     if (normfirst)
@@ -342,7 +331,6 @@ void gui_quit(GtkWidget *widget, gpointer user_data) {
 }
 
 static void *new_create_thread(void *args) {
-    GtkWidget *widget;
     unsigned int level;
 
     set_main_progressbar(args);
@@ -350,12 +338,9 @@ static void *new_create_thread(void *args) {
     hmg_progress_meter = gui_progress_meter;
 
     gdk_threads_enter();
-        widget = lookup_widget(GTK_WIDGET(args), "new_width_spinbutton");
-        map_width = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(widget));
-        widget = lookup_widget(GTK_WIDGET(args), "new_height_spinbutton");
-        map_height = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(widget));
-        widget = lookup_widget(GTK_WIDGET(args), "new_level_spinbutton");
-        level = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(widget));
+        map_width  = get_spin_button_int(args, "new_width_spinbutton");
+        map_height = get_spin_button_int(args, "new_height_spinbutton");
+        level      = get_spin_button_int(args, "new_level_spinbutton");
     gdk_threads_leave();
 
     unref_map_pixbuf();
