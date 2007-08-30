@@ -194,6 +194,17 @@ static void set_main_progressbar(void *args) {
     }
 }
  
+static void activate_save_buttons(void *args) {
+    GtkWidget *widget;
+
+    gdk_threads_enter();
+        widget = lookup_widget(GTK_WIDGET(args), "pgm_save_as_button");
+        gtk_widget_set_sensitive (widget, TRUE);
+        widget = lookup_widget(GTK_WIDGET(args), "ppm_save_as_button");
+        gtk_widget_set_sensitive (widget, TRUE);
+    gdk_threads_leave();
+}
+
 static void activate_main_notebook(void *args) {
     GtkWidget *widget;
 
@@ -281,6 +292,8 @@ static void *generate_thread(void *args) {
 
     render_map(args);
 
+    activate_save_buttons(args);
+
 stopit:
     activate_main_notebook(args);
     return NULL;
@@ -365,6 +378,7 @@ static void *new_create_thread(void *args) {
         render_map(args);
     }
 
+    activate_save_buttons(args);
     activate_main_notebook(args);
     return NULL;
 }
