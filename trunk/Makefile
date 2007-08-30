@@ -23,8 +23,8 @@ endif
 MAKEFLAGS += --no-print-directory
 
 ifneq ($(CONFIGURE_DONE),yes)
-DEFGOAL=$(filter-out clean distclean configure, $(MAKECMDGOALS))
-$(DEFGOAL) all::
+DEFGOAL=$(filter-out all clean distclean configure, $(MAKECMDGOALS))
+$(DEFGOAL) all:
 	@make configure
 	@make $(MAKECMDGOALS)
 
