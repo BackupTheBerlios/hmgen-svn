@@ -44,8 +44,10 @@ LIBHMGEN_BASENAMES = lib_algo_ff lib_algo_mpd lib_algo_forge \
 LIBHMGEN_OBJS = $(addsuffix $(OBJSUF), $(LIBHMGEN_BASENAMES))
 LIBHMGEN_SRCS = $(addsuffix .c, $(LIBHMGEN_BASENAMES))
 
+build_pretty = printf "[%-7s] %s\n" "$(1)" "$(2)"
 SILENT ?= yes
-SILENT_EXEC = @test "$(SILENT)" = "yes" && echo "$(2)" || echo "$(1)"; $(1)
+SILENT_EXEC = @test "$(SILENT)" = "yes" && $(call build_pretty,$(2),$(3)) \
+                                        || echo "$(1)"; $(1)
 
 all: $(GUI) $(CLI)
 
@@ -55,40 +57,40 @@ verbose: all
 $(CLI)-verbose: SILENT=no
 $(CLI)-verbose: $(CLI)
 $(CLI): $(CLIg)
-	$(call SILENT_EXEC,cp $(CLIg) $@,CP $(CLIg) $@)
-	$(call SILENT_EXEC,$(STRIP) $@,STRIP $@)
+	$(call SILENT_EXEC,cp $(CLIg) $@,COPY,$(CLIg) $@)
+	$(call SILENT_EXEC,$(STRIP) $@,STRIP,$@)
 
 $(CLIg): CFLAGS = $(DEF_CFLAGS)
 $(CLIg): LDFLAGS = $(DEF_LDFLAGS)
 $(CLIg): $(LIBHMGEN) $(CLI_OBJS)
-	$(call SILENT_EXEC,$(CC) -o $@ $(CLI_OBJS) $(LIBHMGEN) $(LDFLAGS),LD $@)
+	$(call SILENT_EXEC,$(CC) -o $@ $(CLI_OBJS) $(LIBHMGEN) $(LDFLAGS),LINK,$@)
 
 $(GUI)-verbose: SILENT=no
 $(GUI)-verbose: $(GUI)
 $(GUI): $(GUIg)
-	$(call SILENT_EXEC,cp $(GUIg) $@,CP $(GUIg) $@)
-	$(call SILENT_EXEC,$(STRIP) $@,STRIP $@)
+	$(call SILENT_EXEC,cp $(GUIg) $@,COPY,$(GUIg) $@)
+	$(call SILENT_EXEC,$(STRIP) $@,STRIP,$@)
 
 $(GUIg): CFLAGS = $(GTK_CFLAGS) $(GTHREAD_CFLAGS) $(DEF_CFLAGS)
 $(GUIg): LDFLAGS = $(GTK_LDFLAGS) $(GTHREAD_LDFLAGS) $(DEF_LDFLAGS)
 $(GUIg): $(LIBHMGEN) $(GUI_OBJS)
-	$(call SILENT_EXEC,$(CC) -o $@ $(GUI_OBJS) $(LIBHMGEN) $(LDFLAGS),LD $@)
+	$(call SILENT_EXEC,$(CC) -o $@ $(GUI_OBJS) $(LIBHMGEN) $(LDFLAGS),LINK,$@)
 
 $(LIBHMGEN)-verbose: SILENT=no
 $(LIBHMGEN)-verbose: $(LIBHMGEN)
 $(LIBHMGEN): CFLAGS = $(DEF_CFLAGS)
 $(LIBHMGEN): LDFLAGS = $(DEF_LDFLAGS)
 $(LIBHMGEN): $(LIBHMGEN_OBJS)
-	$(call SILENT_EXEC,$(AR) $(AR_FLAGS) $@ $^,AR $@)
-	$(call SILENT_EXEC,$(RANLIB) $@,RANLIB $@)
+	$(call SILENT_EXEC,$(AR) $(AR_FLAGS) $@ $^,ARCHIVE,$@)
+	$(call SILENT_EXEC,$(RANLIB) $@,RANLIB,$@)
 
 .c.o:
-	$(call SILENT_EXEC,$(CC) -c -o $@ $< $(CFLAGS),CC $<)
+	$(call SILENT_EXEC,$(CC) -c -o $@ $< $(CFLAGS),COMPILE,$<)
 
 depend-verbose dep-verbose: SILENT=no
 depend-verbose dep-verbose: dep
 depend dep: $(CLI_SRCS) $(LIBHMGEN_SRCS) $(GUI_SRCS)
-	$(call SILENT_EXEC,$(CC_DEP) $(DEP_FLAGS) $(DEF_CFLAGS) $(GTK_CFLAGS) $(GTHREAD_CFLAGS) $^ 1>.depend,CCDEP >.depend)
+	$(call SILENT_EXEC,$(CC_DEP) $(DEP_FLAGS) $(DEF_CFLAGS) $(GTK_CFLAGS) $(GTHREAD_CFLAGS) $^ 1>.depend,CCDEP,>.depend)
 
 size:
 	@wc -l *.[ch] Makefile *.mak | tail -1
