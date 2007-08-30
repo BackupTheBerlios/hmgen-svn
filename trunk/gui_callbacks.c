@@ -362,14 +362,11 @@ static void *new_create_thread(void *args) {
 
     if (!map || !tempmap) {
         gui_progress_meter("Out of memory!", 42);
-        goto stopit;
+    } else {
+        memset(map, level, map_width * map_height);
+        render_map(args);
     }
 
-    memset(map, level, map_width * map_height);
-
-    render_map(args);
-
-stopit:
     activate_main_notebook(args);
     return NULL;
 }
