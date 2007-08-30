@@ -13,6 +13,7 @@ else
 Bon = "["
 Boff = "]"
 Red =
+Green =
 endif
 
 # ---------- CONFIGURE PREAMBLE ----------
