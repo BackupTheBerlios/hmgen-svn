@@ -12,7 +12,7 @@
 
 static unsigned char *map = NULL, *tempmap = NULL;
 static GdkPixbuf *map_pixbuf = NULL;
-static unsigned int map_width = 4097, map_height = 4097;
+static unsigned int map_width = 0, map_height = 0;
 static GtkProgressBar *main_progressbar = NULL;
 static unsigned int algo_combo_set = 0, size_combo_set = 0;
 
@@ -53,6 +53,9 @@ static void unref_map_pixbuf(void) {
 static void render_map(GtkWidget *widget) {
     unsigned int x, y, stride;
     unsigned char *p, *m;
+
+    if (!map_width || !map_height)
+        return;
 
     unref_map_pixbuf();
 
@@ -371,6 +374,17 @@ static void *new_create_thread(void *args) {
     return NULL;
 }
 
+static void *new_invert_thread(void *args) {
+    set_main_progressbar(args);
+    hmg_progress_meter = gui_progress_meter;
+
+    hmg_invert(map, map_width, map_height);
+    render_map(args);
+
+    activate_main_notebook(args);
+    return NULL;
+}
+
 void on_new_create_button_clicked(GtkButton *button, gpointer user_data) {
     deactivate_main_notebook(button);
     g_thread_create(new_create_thread, button, FALSE, NULL);
@@ -383,6 +397,8 @@ void on_blur2_button_clicked(GtkButton *button, gpointer user_data) {
 }
 
 void on_invert2_button_clicked(GtkButton *button, gpointer user_data) {
+    deactivate_main_notebook(button);
+    g_thread_create(new_invert_thread, button, FALSE, NULL);
 }
 
 gboolean on_colormap_display_expose_event(GtkWidget *widget,
