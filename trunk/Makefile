@@ -7,9 +7,12 @@
 ifneq ($(colors),no)
 Bon = "[1m"
 Boff = "[0m"
+Red = "[31m"
+Green = "[32m"
 else
 Bon = "["
 Boff = "]"
+Red =
 endif
 
 # ---------- CONFIGURE PREAMBLE ----------
@@ -121,7 +124,14 @@ endif	# END CONFIGURE PREAMBLE
 # ---------- CONFIGURE ----------
 
 define config-print-result
-	printf "%-16s : %s\n" "$(1)" "$(2)"
+	if test "$(2)" = "no" ; then \
+		col="$(Bon)$(Red)" ; \
+	elif test "$(2)" = "yes" ; then \
+		col="$(Bon)$(Green)" ; \
+	else \
+		col="$(Bon)" ; \
+	fi ; \
+	printf "%-16s : $$col%s$(Boff)\n" "$(1)" "$(2)"
 endef
 
 clean-config.mak:
