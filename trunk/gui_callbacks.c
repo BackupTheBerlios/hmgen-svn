@@ -50,7 +50,7 @@ static void unref_map_pixbuf(void) {
     }
 }
 
-static void render_map(GtkWidget *widget) {
+static void render_map(GtkWidget *widget HMG_ATTR_UNUSED) {
     unsigned int x, y, stride;
     unsigned char *p, *m;
 
@@ -60,7 +60,8 @@ static void render_map(GtkWidget *widget) {
     unref_map_pixbuf();
 
     gdk_threads_enter();
-        map_pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8, map_width, map_height);
+        map_pixbuf = gdk_pixbuf_new(GDK_COLORSPACE_RGB, FALSE, 8, map_width,
+                                                                map_height);
         stride = gdk_pixbuf_get_rowstride(map_pixbuf);
         p = gdk_pixbuf_get_pixels(map_pixbuf);
     gdk_threads_leave();
