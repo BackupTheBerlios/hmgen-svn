@@ -174,7 +174,7 @@ static int test_global_settings(void) {
 }
 
 int main(int argc, char **argv) {
-    FILE *fp1, *fp2;
+    FILE *fp1, *fp2 = NULL;
 
     if (!parse_command_line(argc, argv)) {
         fprintf(stderr, "error, parsing command line\n");
