@@ -52,7 +52,15 @@ GtkWidget * create_hmgengui(void) {
   GtkWidget *norm2_button, *label45, *label46, *label47, *vbox5, *hbox7;
   GtkWidget *blur2_xrad_spinbutton, *blur2_yrad_spinbutton, *colormap_display;
   GtkWidget *blur2_sigma_spinbutton, *blur2_button, *label48, *invert2_button;
-  GtkWidget *label49, *table14;
+  GtkWidget *label49, *table14, *alignment6, *colormap_scale6;
+  GtkWidget *colormap_colorbutton1, *colormap_colorbutton2;
+  GtkWidget *colormap_colorbutton3, *colormap_colorbutton4;
+  GtkWidget *colormap_colorbutton5, *colormap_colorbutton6;
+  GtkWidget *colormap_colorbutton7, *colormap_colorbutton8;
+  GtkWidget *colormap_scale1, *colormap_scale2, *colormap_scale3;
+  GtkWidget *colormap_scale4, *colormap_scale5, *colormap_scale7;
+  GtkWidget *colormap_scale8, *table15, *colormap_auto_update_checkbutton;
+  GtkWidget *colormap_update_button, *colormap_redraw_2dview_button;
 
   GtkObject *norm_min_spinbutton_adj, *norm_max_spinbutton_adj;
   GtkObject *blur_sigma_spinbutton_adj, *blur_yradius_spinbutton_adj;
@@ -785,9 +793,144 @@ GtkWidget * create_hmgengui(void) {
   gtk_box_pack_start (GTK_BOX (hbox7), colormap_display, FALSE, FALSE, 0);
   gtk_widget_set_size_request (colormap_display, 258, 32);
 
-  table14 = gtk_table_new (3, 3, FALSE);
+  table14 = gtk_table_new (9, 3, FALSE);
   gtk_widget_show (table14);
-  gtk_box_pack_start (GTK_BOX (vbox5), table14, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox5), table14, FALSE, TRUE, 0);
+  gtk_table_set_row_spacings (GTK_TABLE (table14), 8);
+  gtk_table_set_col_spacings (GTK_TABLE (table14), 8);
+
+  alignment6 = gtk_alignment_new (0.5, 0.5, 1, 1);
+  gtk_widget_show (alignment6);
+  gtk_table_attach (GTK_TABLE (table14), alignment6, 1, 2, 5, 6,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+
+  colormap_scale6 = gtk_hscale_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 255, 0, 0, 0)));
+  gtk_widget_show (colormap_scale6);
+  gtk_container_add (GTK_CONTAINER (alignment6), colormap_scale6);
+  gtk_scale_set_digits (GTK_SCALE (colormap_scale6), 0);
+
+  colormap_colorbutton1 = gtk_color_button_new ();
+  gtk_widget_show (colormap_colorbutton1);
+  gtk_table_attach (GTK_TABLE (table14), colormap_colorbutton1, 0, 1, 0, 1,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+  
+  colormap_colorbutton2 = gtk_color_button_new ();
+  gtk_widget_show (colormap_colorbutton2);
+  gtk_table_attach (GTK_TABLE (table14), colormap_colorbutton2, 0, 1, 1, 2,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+
+  colormap_colorbutton3 = gtk_color_button_new ();
+  gtk_widget_show (colormap_colorbutton3);
+  gtk_table_attach (GTK_TABLE (table14), colormap_colorbutton3, 0, 1, 2, 3,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+
+  colormap_colorbutton4 = gtk_color_button_new ();
+  gtk_widget_show (colormap_colorbutton4);
+  gtk_table_attach (GTK_TABLE (table14), colormap_colorbutton4, 0, 1, 3, 4,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+
+  colormap_colorbutton5 = gtk_color_button_new ();
+  gtk_widget_show (colormap_colorbutton5);
+  gtk_table_attach (GTK_TABLE (table14), colormap_colorbutton5, 0, 1, 4, 5,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+
+  colormap_colorbutton6 = gtk_color_button_new ();
+  gtk_widget_show (colormap_colorbutton6);
+  gtk_table_attach (GTK_TABLE (table14), colormap_colorbutton6, 0, 1, 5, 6,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+
+  colormap_colorbutton7 = gtk_color_button_new ();
+  gtk_widget_show (colormap_colorbutton7);
+  gtk_table_attach (GTK_TABLE (table14), colormap_colorbutton7, 0, 1, 6, 7,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+
+  colormap_colorbutton8 = gtk_color_button_new ();
+  gtk_widget_show (colormap_colorbutton8);
+  gtk_table_attach (GTK_TABLE (table14), colormap_colorbutton8, 0, 1, 7, 8,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+
+  colormap_scale2 = gtk_hscale_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 255, 0, 0, 0)));
+  gtk_widget_show (colormap_scale2);
+  gtk_table_attach (GTK_TABLE (table14), colormap_scale2, 1, 2, 1, 2,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+  gtk_scale_set_digits (GTK_SCALE (colormap_scale2), 0);
+
+  colormap_scale3 = gtk_hscale_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 255, 0, 0, 0)));
+  gtk_widget_show (colormap_scale3);
+  gtk_table_attach (GTK_TABLE (table14), colormap_scale3, 1, 2, 2, 3,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+  gtk_scale_set_digits (GTK_SCALE (colormap_scale3), 0);
+
+  colormap_scale4 = gtk_hscale_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 255, 0, 0, 0)));
+  gtk_widget_show (colormap_scale4);
+  gtk_table_attach (GTK_TABLE (table14), colormap_scale4, 1, 2, 3, 4,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+  gtk_scale_set_digits (GTK_SCALE (colormap_scale4), 0);
+
+  colormap_scale5 = gtk_hscale_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 255, 0, 0, 0)));
+  gtk_widget_show (colormap_scale5);
+  gtk_table_attach (GTK_TABLE (table14), colormap_scale5, 1, 2, 4, 5,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+  gtk_scale_set_digits (GTK_SCALE (colormap_scale5), 0);
+
+  colormap_scale7  = gtk_hscale_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 255, 0, 0, 0)));
+  gtk_widget_show (colormap_scale7);
+  gtk_table_attach (GTK_TABLE (table14), colormap_scale7, 1, 2, 6, 7,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+  gtk_scale_set_digits (GTK_SCALE (colormap_scale7), 0);
+
+  colormap_scale8 = gtk_hscale_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 255, 0, 0, 0)));
+  gtk_widget_show (colormap_scale8);
+  gtk_table_attach (GTK_TABLE (table14), colormap_scale8, 1, 2, 7, 8,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+  gtk_scale_set_digits (GTK_SCALE (colormap_scale8), 0);
+
+  colormap_scale1 = gtk_hscale_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 255, 0, 0, 0)));
+  gtk_widget_show (colormap_scale1);
+  gtk_table_attach (GTK_TABLE (table14), colormap_scale1, 1, 2, 0, 1,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+  gtk_widget_set_size_request (colormap_scale1, 300, -1);
+  gtk_scale_set_digits (GTK_SCALE (colormap_scale1), 0);
+
+  table15 = gtk_table_new (2, 4, FALSE);
+  gtk_widget_show (table15);
+  gtk_box_pack_start (GTK_BOX (vbox5), table15, TRUE, TRUE, 0);
+  gtk_table_set_row_spacings (GTK_TABLE (table15), 8);
+  gtk_table_set_col_spacings (GTK_TABLE (table15), 8);
+
+  colormap_auto_update_checkbutton = gtk_check_button_new_with_mnemonic ("Auto Update");
+  gtk_widget_show (colormap_auto_update_checkbutton);
+  gtk_table_attach (GTK_TABLE (table15), colormap_auto_update_checkbutton, 0, 1, 0, 1,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+
+  colormap_update_button = gtk_button_new_with_mnemonic ("Update");
+  gtk_widget_show (colormap_update_button);
+  gtk_table_attach (GTK_TABLE (table15), colormap_update_button, 1, 2, 0, 1,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+
+  colormap_redraw_2dview_button = gtk_button_new_with_mnemonic ("Redraw 2D View");
+  gtk_widget_show (colormap_redraw_2dview_button);
+  gtk_table_attach (GTK_TABLE (table15), colormap_redraw_2dview_button, 2, 3, 0, 1,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
 
   label49 = gtk_label_new ("Colormap");
   gtk_widget_show (label49);
@@ -993,6 +1136,26 @@ GtkWidget * create_hmgengui(void) {
   GLADE_HOOKUP_OBJECT (hmgengui, blur2_button, "blur2_button");
   GLADE_HOOKUP_OBJECT (hmgengui, invert2_button, "invert2_button");
   GLADE_HOOKUP_OBJECT (hmgengui, colormap_display, "colormap_display");
+
+  GLADE_HOOKUP_OBJECT (hmgengui, colormap_colorbutton1, "colormap_colorbutton1");
+  GLADE_HOOKUP_OBJECT (hmgengui, colormap_colorbutton2, "colormap_colorbutton2");
+  GLADE_HOOKUP_OBJECT (hmgengui, colormap_colorbutton3, "colormap_colorbutton3");
+  GLADE_HOOKUP_OBJECT (hmgengui, colormap_colorbutton4, "colormap_colorbutton4");
+  GLADE_HOOKUP_OBJECT (hmgengui, colormap_colorbutton5, "colormap_colorbutton5");
+  GLADE_HOOKUP_OBJECT (hmgengui, colormap_colorbutton6, "colormap_colorbutton6");
+  GLADE_HOOKUP_OBJECT (hmgengui, colormap_colorbutton7, "colormap_colorbutton7");
+  GLADE_HOOKUP_OBJECT (hmgengui, colormap_colorbutton8, "colormap_colorbutton8");
+  GLADE_HOOKUP_OBJECT (hmgengui, colormap_scale1, "colormap_scale1");
+  GLADE_HOOKUP_OBJECT (hmgengui, colormap_scale2, "colormap_scale2");
+  GLADE_HOOKUP_OBJECT (hmgengui, colormap_scale3, "colormap_scale3");
+  GLADE_HOOKUP_OBJECT (hmgengui, colormap_scale4, "colormap_scale4");
+  GLADE_HOOKUP_OBJECT (hmgengui, colormap_scale5, "colormap_scale5");
+  GLADE_HOOKUP_OBJECT (hmgengui, colormap_scale6, "colormap_scale6");
+  GLADE_HOOKUP_OBJECT (hmgengui, colormap_scale7, "colormap_scale7");
+  GLADE_HOOKUP_OBJECT (hmgengui, colormap_scale8, "colormap_scale8");
+  GLADE_HOOKUP_OBJECT (hmgengui, colormap_auto_update_checkbutton, "colormap_auto_update_checkbutton");
+  GLADE_HOOKUP_OBJECT (hmgengui, colormap_update_button, "colormap_update_button");
+  GLADE_HOOKUP_OBJECT (hmgengui, colormap_redraw_2dview_button, "colormap_redraw_2dview_button");
 
   gtk_notebook_set_current_page(GTK_NOTEBOOK(main_notebook), 1);
 
