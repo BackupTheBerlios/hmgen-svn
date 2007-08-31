@@ -8,16 +8,6 @@ unsigned char hmg_colormap[256][3];
 #define B_GRASS_ROCK     96
 #define B_ROCK_SNOW      192
 
-#if 0
-static unsigned char waterstart[3] = {   0,   0, 128 },
-                     waterend[3]   = {   0,   0, 255 },
-                     grassstart[3] = {   0, 128,   0 },
-                     grassend[3]   = {   0, 255,   0 },
-                     rockstart[3]  = { 128,   0,   0 },
-                     rockend[3]    = { 255, 128, 128 },
-                     snowstart[3]  = { 128, 128, 128 },
-                     snowend[3]    = { 255, 255, 255 };
-#endif
 static unsigned char waterstart[3] = {   0,   0, 96 },
                      waterend[3]   = {   0,   0, 192 },
                      grassstart[3] = {   0, 0,  192 },
