@@ -551,7 +551,6 @@ void on_colormap_update_button_clicked(GtkButton *button,
     GtkWidget *w;
     GdkColor color;
     GdkRectangle rect;
-    GdkWindow *win;
     int i;
     char name[]  = "colormap_colorbuttonx";
     char name2[] = "colormap_scalex";
@@ -573,10 +572,9 @@ void on_colormap_update_button_clicked(GtkButton *button,
     hmg_init_colormap(&settings);
 
     w = lookup_widget(GTK_WIDGET(button), "colormap_display");
-    win = w->window;
     rect.x = rect.y = 0;
     rect.width = 514;
     rect.height = 32;
-    gdk_window_invalidate_rect(win, &rect, TRUE);
+    gdk_window_invalidate_rect(w->window, &rect, TRUE);
 }
 
