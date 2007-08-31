@@ -605,4 +605,6 @@ void on_colormap_auto_update_checkbutton_toggled(GtkToggleButton *togglebutton,
                                                  gpointer user_data
                                                  HMG_ATTR_UNUSED) {
     colormap_auto_adjust = gtk_toggle_button_get_active(togglebutton);
+    if (colormap_auto_adjust)
+        on_colormap_update_button_clicked(GTK_BUTTON(togglebutton), NULL);
 }
