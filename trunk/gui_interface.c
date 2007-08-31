@@ -1085,6 +1085,9 @@ GtkWidget * create_hmgengui(void) {
   g_signal_connect ((gpointer) colormap_redraw_2dview_button, "clicked",
                     G_CALLBACK (on_colormap_redraw_2dview_button_clicked),
                     NULL);
+  g_signal_connect ((gpointer) colormap_auto_update_checkbutton, "toggled",
+                    G_CALLBACK (on_colormap_auto_update_checkbutton_toggled),
+                    NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (hmgengui, hmgengui, "hmgengui");
