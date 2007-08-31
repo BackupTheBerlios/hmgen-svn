@@ -15,7 +15,7 @@ static GdkPixbuf *map_pixbuf = NULL;
 static unsigned int map_width = 0, map_height = 0;
 static GtkProgressBar *main_progressbar = NULL;
 static unsigned int algo_combo_set = 0, size_combo_set = 0;
-static unsigned int colormap_auto_adjust = 0;
+static unsigned int colormap_auto_update = 0;
 
 static void gui_progress_meter(char *context, int p) {
     static char *prevcontext = NULL;
@@ -507,7 +507,7 @@ static void adjust_other_scales(GtkRange *range, int curscale, double val) {
 
     /* the button is not used as a button inside the update function, so we
      * can safely convert our range to a button */
-    if (colormap_auto_adjust)
+    if (colormap_auto_update)
         on_colormap_update_button_clicked(GTK_BUTTON(range), NULL);
 }
 
@@ -604,7 +604,7 @@ void on_colormap_redraw_2dview_button_clicked(GtkButton *button,
 void on_colormap_auto_update_checkbutton_toggled(GtkToggleButton *togglebutton,
                                                  gpointer user_data
                                                  HMG_ATTR_UNUSED) {
-    colormap_auto_adjust = gtk_toggle_button_get_active(togglebutton);
-    if (colormap_auto_adjust)
+    colormap_auto_update = gtk_toggle_button_get_active(togglebutton);
+    if (colormap_auto_update)
         on_colormap_update_button_clicked(GTK_BUTTON(togglebutton), NULL);
 }
