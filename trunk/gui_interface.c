@@ -1088,6 +1088,22 @@ GtkWidget * create_hmgengui(void) {
   g_signal_connect ((gpointer) colormap_auto_update_checkbutton, "toggled",
                     G_CALLBACK (on_colormap_auto_update_checkbutton_toggled),
                     NULL);
+  g_signal_connect ((gpointer) colormap_colorbutton1, "color_set",
+                    G_CALLBACK (on_colormap_colorbutton_color_set), NULL);
+  g_signal_connect ((gpointer) colormap_colorbutton2, "color_set",
+                    G_CALLBACK (on_colormap_colorbutton_color_set), NULL);
+  g_signal_connect ((gpointer) colormap_colorbutton3, "color_set",
+                    G_CALLBACK (on_colormap_colorbutton_color_set), NULL);
+  g_signal_connect ((gpointer) colormap_colorbutton4, "color_set",
+                    G_CALLBACK (on_colormap_colorbutton_color_set), NULL);
+  g_signal_connect ((gpointer) colormap_colorbutton5, "color_set",
+                    G_CALLBACK (on_colormap_colorbutton_color_set), NULL);
+  g_signal_connect ((gpointer) colormap_colorbutton6, "color_set",
+                    G_CALLBACK (on_colormap_colorbutton_color_set), NULL);
+  g_signal_connect ((gpointer) colormap_colorbutton7, "color_set",
+                    G_CALLBACK (on_colormap_colorbutton_color_set), NULL);
+  g_signal_connect ((gpointer) colormap_colorbutton8, "color_set",
+                    G_CALLBACK (on_colormap_colorbutton_color_set), NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (hmgengui, hmgengui, "hmgengui");

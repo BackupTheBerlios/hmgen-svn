@@ -608,3 +608,10 @@ void on_colormap_auto_update_checkbutton_toggled(GtkToggleButton *togglebutton,
     if (colormap_auto_update)
         on_colormap_update_button_clicked(GTK_BUTTON(togglebutton), NULL);
 }
+
+void on_colormap_colorbutton_color_set(GtkColorButton  *colorbutton,
+                                               gpointer user_data
+                                               HMG_ATTR_UNUSED) {
+    if (colormap_auto_update)
+        on_colormap_update_button_clicked(GTK_BUTTON(colorbutton), NULL);
+}
