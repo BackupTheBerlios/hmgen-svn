@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
     gtk_disable_setlocale();
     setlocale(LC_ALL, "C");
 
-    hmg_init_colormap();
+    hmg_init_colormap(NULL);
 
     g_thread_init(NULL);
     gdk_threads_init();

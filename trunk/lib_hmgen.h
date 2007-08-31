@@ -39,7 +39,12 @@ void hmg_invert(unsigned char *map, unsigned int w, unsigned int h);
 
 extern unsigned char hmg_colormap[256][3];
 
-void hmg_init_colormap(void);
+typedef struct hmg_colormap_settings_s {
+        unsigned int scales[8];
+            unsigned char colors[8][3];
+} hmg_colormap_settings_t;
+
+void hmg_init_colormap(hmg_colormap_settings_t *settings);
 
 void hmg_rng_initgauss(unsigned int seed);
 double hmg_rng_gauss(void);
