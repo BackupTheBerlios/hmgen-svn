@@ -544,3 +544,39 @@ void on_colormap_scale8_value_changed(GtkRange *range,
                                       gpointer user_data HMG_ATTR_UNUSED) {
     adjust_other_scales(range, 8, gtk_range_get_value(range));
 }
+
+void on_colormap_update_button_clicked(GtkButton *button,
+                                       gpointer user_data HMG_ATTR_UNUSED) {
+    hmg_colormap_settings_t settings;
+    GtkWidget *w;
+    GdkColor color;
+    GdkRectangle rect;
+    GdkWindow *win;
+    int i;
+    char name[]  = "colormap_colorbuttonx";
+    char name2[] = "colormap_scalex";
+    char nums[]  = "0123456789";
+
+    for (i=1; i<=8; i++) {
+        name[20] = nums[i];
+        w = lookup_widget(GTK_WIDGET(button), name);
+        gtk_color_button_get_color(GTK_COLOR_BUTTON(w), &color);
+        settings.colors[i-1][0] = color.red >> 8;
+        settings.colors[i-1][1] = color.green >> 8;
+        settings.colors[i-1][2] = color.blue >> 8;
+
+        name2[14] = nums[i];
+        w = lookup_widget(GTK_WIDGET(button), name2);
+        settings.scales[i-1] = gtk_range_get_value(GTK_RANGE(w));
+    }
+
+    hmg_init_colormap(&settings);
+
+    w = lookup_widget(GTK_WIDGET(button), "colormap_display");
+    win = w->window;
+    rect.x = rect.y = 0;
+    rect.width = 514;
+    rect.height = 32;
+    gdk_window_invalidate_rect(win, &rect, TRUE);
+}
+

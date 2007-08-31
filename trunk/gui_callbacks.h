@@ -15,6 +15,7 @@ void on_new_create_button_clicked (GtkButton *button, gpointer user_data);
 void on_norm2_button_clicked      (GtkButton *button, gpointer user_data);
 void on_blur2_button_clicked      (GtkButton *button, gpointer user_data);
 void on_invert2_button_clicked    (GtkButton *button, gpointer user_data);
+void on_colormap_update_button_clicked(GtkButton *button, gpointer user_data);
 
 gboolean on_view_drawingarea_expose_event (GtkWidget *widget,
                                     GdkEventExpose *event, gpointer user_data);
