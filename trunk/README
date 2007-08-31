@@ -21,9 +21,11 @@ To build without the GTK+-2.0 GUI, type:
     make hmgen
 
 Developer build:
-    make dep verbose
+    make dep
+    make verbose
     or
-    make dep hmgen-verbose
+    make dep
+    make hmgen-verbose
     etc...
 
 Clean up:
