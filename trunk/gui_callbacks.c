@@ -482,3 +482,65 @@ gboolean on_colormap_display_expose_event(GtkWidget *widget,
     return FALSE;
 }
 
+static void adjust_other_scales(GtkRange *range, int curscale, double val) {
+    double v;
+    GtkWidget *w;
+    int c;
+    char name[] = "colormap_scalex";
+    char nums[] = "0123456789";
+
+    for (c=curscale-1; c>0; c--) {
+        name[14] = nums[c];
+        w = lookup_widget(GTK_WIDGET(range), name);
+        v = gtk_range_get_value(GTK_RANGE(w));
+        if (v>val)
+            gtk_range_set_value(GTK_RANGE(w), val);
+    }
+    for (c=curscale+1; c<9; c++) {
+        name[14] = nums[c];
+        w = lookup_widget(GTK_WIDGET(range), name);
+        v = gtk_range_get_value(GTK_RANGE(w));
+        if (v<val)
+            gtk_range_set_value(GTK_RANGE(w), val);
+    }
+}
+
+void on_colormap_scale1_value_changed(GtkRange *range,
+                                      gpointer user_data HMG_ATTR_UNUSED) {
+    adjust_other_scales(range, 1, gtk_range_get_value(range));
+}
+
+void on_colormap_scale2_value_changed(GtkRange *range,
+                                      gpointer user_data HMG_ATTR_UNUSED) {
+    adjust_other_scales(range, 2, gtk_range_get_value(range));
+}
+
+void on_colormap_scale3_value_changed(GtkRange *range,
+                                      gpointer user_data HMG_ATTR_UNUSED) {
+    adjust_other_scales(range, 3, gtk_range_get_value(range));
+}
+
+void on_colormap_scale4_value_changed(GtkRange *range,
+                                      gpointer user_data HMG_ATTR_UNUSED) {
+    adjust_other_scales(range, 4, gtk_range_get_value(range));
+}
+
+void on_colormap_scale5_value_changed(GtkRange *range,
+                                      gpointer user_data HMG_ATTR_UNUSED) {
+    adjust_other_scales(range, 5, gtk_range_get_value(range));
+}
+
+void on_colormap_scale6_value_changed(GtkRange *range,
+                                      gpointer user_data HMG_ATTR_UNUSED) {
+    adjust_other_scales(range, 6, gtk_range_get_value(range));
+}
+
+void on_colormap_scale7_value_changed(GtkRange *range,
+                                      gpointer user_data HMG_ATTR_UNUSED) {
+    adjust_other_scales(range, 7, gtk_range_get_value(range));
+}
+
+void on_colormap_scale8_value_changed(GtkRange *range,
+                                      gpointer user_data HMG_ATTR_UNUSED) {
+    adjust_other_scales(range, 8, gtk_range_get_value(range));
+}

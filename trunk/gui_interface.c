@@ -1055,6 +1055,30 @@ GtkWidget * create_hmgengui(void) {
   g_signal_connect ((gpointer) colormap_display, "expose_event",
                     G_CALLBACK (on_colormap_display_expose_event),
                     NULL);
+  g_signal_connect ((gpointer) colormap_scale1, "value_changed",
+                    G_CALLBACK (on_colormap_scale1_value_changed),
+                    NULL);
+  g_signal_connect ((gpointer) colormap_scale2, "value_changed",
+                    G_CALLBACK (on_colormap_scale2_value_changed),
+                    NULL);
+  g_signal_connect ((gpointer) colormap_scale3, "value_changed",
+                    G_CALLBACK (on_colormap_scale3_value_changed),
+                    NULL);
+  g_signal_connect ((gpointer) colormap_scale4, "value_changed",
+                    G_CALLBACK (on_colormap_scale4_value_changed),
+                    NULL);
+  g_signal_connect ((gpointer) colormap_scale5, "value_changed",
+                    G_CALLBACK (on_colormap_scale5_value_changed),
+                    NULL);
+  g_signal_connect ((gpointer) colormap_scale6, "value_changed",
+                    G_CALLBACK (on_colormap_scale6_value_changed),
+                    NULL);
+  g_signal_connect ((gpointer) colormap_scale7, "value_changed",
+                    G_CALLBACK (on_colormap_scale7_value_changed),
+                    NULL);
+  g_signal_connect ((gpointer) colormap_scale8, "value_changed",
+                    G_CALLBACK (on_colormap_scale8_value_changed),
+                    NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (hmgengui, hmgengui, "hmgengui");

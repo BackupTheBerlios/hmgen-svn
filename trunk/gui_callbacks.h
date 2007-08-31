@@ -21,4 +21,13 @@ gboolean on_view_drawingarea_expose_event (GtkWidget *widget,
 gboolean on_colormap_display_expose_event (GtkWidget *widget,
                                     GdkEventExpose *event, gpointer user_data);
 
+void on_colormap_scale1_value_changed(GtkRange *range, gpointer user_data);
+void on_colormap_scale2_value_changed(GtkRange *range, gpointer user_data);
+void on_colormap_scale3_value_changed(GtkRange *range, gpointer user_data);
+void on_colormap_scale4_value_changed(GtkRange *range, gpointer user_data);
+void on_colormap_scale5_value_changed(GtkRange *range, gpointer user_data);
+void on_colormap_scale6_value_changed(GtkRange *range, gpointer user_data);
+void on_colormap_scale7_value_changed(GtkRange *range, gpointer user_data);
+void on_colormap_scale8_value_changed(GtkRange *range, gpointer user_data);
+
 #endif
