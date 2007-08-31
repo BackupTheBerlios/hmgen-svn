@@ -40,9 +40,8 @@ GtkWidget * create_hmgengui(void) {
   GtkWidget *mpd_seed_spinbutton, *mpd_label, *table4, *label23, *label24;
   GtkWidget *label25, *forge_seed_spinbutton, *forge_fracdim_spinbutton;
   GtkWidget *forge_powscale_spinbutton, *forge_label, *label8, *generate_label;
-  GtkWidget *table8, *label31, *label32, *pgm_save_as_button, *alignment4;
-  GtkWidget *hbox3, *image1, *label33, *ppm_save_as_button, *alignment5;
-  GtkWidget *hbox4, *image2, *label34, *save_label, *vbox4, *image3;
+  GtkWidget *table8, *label31, *label32, *pgm_save_as_button;
+  GtkWidget *ppm_save_as_button, *save_label, *vbox4, *image3;
   GtkWidget *about_message, *about_label, *main_progressbar;
   GtkWidget *hbox5, *view_sidepanel_notebook, *table9, *label39, *label40;
   GtkWidget *new_width_spinbutton, *new_height_spinbutton, *new_create_button;
@@ -61,6 +60,7 @@ GtkWidget * create_hmgengui(void) {
   GtkWidget *colormap_scale4, *colormap_scale5, *colormap_scale7;
   GtkWidget *colormap_scale8, *table15, *colormap_auto_update_checkbutton;
   GtkWidget *colormap_update_button, *colormap_redraw_2dview_button;
+  GtkWidget *filechooserbutton1, *filechooserbutton2;
 
   GtkObject *norm_min_spinbutton_adj, *norm_max_spinbutton_adj;
   GtkObject *blur_sigma_spinbutton_adj, *blur_yradius_spinbutton_adj;
@@ -944,7 +944,7 @@ GtkWidget * create_hmgengui(void) {
   gtk_widget_show (label42);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (main_notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (main_notebook), 3), label42);
 
-  table8 = gtk_table_new (3, 3, FALSE);
+  table8 = gtk_table_new (3, 4, FALSE);
   gtk_widget_show (table8);
   gtk_container_add (GTK_CONTAINER (main_notebook), table8);
   gtk_container_set_border_width (GTK_CONTAINER (table8), 8);
@@ -965,51 +965,33 @@ GtkWidget * create_hmgengui(void) {
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label32), 0, 0.5);
 
-  pgm_save_as_button = gtk_button_new ();
+  pgm_save_as_button = gtk_button_new_from_stock ("gtk-save");
   gtk_widget_show (pgm_save_as_button);
-  gtk_table_attach (GTK_TABLE (table8), pgm_save_as_button, 1, 2, 0, 1,
+  gtk_table_attach (GTK_TABLE (table8), pgm_save_as_button, 2, 3, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_widget_set_sensitive (pgm_save_as_button, FALSE);
 
-  alignment4 = gtk_alignment_new (0.5, 0.5, 0, 0);
-  gtk_widget_show (alignment4);
-  gtk_container_add (GTK_CONTAINER (pgm_save_as_button), alignment4);
-
-  hbox3 = gtk_hbox_new (FALSE, 2);
-  gtk_widget_show (hbox3);
-  gtk_container_add (GTK_CONTAINER (alignment4), hbox3);
-
-  image1 = gtk_image_new_from_stock ("gtk-save-as", GTK_ICON_SIZE_BUTTON);
-  gtk_widget_show (image1);
-  gtk_box_pack_start (GTK_BOX (hbox3), image1, FALSE, FALSE, 0);
-
-  label33 = gtk_label_new_with_mnemonic ("Save As...");
-  gtk_widget_show (label33);
-  gtk_box_pack_start (GTK_BOX (hbox3), label33, FALSE, FALSE, 0);
-
-  ppm_save_as_button = gtk_button_new ();
+  ppm_save_as_button = gtk_button_new_from_stock ("gtk-save");
   gtk_widget_show (ppm_save_as_button);
-  gtk_table_attach (GTK_TABLE (table8), ppm_save_as_button, 1, 2, 1, 2,
+  gtk_table_attach (GTK_TABLE (table8), ppm_save_as_button, 2, 3, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_widget_set_sensitive (ppm_save_as_button, FALSE);
 
-  alignment5 = gtk_alignment_new (0.5, 0.5, 0, 0);
-  gtk_widget_show (alignment5);
-  gtk_container_add (GTK_CONTAINER (ppm_save_as_button), alignment5);
+  filechooserbutton1 = gtk_file_chooser_button_new ("Select A File", GTK_FILE_CHOOSER_ACTION_OPEN);
+  gtk_widget_show (filechooserbutton1);
+  gtk_table_attach (GTK_TABLE (table8), filechooserbutton1, 1, 2, 0, 1,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+  g_object_set (filechooserbutton1, "show-hidden", TRUE, "width-chars", 32, NULL);
 
-  hbox4 = gtk_hbox_new (FALSE, 2);
-  gtk_widget_show (hbox4);
-  gtk_container_add (GTK_CONTAINER (alignment5), hbox4);
-
-  image2 = gtk_image_new_from_stock ("gtk-save-as", GTK_ICON_SIZE_BUTTON);
-  gtk_widget_show (image2);
-  gtk_box_pack_start (GTK_BOX (hbox4), image2, FALSE, FALSE, 0);
-
-  label34 = gtk_label_new_with_mnemonic ("Save As...");
-  gtk_widget_show (label34);
-  gtk_box_pack_start (GTK_BOX (hbox4), label34, FALSE, FALSE, 0);
+  filechooserbutton2 = gtk_file_chooser_button_new ("Select A File", GTK_FILE_CHOOSER_ACTION_OPEN);
+  gtk_widget_show (filechooserbutton2);
+  gtk_table_attach (GTK_TABLE (table8), filechooserbutton2, 1, 2, 1, 2,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (GTK_FILL), 0, 0);
+  g_object_set (filechooserbutton2, "show-hidden", TRUE, "width-chars", 32, NULL);
 
   save_label = gtk_label_new ("Export");
   gtk_widget_show (save_label);
@@ -1156,6 +1138,8 @@ GtkWidget * create_hmgengui(void) {
   GLADE_HOOKUP_OBJECT (hmgengui, colormap_auto_update_checkbutton, "colormap_auto_update_checkbutton");
   GLADE_HOOKUP_OBJECT (hmgengui, colormap_update_button, "colormap_update_button");
   GLADE_HOOKUP_OBJECT (hmgengui, colormap_redraw_2dview_button, "colormap_redraw_2dview_button");
+  GLADE_HOOKUP_OBJECT (hmgengui, filechooserbutton1, "filechooserbutton1");
+  GLADE_HOOKUP_OBJECT (hmgengui, filechooserbutton2, "filechooserbutton2");
 
   gtk_notebook_set_current_page(GTK_NOTEBOOK(main_notebook), 1);
 
