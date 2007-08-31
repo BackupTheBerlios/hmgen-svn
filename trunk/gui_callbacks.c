@@ -578,3 +578,19 @@ void on_colormap_update_button_clicked(GtkButton *button,
     gdk_window_invalidate_rect(w->window, &rect, TRUE);
 }
 
+static void *rerender_thread(void *args) {
+    set_main_progressbar(args);
+    hmg_progress_meter = gui_progress_meter;
+
+    render_map(args);
+
+    activate_main_notebook(args);
+    return NULL;
+}
+
+void on_colormap_redraw_2dview_button_clicked(GtkButton *button,
+                                              gpointer user_data
+                                              HMG_ATTR_UNUSED) {
+    deactivate_main_notebook(button);
+    g_thread_create(rerender_thread, button, FALSE, (void*)button);
+}
