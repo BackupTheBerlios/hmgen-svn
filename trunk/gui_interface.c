@@ -80,6 +80,7 @@ GtkWidget * create_hmgengui(void) {
   hmgengui = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 //  gtk_widget_set_size_request (hmgengui, 800, -1);
   gtk_window_set_title (GTK_WINDOW (hmgengui), "hmgengui");
+  gtk_window_set_position (GTK_WINDOW (hmgengui), GTK_WIN_POS_CENTER);
 
   vbox1 = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (vbox1);
