@@ -49,6 +49,11 @@ void hmg_init_colormap(hmg_colormap_settings_t *settings);
 void hmg_rng_initgauss(unsigned int seed);
 double hmg_rng_gauss(void);
 
+unsigned int hmg_export_pgm(const char *filename, unsigned char *map,
+                            unsigned int width, unsigned int height);
+unsigned int hmg_export_ppm(const char *filename, unsigned char *map,
+                            unsigned int width, unsigned int height);
+
 #ifdef __GNUC__
 #define HMG_ATTR_UNUSED     __attribute__((unused))
 #else

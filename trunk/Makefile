@@ -54,7 +54,7 @@ GUI_SRCS = $(addsuffix .c, $(GUI_BASENAMES))
 
 LIBHMGEN = libhmgen.a
 LIBHMGEN_BASENAMES = lib_algo_ff lib_algo_mpd lib_algo_forge \
-					 lib_postproc lib_util lib_hmgen
+					 lib_postproc lib_util lib_hmgen lib_export
 LIBHMGEN_OBJS = $(addsuffix $(OBJSUF), $(LIBHMGEN_BASENAMES))
 LIBHMGEN_SRCS = $(addsuffix .c, $(LIBHMGEN_BASENAMES))
 
