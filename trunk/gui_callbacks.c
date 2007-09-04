@@ -199,9 +199,7 @@ static void activate_save_buttons(void *args) {
     GtkWidget *widget;
 
     gdk_threads_enter();
-        widget = lookup_widget(GTK_WIDGET(args), "pgm_save_as_button");
-        gtk_widget_set_sensitive (widget, TRUE);
-        widget = lookup_widget(GTK_WIDGET(args), "ppm_save_as_button");
+        widget = lookup_widget(GTK_WIDGET(args), "export_save_button");
         gtk_widget_set_sensitive (widget, TRUE);
     gdk_threads_leave();
 }
@@ -310,15 +308,6 @@ void on_generate_button_clicked(GtkButton *button,
                                 gpointer user_data HMG_ATTR_UNUSED) {
     deactivate_main_notebook(button);
     g_thread_create(generate_thread, button, FALSE, NULL);
-}
-
-void on_pgm_save_as_button_clicked(GtkButton *button,
-                                   gpointer user_data HMG_ATTR_UNUSED) {
-}
-
-
-void on_ppm_save_as_button_clicked(GtkButton *button,
-                                   gpointer user_data HMG_ATTR_UNUSED) {
 }
 
 gboolean on_view_drawingarea_expose_event(GtkWidget *widget,

@@ -9,8 +9,6 @@ void on_algorithm_combobox_changed(GtkComboBox *combobox, gpointer user_data);
 void on_size_combobox_changed     (GtkComboBox *combobox, gpointer user_data);
 
 void on_generate_button_clicked   (GtkButton *button, gpointer user_data);
-void on_pgm_save_as_button_clicked(GtkButton *button, gpointer user_data);
-void on_ppm_save_as_button_clicked(GtkButton *button, gpointer user_data);
 void on_new_create_button_clicked (GtkButton *button, gpointer user_data);
 void on_norm2_button_clicked      (GtkButton *button, gpointer user_data);
 void on_blur2_button_clicked      (GtkButton *button, gpointer user_data);
