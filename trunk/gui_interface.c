@@ -332,6 +332,7 @@ GtkWidget * create_hmgengui(void) {
   gtk_combo_box_append_text (GTK_COMBO_BOX (algorithm_combobox), "Fault Formation");
   gtk_combo_box_append_text (GTK_COMBO_BOX (algorithm_combobox), "Midpoint Displacement (plasma)");
   gtk_combo_box_append_text (GTK_COMBO_BOX (algorithm_combobox), "Forge (ppmforge/gforge/fft'd noise)");
+  gtk_combo_box_set_active(GTK_COMBO_BOX(algorithm_combobox), 0);
 
   label10 = gtk_label_new ("Size");
   gtk_widget_show (label10);
