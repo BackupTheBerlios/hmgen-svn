@@ -938,7 +938,7 @@ GtkWidget * create_hmgengui(void) {
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (main_notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (main_notebook), 2), label49);
 
   table13 = gtk_table_new (3, 3, FALSE);
-  gtk_widget_show (table13);
+//  gtk_widget_show (table13);
   gtk_container_add (GTK_CONTAINER (main_notebook), table13);
 
   label42 = gtk_label_new ("Import");
