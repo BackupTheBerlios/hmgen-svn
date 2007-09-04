@@ -355,11 +355,11 @@ GtkWidget * create_hmgengui(void) {
   gtk_combo_box_append_text (GTK_COMBO_BOX (size_combobox), "4097 x 4097");
   gtk_combo_box_append_text (GTK_COMBO_BOX (size_combobox), "8193 x 8193");
   gtk_combo_box_append_text (GTK_COMBO_BOX (size_combobox), "16385 x 16384");
+  gtk_combo_box_set_active(GTK_COMBO_BOX(size_combobox), 8);
 
   generate_button = gtk_button_new_with_mnemonic ("Generate!");
   gtk_widget_show (generate_button);
   gtk_box_pack_start (GTK_BOX (hbox1), generate_button, FALSE, FALSE, 0);
-  gtk_widget_set_sensitive (generate_button, FALSE);
 
   label6 = gtk_label_new ("Main");
   gtk_widget_show (label6);
@@ -1024,9 +1024,6 @@ GtkWidget * create_hmgengui(void) {
                     NULL);
   g_signal_connect ((gpointer) algorithm_combobox, "changed",
                     G_CALLBACK (on_algorithm_combobox_changed),
-                    NULL);
-  g_signal_connect ((gpointer) size_combobox, "changed",
-                    G_CALLBACK (on_size_combobox_changed),
                     NULL);
   g_signal_connect ((gpointer) generate_button, "clicked",
                     G_CALLBACK (on_generate_button_clicked),

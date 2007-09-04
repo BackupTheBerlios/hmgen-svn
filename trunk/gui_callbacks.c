@@ -14,7 +14,6 @@ static unsigned char *map = NULL, *tempmap = NULL;
 static GdkPixbuf *map_pixbuf = NULL;
 static unsigned int map_width = 0, map_height = 0;
 static GtkProgressBar *main_progressbar = NULL;
-static unsigned int algo_combo_set = 0, size_combo_set = 0;
 static unsigned int colormap_auto_update = 0;
 
 static void gui_progress_meter(char *context, int p) {
@@ -84,33 +83,15 @@ static void render_map(GtkWidget *widget HMG_ATTR_UNUSED) {
     gui_progress_meter("", -1);
 }
 
-static void generate_button_sensitivity(GtkComboBox *cb) {
-    GtkWidget *w;
-
-    if (algo_combo_set && size_combo_set) {
-        w = lookup_widget(GTK_WIDGET(cb), "generate_button");
-        gtk_widget_set_sensitive (w, TRUE);
-    }
-}
-
 void on_algorithm_combobox_changed(GtkComboBox *combobox,
                                    gpointer user_data HMG_ATTR_UNUSED) {
     gint active;
     GtkWidget *w;
 
-    algo_combo_set = 1;
-    generate_button_sensitivity(combobox);
-
     w = lookup_widget(GTK_WIDGET(combobox), "algosettings_notebook");
     active = gtk_combo_box_get_active(combobox);
 
     gtk_notebook_set_current_page(GTK_NOTEBOOK(w), active);
-}
-
-void on_size_combobox_changed(GtkComboBox *combobox,
-                              gpointer user_data HMG_ATTR_UNUSED) {
-    size_combo_set = 1;
-    generate_button_sensitivity(combobox);
 }
 
 /* not thread safe; wrap it yourself */

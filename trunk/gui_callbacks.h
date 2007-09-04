@@ -6,7 +6,6 @@
 void gui_quit(GtkWidget *widget, gpointer user_data);
 
 void on_algorithm_combobox_changed(GtkComboBox *combobox, gpointer user_data);
-void on_size_combobox_changed     (GtkComboBox *combobox, gpointer user_data);
 
 void on_generate_button_clicked   (GtkButton *button, gpointer user_data);
 void on_new_create_button_clicked (GtkButton *button, gpointer user_data);
