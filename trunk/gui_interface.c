@@ -971,8 +971,10 @@ GtkWidget * create_hmgengui(void) {
   export_format_combobox = gtk_combo_box_new_text ();
   gtk_widget_show (export_format_combobox);
   gtk_box_pack_start (GTK_BOX (hbox8), export_format_combobox, FALSE, TRUE, 0);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (export_format_combobox), "PGM");
-  gtk_combo_box_append_text (GTK_COMBO_BOX (export_format_combobox), "PPM");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (export_format_combobox),
+          "Heightmap as PGM image (grayscale)");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (export_format_combobox),
+          "Heightmap as PPM image (color)");
   gtk_combo_box_set_active(GTK_COMBO_BOX(export_format_combobox), 0);
 
   export_save_button = gtk_button_new_from_stock ("gtk-save");
@@ -1039,6 +1041,9 @@ GtkWidget * create_hmgengui(void) {
                     NULL);
   g_signal_connect ((gpointer) invert2_button, "clicked",
                     G_CALLBACK (on_invert2_button_clicked),
+                    NULL);
+  g_signal_connect ((gpointer) export_save_button, "clicked",
+                    G_CALLBACK (on_export_save_button_clicked),
                     NULL);
   g_signal_connect ((gpointer) colormap_display, "expose_event",
                     G_CALLBACK (on_colormap_display_expose_event),

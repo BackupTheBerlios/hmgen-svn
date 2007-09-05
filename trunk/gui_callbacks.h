@@ -12,6 +12,7 @@ void on_new_create_button_clicked (GtkButton *button, gpointer user_data);
 void on_norm2_button_clicked      (GtkButton *button, gpointer user_data);
 void on_blur2_button_clicked      (GtkButton *button, gpointer user_data);
 void on_invert2_button_clicked    (GtkButton *button, gpointer user_data);
+void on_export_save_button_clicked(GtkButton *button, gpointer user_data);
 void on_colormap_update_button_clicked(GtkButton *button, gpointer user_data);
 void on_colormap_redraw_2dview_button_clicked(GtkButton *button,
                                               gpointer user_data);

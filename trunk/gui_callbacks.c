@@ -585,3 +585,38 @@ void on_colormap_colorbutton_color_set(GtkColorButton  *colorbutton,
     if (colormap_auto_update)
         on_colormap_update_button_clicked(GTK_BUTTON(colorbutton), NULL);
 }
+
+static void *export_thread(void *args) {
+    GtkWidget *w;
+    int format;
+    char *filename;
+
+    set_main_progressbar(args);
+    hmg_progress_meter = gui_progress_meter;
+
+    w = lookup_widget(GTK_WIDGET(args), "export_format_combobox");
+    format = gtk_combo_box_get_active(GTK_COMBO_BOX(w));
+    w = lookup_widget(GTK_WIDGET(args), "export_filechooserwidget");
+    filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(w));
+
+    switch (format) {
+    case 0:
+        hmg_export_pgm(filename, map, map_width, map_height);
+        break;
+    case 1:
+        hmg_export_ppm(filename, map, map_width, map_height);
+        break;
+    default:
+        assert(0);
+        break;
+    }
+
+    activate_main_notebook(args);
+    return NULL;
+}
+
+void on_export_save_button_clicked(GtkButton *button,
+                                   gpointer user_data HMG_ATTR_UNUSED) {
+    deactivate_main_notebook(button);
+    g_thread_create(export_thread, button, FALSE, NULL);
+}
