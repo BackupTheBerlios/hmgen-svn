@@ -568,7 +568,7 @@ void on_colormap_redraw_2dview_button_clicked(GtkButton *button,
                                               gpointer user_data
                                               HMG_ATTR_UNUSED) {
     deactivate_main_notebook(button);
-    g_thread_create(rerender_thread, button, FALSE, (void*)button);
+    g_thread_create(rerender_thread, button, FALSE, NULL);
 }
 
 void on_colormap_auto_update_checkbutton_toggled(GtkToggleButton *togglebutton,
