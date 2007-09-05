@@ -185,12 +185,13 @@ static void activate_save_buttons(void *args) {
     gdk_threads_leave();
 }
 
-static void activate_main_notebook(void *args) {
+static void activate_main_notebook(void *args, int to_2dview) {
     GtkWidget *widget;
 
     gdk_threads_enter();
         widget = lookup_widget(GTK_WIDGET(args), "main_notebook");
         gtk_widget_set_sensitive (widget, TRUE);
+        if (to_2dview)
         gtk_notebook_set_current_page(GTK_NOTEBOOK(widget), 0);
     gdk_threads_leave();
 }
@@ -275,7 +276,7 @@ static void *generate_thread(void *args) {
     activate_save_buttons(args);
 
 stopit:
-    activate_main_notebook(args);
+    activate_main_notebook(args, 1);
     return NULL;
 }
 
@@ -350,7 +351,7 @@ static void *new_create_thread(void *args) {
     }
 
     activate_save_buttons(args);
-    activate_main_notebook(args);
+    activate_main_notebook(args, 1);
     return NULL;
 }
 
@@ -361,7 +362,7 @@ static void *invert2_thread(void *args) {
     hmg_invert(map, map_width, map_height);
     render_map(args);
 
-    activate_main_notebook(args);
+    activate_main_notebook(args, 1);
     return NULL;
 }
 
@@ -379,7 +380,7 @@ static void *norm2_thread(void *args) {
     hmg_normalize(map, normmin, normmax, map_width, map_height);
     render_map(args);
 
-    activate_main_notebook(args);
+    activate_main_notebook(args, 1);
     return NULL;
 }
 
@@ -400,7 +401,7 @@ static void *blur2_thread(void *args) {
                                                                 map_height);
     render_map(args);
 
-    activate_main_notebook(args);
+    activate_main_notebook(args, 1);
     return NULL;
 }
 
@@ -560,7 +561,7 @@ static void *rerender_thread(void *args) {
 
     render_map(args);
 
-    activate_main_notebook(args);
+    activate_main_notebook(args, 1);
     return NULL;
 }
 
@@ -611,7 +612,7 @@ static void *export_thread(void *args) {
         break;
     }
 
-    activate_main_notebook(args);
+    activate_main_notebook(args, 0);
     return NULL;
 }
 
