@@ -589,7 +589,7 @@ void on_colormap_colorbutton_color_set(GtkColorButton  *colorbutton,
 
 static void *export_thread(void *args) {
     GtkWidget *w;
-    int format;
+    unsigned int format, ret;
     char *filename;
 
     set_main_progressbar(args);
@@ -602,15 +602,19 @@ static void *export_thread(void *args) {
 
     switch (format) {
     case 0:
-        hmg_export_pgm(filename, map, map_width, map_height);
+        ret = hmg_export_pgm(filename, map, map_width, map_height);
         break;
     case 1:
-        hmg_export_ppm(filename, map, map_width, map_height);
+        ret = hmg_export_ppm(filename, map, map_width, map_height);
         break;
     default:
         assert(0);
         break;
     }
+
+    // FIXME: add some sort of hmg_errno and hmg_strerror or similar
+    if (!ret)
+        hmg_progress_meter("Error! Could not export to file!", 42);
 
     activate_main_notebook(args, 0);
     return NULL;
