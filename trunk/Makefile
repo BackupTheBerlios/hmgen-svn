@@ -81,7 +81,8 @@ $(CLI): $(CLIg)
 $(CLIg): CFLAGS = $(DEF_CFLAGS)
 $(CLIg): LDFLAGS = $(DEF_LDFLAGS)
 $(CLIg): $(LIBHMGEN) $(CLI_OBJS)
-	$(call SILENT_EXEC,$(CC) -o $@ $(CLI_OBJS) $(LIBHMGEN) $(LDFLAGS),link,$@)
+	$(call SILENT_EXEC,$(CC) $(OBJ_OUT_FLAG) $@ $(CLI_OBJS) $(LIBHMGEN) \
+		$(LDFLAGS),link,$@)
 
 $(GUI)-verbose: SILENT=no
 $(GUI)-verbose: $(GUI)
@@ -92,7 +93,8 @@ $(GUI): $(GUIg)
 $(GUIg): CFLAGS = $(GTK_CFLAGS) $(GTHREAD_CFLAGS) $(DEF_CFLAGS)
 $(GUIg): LDFLAGS = $(GTK_LDFLAGS) $(GTHREAD_LDFLAGS) $(DEF_LDFLAGS)
 $(GUIg): $(LIBHMGEN) $(GUI_OBJS)
-	$(call SILENT_EXEC,$(CC) -o $@ $(GUI_OBJS) $(LIBHMGEN) $(LDFLAGS),link,$@)
+	$(call SILENT_EXEC,$(CC) $(OBJ_OUT_FLAG) $@ $(GUI_OBJS) $(LIBHMGEN) \
+		$(LDFLAGS),link,$@)
 
 $(LIBHMGEN)-verbose: SILENT=no
 $(LIBHMGEN)-verbose: $(LIBHMGEN)
@@ -103,7 +105,8 @@ $(LIBHMGEN): $(LIBHMGEN_OBJS)
 	$(call SILENT_EXEC,$(RANLIB) $@,ranlib,$@)
 
 .c.o:
-	$(call SILENT_EXEC,$(CC) -c -o $@ $< $(CFLAGS),compile,$<)
+	$(call SILENT_EXEC,$(CC) $(DONT_LINK_FLAG) $(OBJ_OUT_FLAG) $@ $< $(CFLAGS)\
+		,compile,$<)
 
 depend-verbose dep-verbose: SILENT=no
 depend-verbose dep-verbose: dep
@@ -188,6 +191,8 @@ config-cc-flags: 	config-cc-vendor-and-version-restrict
 			STD_FLAGS="-std=c99" ; \
 			DEBUG_FLAGS="-g" ; \
 			DEP_FLAGS="-MM" ; \
+			OBJ_OUT_FLAG="-o" ; \
+			DONT_LINK_FLAG="-c" ; \
 			;; \
 		sun) \
 			WARN_FLAGS= ; \
@@ -195,6 +200,8 @@ config-cc-flags: 	config-cc-vendor-and-version-restrict
 			STD_FLAGS="-Xc" ; \
 			DEBUG_FLAGS="-g" ; \
 			DEP_FLAGS="-xM" ; \
+			OBJ_OUT_FLAG="-o" ; \
+			DONT_LINK_FLAG="-c" ; \
 			;; \
 	esac ; \
 	echo WARN_FLAGS=$$WARN_FLAGS >> config.mak ; \
@@ -202,11 +209,15 @@ config-cc-flags: 	config-cc-vendor-and-version-restrict
 	echo STD_FLAGS=$$STD_FLAGS >> config.mak ; \
 	echo DEBUG_FLAGS=$$DEBUG_FLAGS >> config.mak ; \
 	echo DEP_FLAGS=$$DEP_FLAGS >> config.mak ; \
+	echo OBJ_OUT_FLAG=$$OBJ_OUT_FLAG >> config.mak ; \
+	echo DONT_LINK_FLAG=$$DONT_LINK_FLAG >> config.mak ; \
 	$(call config-print-result,warnings,$$WARN_FLAGS) ; \
 	$(call config-print-result,optimize,$$OPT_FLAGS) ; \
 	$(call config-print-result,standards,$$STD_FLAGS) ; \
 	$(call config-print-result,debug,$$DEBUG_FLAGS) ; \
-	$(call config-print-result,dependencies,$$DEP_FLAGS) ;
+	$(call config-print-result,dependencies,$$DEP_FLAGS) ; \
+	$(call config-print-result,object out,$$OBJ_OUT_FLAG) ; \
+	$(call config-print-result,do not link,$$DONT_LINK_FLAG) ;
 
 config-pkg-config:
 	@TMP=`pkg-config --version 2>/dev/null 1>&2 && echo yes || echo no` ; \
