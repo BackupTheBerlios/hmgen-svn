@@ -2,6 +2,10 @@
 # Makefile with built-in configure experiment
 # Needs GNU Make to run properly
 
+ifeq ($(V),1)
+SILENT=no
+endif
+
 # ---------- COLORS ----------
 
 ifneq ($(colors),no)
