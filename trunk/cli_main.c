@@ -215,15 +215,13 @@ int main(int argc, char **argv) {
         hmg_invert(map, w, h);
 
     if (outfile) {
-    fprintf(stderr, "Saving to %s\n", outfile);
-
-    if (!hmg_export_pgm(outfile, map, w, h))
-        fprintf(stderr, "error during saving\n");
+        fprintf(stderr, "Saving to %s\n", outfile);
+        if (!hmg_export_pgm(outfile, map, w, h))
+            fprintf(stderr, "error during saving\n");
     }
 
     if (colfile) {
         fprintf(stderr, "Saving PPM file to %s\n", colfile);
-
         hmg_init_colormap(NULL);
         if (!hmg_export_ppm(colfile, map, w, h))
             fprintf(stderr, "error during saving\n");
@@ -231,7 +229,6 @@ int main(int argc, char **argv) {
 
     if (bmpfile) {
         fprintf(stderr, "Saving BMP file to %s\n", bmpfile);
-
         hmg_init_colormap(NULL);
         if (!hmg_export_bmp(bmpfile, map, w, h))
             fprintf(stderr, "error during saving\n");
