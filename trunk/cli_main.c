@@ -14,7 +14,6 @@
 #define DEF_NORMMAX     255
 
 static const char defoutfile[] = "output.pgm";
-static const char defcolfile[] = "output.ppm";
 
 static int size = 8, algo = 0, blur = 0, blurx = DEF_BLURX, blury = DEF_BLURY;
 static double blursigma = DEF_BLURSIGMA;
@@ -22,9 +21,8 @@ static int normmin = DEF_NORMMIN, normmax = DEF_NORMMAX,
            normfirst = 0, normlast = 0, inv = 0;
 static unsigned int w, h;
 static char *outfile = (char *) defoutfile;
-static char *colfile = (char *) defcolfile;
+static char *colfile = NULL;
 static char *bmpfile = NULL;
-static unsigned int outputcol = 0;
 static const char *params = NULL;
 
 static unsigned char *map, *tempmap;
@@ -35,8 +33,7 @@ static void help_message(char **argv) {
 "usage: %s [options]\n\n"
 "-s INT         size, 2^VAL+1 [default: 8]\n"
 "-o FILE        output filename [default: output.pgm]\n"
-"-c             enable output of colorized version\n"
-"-cfile FILE    output file name of colorized version [default: output.ppm]\n"
+"-ppm FILE      output colorized version to PPM file\n"
 "-bmp FILE      output map to BMP file\n"
 "-p STRING      algorithm parameters (param:param:param...)\n"
 "-a INT         algorithm [default: 0]\n"
@@ -99,9 +96,7 @@ static int parse_command_line(int argc, char**argv) {
         } else if (!strcmp(argv[a], "-o")) {
             if (!test_argument(a, argc, argv)) return 0;
             outfile = argv[++a];
-        } else if (!strcmp(argv[a], "-c")) {
-            outputcol = 1;
-        } else if (!strcmp(argv[a], "-cfile")) {
+        } else if (!strcmp(argv[a], "-ppm")) {
             if (!test_argument(a, argc, argv)) return 0;
             colfile = argv[++a];
         } else if (!strcmp(argv[a], "-bmp")) {
@@ -226,8 +221,8 @@ int main(int argc, char **argv) {
     if (!hmg_export_pgm(outfile, map, w, h))
         fprintf(stderr, "error during saving\n");
 
-    if (outputcol) {
-        fprintf(stderr, "Saving colorized version to %s\n", colfile);
+    if (colfile) {
+        fprintf(stderr, "Saving PPM file to %s\n", colfile);
 
         hmg_init_colormap(NULL);
         if (!hmg_export_ppm(colfile, map, w, h))
