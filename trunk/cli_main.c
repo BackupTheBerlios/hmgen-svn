@@ -13,14 +13,12 @@
 #define DEF_NORMMIN     0
 #define DEF_NORMMAX     255
 
-static const char defoutfile[] = "output.pgm";
-
 static int size = 8, algo = 0, blur = 0, blurx = DEF_BLURX, blury = DEF_BLURY;
 static double blursigma = DEF_BLURSIGMA;
 static int normmin = DEF_NORMMIN, normmax = DEF_NORMMAX,
            normfirst = 0, normlast = 0, inv = 0;
 static unsigned int w, h;
-static char *outfile = (char *) defoutfile;
+static char *outfile = NULL;
 static char *colfile = NULL;
 static char *bmpfile = NULL;
 static const char *params = NULL;
@@ -32,7 +30,7 @@ static void help_message(char **argv) {
 "\nHeight Map Generator - %s - %s\n\n"
 "usage: %s [options]\n\n"
 "-s INT         size, 2^VAL+1 [default: 8]\n"
-"-o FILE        output filename [default: output.pgm]\n"
+"-o FILE        output heightmap to PGM file\n"
 "-ppm FILE      output colorized version to PPM file\n"
 "-bmp FILE      output map to BMP file\n"
 "-p STRING      algorithm parameters (param:param:param...)\n"
@@ -216,10 +214,12 @@ int main(int argc, char **argv) {
     if (inv)
         hmg_invert(map, w, h);
 
+    if (outfile) {
     fprintf(stderr, "Saving to %s\n", outfile);
 
     if (!hmg_export_pgm(outfile, map, w, h))
         fprintf(stderr, "error during saving\n");
+    }
 
     if (colfile) {
         fprintf(stderr, "Saving PPM file to %s\n", colfile);
