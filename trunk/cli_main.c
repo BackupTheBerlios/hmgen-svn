@@ -23,6 +23,7 @@ static int normmin = DEF_NORMMIN, normmax = DEF_NORMMAX,
 static unsigned int w, h;
 static char *outfile = (char *) defoutfile;
 static char *colfile = (char *) defcolfile;
+static char *bmpfile = NULL;
 static unsigned int outputcol = 0;
 static const char *params = NULL;
 
@@ -36,6 +37,7 @@ static void help_message(char **argv) {
 "-o FILE        output filename [default: output.pgm]\n"
 "-c             enable output of colorized version\n"
 "-cfile FILE    output file name of colorized version [default: output.ppm]\n"
+"-bmp FILE      output map to BMP file\n"
 "-p STRING      algorithm parameters (param:param:param...)\n"
 "-a INT         algorithm [default: 0]\n"
 "                   0 - Fault Formation\n"
@@ -102,6 +104,9 @@ static int parse_command_line(int argc, char**argv) {
         } else if (!strcmp(argv[a], "-cfile")) {
             if (!test_argument(a, argc, argv)) return 0;
             colfile = argv[++a];
+        } else if (!strcmp(argv[a], "-bmp")) {
+            if (!test_argument(a, argc, argv)) return 0;
+            bmpfile = argv[++a];
         } else if (!strcmp(argv[a], "-p")) {
             if (!test_argument(a, argc, argv)) return 0;
             params = argv[++a];
@@ -226,6 +231,14 @@ int main(int argc, char **argv) {
 
         hmg_init_colormap(NULL);
         if (!hmg_export_ppm(colfile, map, w, h))
+            fprintf(stderr, "error during saving\n");
+    }
+
+    if (bmpfile) {
+        fprintf(stderr, "Saving BMP file to %s\n", bmpfile);
+
+        hmg_init_colormap(NULL);
+        if (!hmg_export_bmp(bmpfile, map, w, h))
             fprintf(stderr, "error during saving\n");
     }
 
