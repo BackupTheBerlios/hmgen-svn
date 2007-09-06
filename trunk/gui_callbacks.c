@@ -607,6 +607,9 @@ static void *export_thread(void *args) {
     case 1:
         ret = hmg_export_ppm(filename, map, map_width, map_height);
         break;
+    case 2:
+        ret = hmg_export_bmp(filename, map, map_width, map_height);
+        break;
     default:
         assert(0);
         break;

@@ -53,6 +53,8 @@ unsigned int hmg_export_pgm(const char *filename, unsigned char *map,
                             unsigned int width, unsigned int height);
 unsigned int hmg_export_ppm(const char *filename, unsigned char *map,
                             unsigned int width, unsigned int height);
+unsigned int hmg_export_bmp(const char *filename, unsigned char *map,
+                            unsigned int width, unsigned int height);
 
 #ifdef __GNUC__
 #define HMG_ATTR_UNUSED     __attribute__((unused))

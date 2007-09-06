@@ -975,6 +975,8 @@ GtkWidget * create_hmgengui(void) {
           "Heightmap as PGM image (grayscale)");
   gtk_combo_box_append_text (GTK_COMBO_BOX (export_format_combobox),
           "Heightmap as PPM image (color)");
+  gtk_combo_box_append_text (GTK_COMBO_BOX (export_format_combobox),
+          "Heightmap as BMP image (8-bit palette, uncompressed)");
   gtk_combo_box_set_active(GTK_COMBO_BOX(export_format_combobox), 0);
 
   export_save_button = gtk_button_new_from_stock ("gtk-save");

@@ -73,3 +73,61 @@ err_out:
     return 0;
 }
 
+#define S16(a)  (a)&0xff, (a>>8)&0xff
+#define S32(a)  (a)&0xff, (a>>8)&0xff, (a>>16)&0xff, (a>>24)&0xff
+#define C32     "%c%c%c%c"
+#define C16     "%c%c"
+#define C8      "%c"
+
+unsigned int hmg_export_bmp(const char *filename, unsigned char *map,
+                            unsigned int width, unsigned int height) {
+    FILE *fp;
+    unsigned int x, wr, fsize;
+    int y, ret;
+
+    wr = width & ~3;
+    if (wr != width)
+        wr += 4;
+
+    fsize = 14 + 40 + 1024 + height * wr;
+
+    fp = fopen(filename, "wb");
+
+    if (!fp)
+        return 0;
+
+    ret = fprintf(fp, "%2s" C32 C32 C32, "BM", S32(fsize), S32(0), S32(1078));
+    if (ret < 0)
+        goto err_out;
+
+    ret = fprintf(fp, C32 C32 C32 C16 C16 C32 C32 C32 C32 C32 C32,
+            S32(40), S32(width), S32(height), S16(1), S16(8), S32(0), S32(0),
+            S32(0), S32(0), S32(0), S32(0));
+    if (ret < 0)
+        goto err_out;
+
+    for (x=0; x<256; x++) {
+        ret = fprintf(fp, C32, hmg_colormap[x][2], hmg_colormap[x][1],
+                                                        hmg_colormap[x][0], 0);
+        if (ret < 0)
+            goto err_out;
+    }
+
+    for (y=height-1; y>=0; y--) {
+        progress_meter((height-y)*100.0/height);
+        if (fwrite(map+y*width, width, 1, fp) != 1)
+            goto err_out;
+        for (x=0; x<(wr-width); x++)
+            if (fputc(0, fp) < 0)
+                goto err_out;
+    }
+
+    progress_meter(-1);
+
+    return !fclose(fp);
+
+err_out:
+    fclose(fp);
+    progress_meter(-1);
+    return 0;
+}
