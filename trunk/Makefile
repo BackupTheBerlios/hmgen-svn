@@ -160,6 +160,7 @@ config-cc-vendor-and-version:	config-cc
 			CC_VERSION=`echo | $(CC) -E - | grep ident | cut -d ' ' -f 5` ; \
 		else \
 			CC_VENDOR=unknown; \
+			echo CC_DEP=true >> config.mak; \
 		fi ; \
 	fi ; \
 	echo CC_VENDOR=$$CC_VENDOR >> config.mak ; \
@@ -200,6 +201,15 @@ config-cc-flags: 	config-cc-vendor-and-version-restrict
 			STD_FLAGS="-Xc" ; \
 			DEBUG_FLAGS="-g" ; \
 			DEP_FLAGS="-xM" ; \
+			OBJ_OUT_FLAG="-o" ; \
+			DONT_LINK_FLAG="-c" ; \
+			;; \
+		unknown) \
+			WARN_FLAGS= ; \
+			OPT_FLAGS="-O" ; \
+			STD_FLAGS= ; \
+			DEBUG_FLAGS="-g" ; \
+			DEP_FLAGS= ; \
 			OBJ_OUT_FLAG="-o" ; \
 			DONT_LINK_FLAG="-c" ; \
 			;; \
