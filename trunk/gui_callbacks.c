@@ -105,6 +105,11 @@ static float get_spin_button_float(void *widget, const char *name) {
     w = lookup_widget(GTK_WIDGET(widget), name);
     return gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(w));
 }
+static int get_check_button_active(void *widget, const char *name) {
+    GtkWidget *w;
+    w = lookup_widget(GTK_WIDGET(widget), name);
+    return gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w));
+}
 
 static void retrieve_settings_ff(GtkWidget *widget, char *buf, int len) {
     unsigned int seed, init, nplates, up, down;
@@ -238,27 +243,21 @@ static void *generate_thread(void *args) {
     // post-processing
 
     gdk_threads_enter();
-        widget = lookup_widget(GTK_WIDGET(args), "norm_first_checkbutton");
-        normfirst = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
-        widget = lookup_widget(GTK_WIDGET(args), "norm_last_checkbutton");
-        normlast = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
+        normfirst   = get_check_button_active(args, "norm_first_checkbutton");
+        normlast    = get_check_button_active(args, "norm_last_checkbutton");
         normmin = get_spin_button_int(args, "norm_min_spinbutton");
         normmax = get_spin_button_int(args, "norm_max_spinbutton");
-        widget = lookup_widget(GTK_WIDGET(args), "invert_checkbutton");
-        inv = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
-        widget = lookup_widget(GTK_WIDGET(args), "blur_checkbutton");
-        blur = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
+        inv         = get_check_button_active(args, "invert_checkbutton");
+        blur        = get_check_button_active(args, "blur_checkbutton");
         blurx     = get_spin_button_int  (args, "blur_xradius_spinbutton");
         blury     = get_spin_button_int  (args, "blur_yradius_spinbutton");
         blursigma = get_spin_button_float(args, "blur_sigma_spinbutton");
-        widget      = lookup_widget(GTK_WIDGET(args),"crop_enable_checkbutton");
-        crop        = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
+        crop        = get_check_button_active(args, "crop_enable_checkbutton");
         cropleft    = get_spin_button_int(args, "crop_left_spinbutton");
         cropright   = get_spin_button_int(args, "crop_right_spinbutton");
         croptop     = get_spin_button_int(args, "crop_top_spinbutton");
         cropbottom  = get_spin_button_int(args, "crop_bottom_spinbutton");
-        widget      = lookup_widget(GTK_WIDGET(args),"clip_enable_checkbutton");
-        clip        = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
+        clip        = get_check_button_active(args, "clip_enable_checkbutton");
         clipmin     = get_spin_button_int(args, "clip_min_spinbutton");
         clipmax     = get_spin_button_int(args, "clip_max_spinbutton");
     gdk_threads_leave();
