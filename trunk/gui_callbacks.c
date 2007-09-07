@@ -262,6 +262,27 @@ static void *generate_thread(void *args) {
         clipmax     = get_spin_button_int    (args, "clip_max_spinbutton");
     gdk_threads_leave();
 
+    if (crop) {
+        /* sanitize crop settings if necessary */
+        if (cropleft > map_width-3)
+            cropleft = map_width-3;
+        if (cropright > map_width-3)
+            cropright = map_width-3;
+        if ((cropright+cropleft) > map_width-3) {
+            cropright = 0;
+            cropleft = map_width-3;
+        }
+        if (croptop > map_height-3)
+            croptop = map_height-3;
+        if (cropbottom > map_height-3)
+            cropbottom = map_height-3;
+        if ((cropbottom+croptop) > map_height-3) {
+            cropbottom = 0;
+            croptop = map_height-3;
+        }
+        hmg_crop(&map, &map_width, &map_height, cropleft, cropright,
+                croptop, cropbottom);
+    }
     if (normfirst)
         hmg_normalize(map, normmin, normmax, map_width, map_height);
     if (blur)
@@ -269,6 +290,8 @@ static void *generate_thread(void *args) {
                                                                 map_height);
     if (inv)
         hmg_invert(map, map_width, map_height);
+    if (clip)
+        hmg_clip(map, clipmin, clipmax, map_width, map_height);
     if (normlast)
         hmg_normalize(map, normmin, normmax, map_width, map_height);
 
