@@ -626,3 +626,11 @@ void on_export_save_button_clicked(GtkButton *button,
     deactivate_main_notebook(button);
     g_thread_create(export_thread, button, FALSE, NULL);
 }
+
+void on_clip_button_clicked(GtkButton *button,
+                                   gpointer user_data HMG_ATTR_UNUSED) {
+}
+
+void on_crop_button_clicked(GtkButton *button,
+                                   gpointer user_data HMG_ATTR_UNUSED) {
+}
