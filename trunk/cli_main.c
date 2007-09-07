@@ -233,12 +233,12 @@ int main(int argc, char **argv) {
         hmg_normalize(map, normmin, normmax, w, h);
     if (blur)
         hmg_gaussian_blur(map, tempmap, blurx, blury, blursigma, w, h);
-    if (normlast)
-        hmg_normalize(map, normmin, normmax, w, h);
     if (inv)
         hmg_invert(map, w, h);
     if (clip)
         hmg_clip(map, clipmin, clipmax, w, h);
+    if (normlast)
+        hmg_normalize(map, normmin, normmax, w, h);
 
     if (outfile) {
         fprintf(stderr, "Saving to %s\n", outfile);

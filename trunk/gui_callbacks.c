@@ -254,15 +254,13 @@ static void *generate_thread(void *args) {
 
     if (normfirst)
         hmg_normalize(map, normmin, normmax, map_width, map_height);
-
     if (blur)
         hmg_gaussian_blur(map, tempmap, blurx, blury, blursigma, map_width,
                                                                 map_height);
-    if (normlast)
-        hmg_normalize(map, normmin, normmax, map_width, map_height);
-
     if (inv)
         hmg_invert(map, map_width, map_height);
+    if (normlast)
+        hmg_normalize(map, normmin, normmax, map_width, map_height);
 
 /* hmmm, some "sidebar" commands may need tempmap, like gaussian blur
  * FIXME increases memory requirements
