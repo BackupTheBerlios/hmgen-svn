@@ -70,6 +70,7 @@ GtkWidget * create_hmgengui(void) {
   GtkWidget *crop_right_spinbutton, *crop_top_spinbutton;
   GtkWidget *crop_bottom_spinbutton, *label52, *table16, *label56, *label57;
   GtkWidget *clip_min_spinbutton, *clip_max_spinbutton, *label53;
+  GtkWidget *crop_enable_checkbutton, *clip_enable_checkbutton;
 
   GtkObject *norm_min_spinbutton_adj, *norm_max_spinbutton_adj;
   GtkObject *blur_sigma_spinbutton_adj, *blur_yradius_spinbutton_adj;
@@ -513,7 +514,7 @@ GtkWidget * create_hmgengui(void) {
   gtk_widget_show (postprocessing_notebook);
   gtk_container_add (GTK_CONTAINER (alignment2), postprocessing_notebook);
 
-  table17 = gtk_table_new (5, 3, FALSE);
+  table17 = gtk_table_new (6, 3, FALSE);
   gtk_widget_show (table17);
   gtk_container_add (GTK_CONTAINER (postprocessing_notebook), table17);
   gtk_container_set_border_width (GTK_CONTAINER (table17), 8);
@@ -522,28 +523,28 @@ GtkWidget * create_hmgengui(void) {
 
   label61 = gtk_label_new ("Left");
   gtk_widget_show (label61);
-  gtk_table_attach (GTK_TABLE (table17), label61, 0, 1, 0, 1,
+  gtk_table_attach (GTK_TABLE (table17), label61, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label61), 0, 0.5);
 
   label62 = gtk_label_new ("Right");
   gtk_widget_show (label62);
-  gtk_table_attach (GTK_TABLE (table17), label62, 0, 1, 1, 2,
+  gtk_table_attach (GTK_TABLE (table17), label62, 0, 1, 2, 3,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label62), 0, 0.5);
 
   label63 = gtk_label_new ("Top");
   gtk_widget_show (label63);
-  gtk_table_attach (GTK_TABLE (table17), label63, 0, 1, 2, 3,
+  gtk_table_attach (GTK_TABLE (table17), label63, 0, 1, 3, 4,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label63), 0, 0.5);
 
   label64 = gtk_label_new ("Bottom");
   gtk_widget_show (label64);
-  gtk_table_attach (GTK_TABLE (table17), label64, 0, 1, 3, 4,
+  gtk_table_attach (GTK_TABLE (table17), label64, 0, 1, 4, 5,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label64), 0, 0.5);
@@ -551,28 +552,34 @@ GtkWidget * create_hmgengui(void) {
   crop_left_spinbutton_adj = gtk_adjustment_new (0, 0, 65536, 1, 10, 10);
   crop_left_spinbutton = gtk_spin_button_new (GTK_ADJUSTMENT (crop_left_spinbutton_adj), 1, 0);
   gtk_widget_show (crop_left_spinbutton);
-  gtk_table_attach (GTK_TABLE (table17), crop_left_spinbutton, 1, 2, 0, 1,
+  gtk_table_attach (GTK_TABLE (table17), crop_left_spinbutton, 1, 2, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
 
   crop_right_spinbutton_adj = gtk_adjustment_new (0, 0, 65536, 1, 10, 10);
   crop_right_spinbutton = gtk_spin_button_new (GTK_ADJUSTMENT (crop_right_spinbutton_adj), 1, 0);
   gtk_widget_show (crop_right_spinbutton);
-  gtk_table_attach (GTK_TABLE (table17), crop_right_spinbutton, 1, 2, 1, 2,
+  gtk_table_attach (GTK_TABLE (table17), crop_right_spinbutton, 1, 2, 2, 3,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
 
   crop_top_spinbutton_adj = gtk_adjustment_new (0, 0, 65536, 1, 10, 10);
   crop_top_spinbutton = gtk_spin_button_new (GTK_ADJUSTMENT (crop_top_spinbutton_adj), 1, 0);
   gtk_widget_show (crop_top_spinbutton);
-  gtk_table_attach (GTK_TABLE (table17), crop_top_spinbutton, 1, 2, 2, 3,
+  gtk_table_attach (GTK_TABLE (table17), crop_top_spinbutton, 1, 2, 3, 4,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
 
   crop_bottom_spinbutton_adj = gtk_adjustment_new (0, 0, 65536, 1, 10, 10);
   crop_bottom_spinbutton = gtk_spin_button_new (GTK_ADJUSTMENT (crop_bottom_spinbutton_adj), 1, 0);
   gtk_widget_show (crop_bottom_spinbutton);
-  gtk_table_attach (GTK_TABLE (table17), crop_bottom_spinbutton, 1, 2, 3, 4,
+  gtk_table_attach (GTK_TABLE (table17), crop_bottom_spinbutton, 1, 2, 4, 5,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+
+  crop_enable_checkbutton = gtk_check_button_new_with_mnemonic ("Enable");
+  gtk_widget_show (crop_enable_checkbutton);
+  gtk_table_attach (GTK_TABLE (table17), crop_enable_checkbutton, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
 
@@ -707,7 +714,7 @@ GtkWidget * create_hmgengui(void) {
   gtk_widget_show (invert_label);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (postprocessing_notebook), gtk_notebook_get_nth_page (GTK_NOTEBOOK (postprocessing_notebook), 3), invert_label);
 
-  table16 = gtk_table_new (3, 3, FALSE);
+  table16 = gtk_table_new (4, 3, FALSE);
   gtk_widget_show (table16);
   gtk_container_add (GTK_CONTAINER (postprocessing_notebook), table16);
   gtk_container_set_border_width (GTK_CONTAINER (table16), 8);
@@ -716,14 +723,14 @@ GtkWidget * create_hmgengui(void) {
 
   label56 = gtk_label_new ("Minimum");
   gtk_widget_show (label56);
-  gtk_table_attach (GTK_TABLE (table16), label56, 0, 1, 0, 1,
+  gtk_table_attach (GTK_TABLE (table16), label56, 0, 1, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label56), 0, 0.5);
 
   label57 = gtk_label_new ("Maximum");
   gtk_widget_show (label57);
-  gtk_table_attach (GTK_TABLE (table16), label57, 0, 1, 1, 2,
+  gtk_table_attach (GTK_TABLE (table16), label57, 0, 1, 2, 3,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
   gtk_misc_set_alignment (GTK_MISC (label57), 0, 0.5);
@@ -731,14 +738,20 @@ GtkWidget * create_hmgengui(void) {
   clip_min_spinbutton_adj = gtk_adjustment_new (0, 0, 255, 1, 10, 10);
   clip_min_spinbutton = gtk_spin_button_new (GTK_ADJUSTMENT (clip_min_spinbutton_adj), 1, 0);
   gtk_widget_show (clip_min_spinbutton);
-  gtk_table_attach (GTK_TABLE (table16), clip_min_spinbutton, 1, 2, 0, 1,
+  gtk_table_attach (GTK_TABLE (table16), clip_min_spinbutton, 1, 2, 1, 2,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
 
   clip_max_spinbutton_adj = gtk_adjustment_new (255, 0, 255, 1, 10, 10);
   clip_max_spinbutton = gtk_spin_button_new (GTK_ADJUSTMENT (clip_max_spinbutton_adj), 1, 0);
   gtk_widget_show (clip_max_spinbutton);
-  gtk_table_attach (GTK_TABLE (table16), clip_max_spinbutton, 1, 2, 1, 2,
+  gtk_table_attach (GTK_TABLE (table16), clip_max_spinbutton, 1, 2, 2, 3,
+                    (GtkAttachOptions) (GTK_FILL),
+                    (GtkAttachOptions) (0), 0, 0);
+
+  clip_enable_checkbutton = gtk_check_button_new_with_mnemonic ("Enable");
+  gtk_widget_show (clip_enable_checkbutton);
+  gtk_table_attach (GTK_TABLE (table16), clip_enable_checkbutton, 0, 1, 0, 1,
                     (GtkAttachOptions) (GTK_FILL),
                     (GtkAttachOptions) (0), 0, 0);
 
@@ -1439,6 +1452,9 @@ GtkWidget * create_hmgengui(void) {
   GLADE_HOOKUP_OBJECT (hmgengui, crop_bottom_spinbutton, "crop_bottom_spinbutton");
   GLADE_HOOKUP_OBJECT (hmgengui, clip_min_spinbutton, "clip_min_spinbutton");
   GLADE_HOOKUP_OBJECT (hmgengui, clip_max_spinbutton, "clip_max_spinbutton");
+  GLADE_HOOKUP_OBJECT (hmgengui, crop_enable_checkbutton, "crop_enable_checkbutton");
+  GLADE_HOOKUP_OBJECT (hmgengui, clip_enable_checkbutton, "clip_enable_checkbutton");
+
 
   gtk_notebook_set_current_page(GTK_NOTEBOOK(main_notebook), 1);
 
