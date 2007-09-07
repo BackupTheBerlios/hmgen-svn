@@ -201,7 +201,8 @@ static void *generate_thread(void *args) {
     gint active;
     unsigned int dims[] = { 3, 5, 9, 17, 33, 65, 129, 257, 513, 1025, 2049, 4097, 8193, 16385 };
     unsigned int normmin, normmax, normfirst, normlast, inv, blurx, blury;
-    unsigned int blur;
+    unsigned int blur, crop, cropleft, cropright, croptop, cropbottom;
+    unsigned int clip, clipmin, clipmax;
     double blursigma;
     char *settings;
  
@@ -250,6 +251,16 @@ static void *generate_thread(void *args) {
         blurx     = get_spin_button_int  (args, "blur_xradius_spinbutton");
         blury     = get_spin_button_int  (args, "blur_yradius_spinbutton");
         blursigma = get_spin_button_float(args, "blur_sigma_spinbutton");
+        widget      = lookup_widget(GTK_WIDGET(args),"crop_enable_checkbutton");
+        crop        = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
+        cropleft    = get_spin_button_int(args, "crop_left_spinbutton");
+        cropright   = get_spin_button_int(args, "crop_right_spinbutton");
+        croptop     = get_spin_button_int(args, "crop_top_spinbutton");
+        cropbottom  = get_spin_button_int(args, "crop_bottom_spinbutton");
+        widget      = lookup_widget(GTK_WIDGET(args),"clip_enable_checkbutton");
+        clip        = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
+        clipmin     = get_spin_button_int(args, "clip_min_spinbutton");
+        clipmax     = get_spin_button_int(args, "clip_max_spinbutton");
     gdk_threads_leave();
 
     if (normfirst)
