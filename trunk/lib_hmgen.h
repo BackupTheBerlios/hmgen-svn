@@ -41,6 +41,11 @@ void hmg_clip(unsigned char *map,
               unsigned int clipmin, unsigned int clipmax,
               unsigned int w, unsigned int h);
 
+void hmg_crop(unsigned char *map,
+              unsigned int *width, unsigned int *height,
+              unsigned int left, unsigned int right,
+              unsigned int top, unsigned int bottom);
+
 extern unsigned char hmg_colormap[256][3];
 
 typedef struct hmg_colormap_settings_s {

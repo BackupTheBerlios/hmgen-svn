@@ -20,7 +20,8 @@ static int size = 8, algo = 0, blur = 0, blurx = DEF_BLURX, blury = DEF_BLURY;
 static double blursigma = DEF_BLURSIGMA;
 static int normmin = DEF_NORMMIN, normmax = DEF_NORMMAX,
            normfirst = 0, normlast = 0, inv = 0, clip = 0,
-           clipmin = DEF_CLIPMIN, clipmax = DEF_CLIPMAX;
+           clipmin = DEF_CLIPMIN, clipmax = DEF_CLIPMAX,
+           crop = 0, cropleft = 0, cropright = 0, croptop = 0, cropbottom = 0;
 static unsigned int w, h;
 static char *outfile = NULL;
 static char *colfile = NULL;
@@ -71,6 +72,11 @@ static void help_message(char **argv) {
 "-clip          postprocess, clip [default: no]\n"
 "-clipmin INT   clip minimum (0-255) [default: %i]\n"
 "-clipmax INT   clip maximum (0-255) [default: %i]\n"
+"-crop              postprocess, crop [default: no]\n"
+"-cropleft INT      crop left margin (0-..) [default: 0]\n"
+"-cropright INT     crop right margin (0-..) [default: 0]\n"
+"-croptop INT       crop top margin (0-..) [default: 0]\n"
+"-cropbottom INT    crop bottom margin (0-..) [default: 0]\n"
 "\n",
         HMG_VERSION_STRING, HMG_COPYRIGHT_STRING, argv[0],
         DEF_NORMMIN, DEF_NORMMAX,
@@ -148,6 +154,20 @@ static int parse_command_line(int argc, char**argv) {
         } else if (!strcmp(argv[a], "-clipmax")) {
             if (!test_argument(a, argc, argv)) return 0;
             clipmax = atoi(argv[++a]);
+        } else if (!strcmp(argv[a], "-crop")) {
+            crop = 1;
+        } else if (!strcmp(argv[a], "-cropleft")) {
+            if (!test_argument(a, argc, argv)) return 0;
+            cropleft = atoi(argv[++a]);
+        } else if (!strcmp(argv[a], "-cropright")) {
+            if (!test_argument(a, argc, argv)) return 0;
+            cropright = atoi(argv[++a]);
+        } else if (!strcmp(argv[a], "-croptop")) {
+            if (!test_argument(a, argc, argv)) return 0;
+            croptop = atoi(argv[++a]);
+        } else if (!strcmp(argv[a], "-cropbottom")) {
+            if (!test_argument(a, argc, argv)) return 0;
+            cropbottom = atoi(argv[++a]);
         } else {
             fprintf(stderr, "unknown option: %s\n", argv[a]);
             return 0;
@@ -163,6 +183,7 @@ static int test_global_settings(void) {
         fprintf(stderr, "size is smaller than 1 or larger than 16\n");
         return 0;
     }
+    w = h = exp2(size) + 1;
     if (algo<ALGO_FF || algo>=ALGO_LAST) {
         fprintf(stderr, "algo is smaller then %i or larger than %i\n",
                 ALGO_FF, ALGO_LAST-1);
@@ -190,6 +211,14 @@ static int test_global_settings(void) {
     }
     if (clipmax > 255) {
         fprintf(stderr, "clipmax is larger than 255\n");
+        return 0;
+    }
+    if ((croptop + cropbottom + 3U) > h) {
+        fprintf(stderr, "vertical cropping beyond width\n");
+        return 0;
+    }
+    if ((cropleft + cropright + 3U) > w) {
+        fprintf(stderr, "horizontal cropping beyond width\n");
         return 0;
     }
     return 1;
@@ -229,6 +258,8 @@ int main(int argc, char **argv) {
 
     hmg_algorithms[algo]->func(map, tempmap, w, h);
 
+    if (crop)
+        hmg_crop(map, &w, &h, cropleft, cropright, croptop, cropbottom);
     if (normfirst)
         hmg_normalize(map, normmin, normmax, w, h);
     if (blur)

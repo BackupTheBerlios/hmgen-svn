@@ -131,3 +131,28 @@ void hmg_clip(unsigned char *map,
     }
     progress_meter(-1);
 }
+
+#undef  HMGEN_MODULE
+#define HMGEN_MODULE "Crop"
+
+void hmg_crop(unsigned char *map,
+              unsigned int *width, unsigned int *height,
+              unsigned int left, unsigned int right,
+              unsigned int top, unsigned int bottom) {
+    unsigned int y, w = *width, h = *height;
+    unsigned char *src = map;
+
+    src += left;
+    src += top * w;
+
+    for (y=0; y<(h-top-bottom); y++) {
+        progress_meter((int)round(y*100.0/(h-1-top-bottom)));
+        memcpy(map, src, w-left-right);
+        map += w-left-right;
+        src += w;
+    }
+
+    *width = w-left-right;
+    *height = h-top-bottom;
+    progress_meter(-1);
+}
