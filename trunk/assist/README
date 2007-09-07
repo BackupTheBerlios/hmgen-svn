@@ -1,3 +1,4 @@
 This file and glade-2.0 was used to bootstrap the GUI. However, I do not use
 any of the buildtools or libglade. Current interface/callbacks/etc. files
-are modified versions.
+are modified versions, so even though this .glade file gets updated everytime
+the GUI changes, it's not a 100% one-on-one mapping.
