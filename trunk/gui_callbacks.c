@@ -245,21 +245,21 @@ static void *generate_thread(void *args) {
     gdk_threads_enter();
         normfirst   = get_check_button_active(args, "norm_first_checkbutton");
         normlast    = get_check_button_active(args, "norm_last_checkbutton");
-        normmin = get_spin_button_int(args, "norm_min_spinbutton");
-        normmax = get_spin_button_int(args, "norm_max_spinbutton");
+        normmin     = get_spin_button_int    (args, "norm_min_spinbutton");
+        normmax     = get_spin_button_int    (args, "norm_max_spinbutton");
         inv         = get_check_button_active(args, "invert_checkbutton");
         blur        = get_check_button_active(args, "blur_checkbutton");
-        blurx     = get_spin_button_int  (args, "blur_xradius_spinbutton");
-        blury     = get_spin_button_int  (args, "blur_yradius_spinbutton");
-        blursigma = get_spin_button_float(args, "blur_sigma_spinbutton");
+        blurx       = get_spin_button_int    (args, "blur_xradius_spinbutton");
+        blury       = get_spin_button_int    (args, "blur_yradius_spinbutton");
+        blursigma   = get_spin_button_float  (args, "blur_sigma_spinbutton");
         crop        = get_check_button_active(args, "crop_enable_checkbutton");
-        cropleft    = get_spin_button_int(args, "crop_left_spinbutton");
-        cropright   = get_spin_button_int(args, "crop_right_spinbutton");
-        croptop     = get_spin_button_int(args, "crop_top_spinbutton");
-        cropbottom  = get_spin_button_int(args, "crop_bottom_spinbutton");
+        cropleft    = get_spin_button_int    (args, "crop_left_spinbutton");
+        cropright   = get_spin_button_int    (args, "crop_right_spinbutton");
+        croptop     = get_spin_button_int    (args, "crop_top_spinbutton");
+        cropbottom  = get_spin_button_int    (args, "crop_bottom_spinbutton");
         clip        = get_check_button_active(args, "clip_enable_checkbutton");
-        clipmin     = get_spin_button_int(args, "clip_min_spinbutton");
-        clipmax     = get_spin_button_int(args, "clip_max_spinbutton");
+        clipmin     = get_spin_button_int    (args, "clip_min_spinbutton");
+        clipmax     = get_spin_button_int    (args, "clip_max_spinbutton");
     gdk_threads_leave();
 
     if (normfirst)
