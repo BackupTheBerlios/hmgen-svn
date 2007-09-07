@@ -40,10 +40,12 @@ void hmg_gaussian_blur(unsigned char *map, unsigned char *tempmap,
                        int blurx, int blury,
                        double blursigma,
                        unsigned int w, unsigned int h) {
-    double mask[blurx*blury];
+    double *mask;
     double cx = 0, cy = 0, r = 0, m = 0, nv;
     int x, y, a, b, v;
     double cr = -1.0/(2.0*blursigma*blursigma);
+
+    mask = calloc(blurx*blury, sizeof(double));
 
     memcpy(tempmap, map, w*h);
 
@@ -91,6 +93,7 @@ void hmg_gaussian_blur(unsigned char *map, unsigned char *tempmap,
         }
     }
     progress_meter(-1);
+    free(mask);
 }
 
 
