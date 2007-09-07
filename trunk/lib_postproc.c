@@ -107,3 +107,24 @@ void hmg_invert(unsigned char *map, unsigned int w, unsigned int h) {
     }
     progress_meter(-1);
 }
+
+#undef  HMGEN_MODULE
+#define HMGEN_MODULE "Clip"
+
+void hmg_clip(unsigned char *map,
+              unsigned int clipmin, unsigned int clipmax,
+              unsigned int w, unsigned int h) {
+    unsigned int x, y;
+    unsigned char v;
+
+    for (y=0; y<h; y++) {
+        progress_meter((int)round(y*100.0/(h-1)));
+        for (x=0; x<w; x++) {
+            v = map[x];
+            v = v > clipmax ? clipmax : v;
+            map[x] = v < clipmin ? clipmin : v;
+        }
+        map += w;
+    }
+    progress_meter(-1);
+}

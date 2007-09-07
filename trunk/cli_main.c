@@ -13,10 +13,14 @@
 #define DEF_NORMMIN     0
 #define DEF_NORMMAX     255
 
+#define DEF_CLIPMIN     96
+#define DEF_CLIPMAX     160
+
 static int size = 8, algo = 0, blur = 0, blurx = DEF_BLURX, blury = DEF_BLURY;
 static double blursigma = DEF_BLURSIGMA;
 static int normmin = DEF_NORMMIN, normmax = DEF_NORMMAX,
-           normfirst = 0, normlast = 0, inv = 0;
+           normfirst = 0, normlast = 0, inv = 0, clip = 0,
+           clipmin = DEF_CLIPMIN, clipmax = DEF_CLIPMAX;
 static unsigned int w, h;
 static char *outfile = NULL;
 static char *colfile = NULL;
@@ -64,10 +68,15 @@ static void help_message(char **argv) {
 "-bxy INT       blur xy-radius\n"
 "-bs FLOAT      blur sigma [default: %0.2f]\n"
 "-i             postprocess, invert heightmap [default: no]\n"
+"-clip          postprocess, clip [default: no]\n"
+"-clipmin INT   clip minimum (0-255) [default: %i]\n"
+"-clipmax INT   clip maximum (0-255) [default: %i]\n"
 "\n",
         HMG_VERSION_STRING, HMG_COPYRIGHT_STRING, argv[0],
         DEF_NORMMIN, DEF_NORMMAX,
-        DEF_BLURX, DEF_BLURY, DEF_BLURSIGMA);
+        DEF_BLURX, DEF_BLURY, DEF_BLURSIGMA,
+        DEF_CLIPMIN, DEF_CLIPMAX
+            );
     exit(0);
 }
 
@@ -131,6 +140,14 @@ static int parse_command_line(int argc, char**argv) {
             normmax = atoi(argv[++a]);
         } else if (!strcmp(argv[a], "-i")) {
             inv = 1;
+        } else if (!strcmp(argv[a], "-clip")) {
+            clip = 1;
+        } else if (!strcmp(argv[a], "-clipmin")) {
+            if (!test_argument(a, argc, argv)) return 0;
+            clipmin = atoi(argv[++a]);
+        } else if (!strcmp(argv[a], "-clipmax")) {
+            if (!test_argument(a, argc, argv)) return 0;
+            clipmax = atoi(argv[++a]);
         } else {
             fprintf(stderr, "unknown option: %s\n", argv[a]);
             return 0;
@@ -167,7 +184,14 @@ static int test_global_settings(void) {
         fprintf(stderr, "normmax is larger than 255\n");
         return 0;
     }
-
+    if (clipmin < 0) {
+        fprintf(stderr, "clipmin is smaller than 0\n");
+        return 0;
+    }
+    if (clipmax > 255) {
+        fprintf(stderr, "clipmax is larger than 255\n");
+        return 0;
+    }
     return 1;
 }
 
@@ -213,6 +237,8 @@ int main(int argc, char **argv) {
         hmg_normalize(map, normmin, normmax, w, h);
     if (inv)
         hmg_invert(map, w, h);
+    if (clip)
+        hmg_clip(map, clipmin, clipmax, w, h);
 
     if (outfile) {
         fprintf(stderr, "Saving to %s\n", outfile);

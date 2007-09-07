@@ -37,6 +37,10 @@ void hmg_gaussian_blur(unsigned char *map, unsigned char *tempmap,
 
 void hmg_invert(unsigned char *map, unsigned int w, unsigned int h);
 
+void hmg_clip(unsigned char *map,
+              unsigned int clipmin, unsigned int clipmax,
+              unsigned int w, unsigned int h);
+
 extern unsigned char hmg_colormap[256][3];
 
 typedef struct hmg_colormap_settings_s {
