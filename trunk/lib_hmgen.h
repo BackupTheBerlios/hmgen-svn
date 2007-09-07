@@ -41,7 +41,8 @@ void hmg_clip(unsigned char *map,
               unsigned int clipmin, unsigned int clipmax,
               unsigned int w, unsigned int h);
 
-void hmg_crop(unsigned char *map,
+/* the pointer pmap points to MUST be previously allocated with *alloc */
+void hmg_crop(unsigned char **pmap,
               unsigned int *width, unsigned int *height,
               unsigned int left, unsigned int right,
               unsigned int top, unsigned int bottom);

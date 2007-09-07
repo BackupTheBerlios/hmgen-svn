@@ -259,7 +259,7 @@ int main(int argc, char **argv) {
     hmg_algorithms[algo]->func(map, tempmap, w, h);
 
     if (crop)
-        hmg_crop(map, &w, &h, cropleft, cropright, croptop, cropbottom);
+        hmg_crop(&map, &w, &h, cropleft, cropright, croptop, cropbottom);
     if (normfirst)
         hmg_normalize(map, normmin, normmax, w, h);
     if (blur)

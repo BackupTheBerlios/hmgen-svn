@@ -135,12 +135,12 @@ void hmg_clip(unsigned char *map,
 #undef  HMGEN_MODULE
 #define HMGEN_MODULE "Crop"
 
-void hmg_crop(unsigned char *map,
+void hmg_crop(unsigned char **pmap,
               unsigned int *width, unsigned int *height,
               unsigned int left, unsigned int right,
               unsigned int top, unsigned int bottom) {
     unsigned int y, w = *width, h = *height;
-    unsigned char *src = map;
+    unsigned char *map = *pmap, *src = map;
 
     src += left;
     src += top * w;
@@ -154,5 +154,6 @@ void hmg_crop(unsigned char *map,
 
     *width = w-left-right;
     *height = h-top-bottom;
+    *pmap = realloc(*pmap, *width * *height);
     progress_meter(-1);
 }
