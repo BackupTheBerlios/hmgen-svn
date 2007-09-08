@@ -201,6 +201,29 @@ static void activate_main_notebook(void *args, int to_2dview) {
     gdk_threads_leave();
 }
 
+static void sanitize_crop_settings(unsigned int *cropleft,
+                                   unsigned int *cropright,
+                                   unsigned int *croptop,
+                                   unsigned int *cropbottom) {
+    /* sanitize crop settings if necessary */
+    if (*cropleft > map_width-3)
+        *cropleft = map_width-3;
+    if (*cropright > map_width-3)
+        *cropright = map_width-3;
+    if ((*cropright + *cropleft) > map_width-3) {
+        *cropright = 0;
+        *cropleft = map_width-3;
+    }
+    if (*croptop > map_height-3)
+        *croptop = map_height-3;
+    if (*cropbottom > map_height-3)
+        *cropbottom = map_height-3;
+    if ((*cropbottom + *croptop) > map_height-3) {
+        *cropbottom = 0;
+        *croptop = map_height-3;
+    }
+}
+
 static void *generate_thread(void *args) {
     GtkWidget *widget;
     gint active;
@@ -263,23 +286,7 @@ static void *generate_thread(void *args) {
     gdk_threads_leave();
 
     if (crop) {
-        /* sanitize crop settings if necessary */
-        if (cropleft > map_width-3)
-            cropleft = map_width-3;
-        if (cropright > map_width-3)
-            cropright = map_width-3;
-        if ((cropright+cropleft) > map_width-3) {
-            cropright = 0;
-            cropleft = map_width-3;
-        }
-        if (croptop > map_height-3)
-            croptop = map_height-3;
-        if (cropbottom > map_height-3)
-            cropbottom = map_height-3;
-        if ((cropbottom+croptop) > map_height-3) {
-            cropbottom = 0;
-            croptop = map_height-3;
-        }
+        sanitize_crop_settings(&cropleft, &cropright, &croptop, &cropbottom);
         hmg_crop(&map, &map_width, &map_height, cropleft, cropright,
                 croptop, cropbottom);
     }
@@ -660,10 +667,53 @@ void on_export_save_button_clicked(GtkButton *button,
     g_thread_create(export_thread, button, FALSE, NULL);
 }
 
+static void *clip2_thread(void *args) {
+    unsigned int clipmin, clipmax;
+
+    set_main_progressbar(args);
+    hmg_progress_meter = gui_progress_meter;
+
+    gdk_threads_enter();
+        clipmin = get_spin_button_int  (args, "clip2_min_spinbutton");
+        clipmax = get_spin_button_int  (args, "clip2_max_spinbutton");
+    gdk_threads_leave();
+
+    hmg_clip(map, clipmin, clipmax, map_width, map_height);
+    render_map(args);
+
+    activate_main_notebook(args, 1);
+    return NULL;
+}
+
 void on_clip_button_clicked(GtkButton *button,
                                    gpointer user_data HMG_ATTR_UNUSED) {
+    deactivate_main_notebook(button);
+    g_thread_create(clip2_thread, button, FALSE, NULL);
+}
+
+static void *crop2_thread(void *args) {
+    unsigned int cropleft, cropright, croptop, cropbottom;
+
+    set_main_progressbar(args);
+    hmg_progress_meter = gui_progress_meter;
+
+    gdk_threads_enter();
+        cropleft   = get_spin_button_int  (args, "crop2_left_spinbutton");
+        cropright  = get_spin_button_int  (args, "crop2_right_spinbutton");
+        croptop    = get_spin_button_int  (args, "crop2_top_spinbutton");
+        cropbottom = get_spin_button_int  (args, "crop2_bottom_spinbutton");
+    gdk_threads_leave();
+
+    sanitize_crop_settings(&cropleft, &cropright, &croptop, &cropbottom);
+    hmg_crop(&map, &map_width, &map_height, cropleft, cropright, croptop, cropbottom);
+    render_map(args);
+
+    activate_main_notebook(args, 1);
+    return NULL;
 }
 
 void on_crop_button_clicked(GtkButton *button,
                                    gpointer user_data HMG_ATTR_UNUSED) {
+    deactivate_main_notebook(button);
+    g_thread_create(crop2_thread, button, FALSE, NULL);
 }
