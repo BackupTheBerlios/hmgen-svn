@@ -1455,7 +1455,6 @@ GtkWidget * create_hmgengui(void) {
   GLADE_HOOKUP_OBJECT (hmgengui, crop_enable_checkbutton, "crop_enable_checkbutton");
   GLADE_HOOKUP_OBJECT (hmgengui, clip_enable_checkbutton, "clip_enable_checkbutton");
 
-
   gtk_notebook_set_current_page(GTK_NOTEBOOK(main_notebook), 1);
 
   return hmgengui;
