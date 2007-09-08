@@ -230,7 +230,8 @@ static void *generate_thread(void *args) {
     unsigned int dims[] = { 3, 5, 9, 17, 33, 65, 129, 257, 513, 1025, 2049, 4097, 8193, 16385 };
     unsigned int normmin, normmax, normfirst, normlast, inv, blurx, blury;
     unsigned int blur, crop, cropleft, cropright, croptop, cropbottom;
-    unsigned int clip, clipmin, clipmax;
+    unsigned int clip, clipmin, clipmax, level;
+    int adjust;
     double blursigma;
     char *settings;
  
@@ -283,6 +284,8 @@ static void *generate_thread(void *args) {
         clip        = get_check_button_active(args, "clip_enable_checkbutton");
         clipmin     = get_spin_button_int    (args, "clip_min_spinbutton");
         clipmax     = get_spin_button_int    (args, "clip_max_spinbutton");
+        level       = get_check_button_active(args, "level_enable_checkbutton");
+        adjust      = get_spin_button_int    (args, "level_adjust_spinbutton");
     gdk_threads_leave();
 
     if (crop) {
@@ -299,6 +302,8 @@ static void *generate_thread(void *args) {
         hmg_invert(map, map_width, map_height);
     if (clip)
         hmg_clip(map, clipmin, clipmax, map_width, map_height);
+    if (level)
+        hmg_level(map, adjust, map_width, map_height);
     if (normlast)
         hmg_normalize(map, normmin, normmax, map_width, map_height);
 
@@ -717,4 +722,27 @@ void on_crop_button_clicked(GtkButton *button,
                                    gpointer user_data HMG_ATTR_UNUSED) {
     deactivate_main_notebook(button);
     g_thread_create(crop2_thread, button, FALSE, NULL);
+}
+
+static void *level2_thread(void *args) {
+    int adjust;
+
+    set_main_progressbar(args);
+    hmg_progress_meter = gui_progress_meter;
+
+    gdk_threads_enter();
+        adjust = get_spin_button_int  (args, "level2_adjust_spinbutton");
+    gdk_threads_leave();
+
+    hmg_level(map, adjust, map_width, map_height);
+    render_map(args);
+
+    activate_main_notebook(args, 1);
+    return NULL;
+}
+
+void on_level2_button_clicked(GtkButton *button,
+                                   gpointer user_data HMG_ATTR_UNUSED) {
+    deactivate_main_notebook(button);
+    g_thread_create(level2_thread, button, FALSE, NULL);
 }

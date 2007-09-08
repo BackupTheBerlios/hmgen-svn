@@ -1420,6 +1420,8 @@ GtkWidget * create_hmgengui(void) {
                     G_CALLBACK (on_clip_button_clicked), NULL);
   g_signal_connect ((gpointer) crop_button, "clicked",
                     G_CALLBACK (on_crop_button_clicked), NULL);
+  g_signal_connect ((gpointer) level2_adjust_button, "clicked",
+                    G_CALLBACK (on_level2_button_clicked), NULL);
 
   /* Store pointers to all widgets, for use by lookup_widget(). */
   GLADE_HOOKUP_OBJECT_NO_REF (hmgengui, hmgengui, "hmgengui");
@@ -1523,7 +1525,7 @@ GtkWidget * create_hmgengui(void) {
   GLADE_HOOKUP_OBJECT (hmgengui, level2_adjust_spinbutton, "level2_adjust_spinbutton");
   GLADE_HOOKUP_OBJECT (hmgengui, level2_adjust_button, "level2_adjust_button");
   GLADE_HOOKUP_OBJECT (hmgengui, level_enable_checkbutton, "level_enable_checkbutton");
-  GLADE_HOOKUP_OBJECT (hmgengui, level_adjustment_spinbutton, "level_adjustment_spinbutton");
+  GLADE_HOOKUP_OBJECT (hmgengui, level_adjustment_spinbutton, "level_adjust_spinbutton");
 
   gtk_notebook_set_current_page(GTK_NOTEBOOK(main_notebook), 1);
 
