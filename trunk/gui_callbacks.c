@@ -705,7 +705,8 @@ static void *crop2_thread(void *args) {
     gdk_threads_leave();
 
     sanitize_crop_settings(&cropleft, &cropright, &croptop, &cropbottom);
-    hmg_crop(&map, &map_width, &map_height, cropleft, cropright, croptop, cropbottom);
+    hmg_crop(&map, &map_width, &map_height, cropleft, cropright, croptop,
+                                                                cropbottom);
     render_map(args);
 
     activate_main_notebook(args, 1);
