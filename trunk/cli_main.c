@@ -21,7 +21,8 @@ static double blursigma = DEF_BLURSIGMA;
 static int normmin = DEF_NORMMIN, normmax = DEF_NORMMAX,
            normfirst = 0, normlast = 0, inv = 0, clip = 0,
            clipmin = DEF_CLIPMIN, clipmax = DEF_CLIPMAX,
-           crop = 0, cropleft = 0, cropright = 0, croptop = 0, cropbottom = 0;
+           crop = 0, cropleft = 0, cropright = 0, croptop = 0, cropbottom = 0,
+           level = 0;
 static unsigned int w, h;
 static char *outfile = NULL;
 static char *colfile = NULL;
@@ -77,6 +78,7 @@ static void help_message(char **argv) {
 "-cropright INT     crop right margin (0-..) [default: 0]\n"
 "-croptop INT       crop top margin (0-..) [default: 0]\n"
 "-cropbottom INT    crop bottom margin (0-..) [default: 0]\n"
+"-level INT         posprocess, in/decrease level (-255-255) [default: 0]\n"
 "\n",
         HMG_VERSION_STRING, HMG_COPYRIGHT_STRING, argv[0],
         DEF_NORMMIN, DEF_NORMMAX,
@@ -168,6 +170,9 @@ static int parse_command_line(int argc, char**argv) {
         } else if (!strcmp(argv[a], "-cropbottom")) {
             if (!test_argument(a, argc, argv)) return 0;
             cropbottom = atoi(argv[++a]);
+        } else if (!strcmp(argv[a], "-level")) {
+            if (!test_argument(a, argc, argv)) return 0;
+            level = atoi(argv[++a]);
         } else {
             fprintf(stderr, "unknown option: %s\n", argv[a]);
             return 0;
@@ -221,6 +226,10 @@ static int test_global_settings(void) {
         fprintf(stderr, "horizontal cropping beyond width\n");
         return 0;
     }
+    if (level < -255 || level > 255) {
+        fprintf(stderr, "level out of range [-255,255]\n");
+        return 0;
+    }
     return 1;
 }
 
@@ -268,6 +277,8 @@ int main(int argc, char **argv) {
         hmg_invert(map, w, h);
     if (clip)
         hmg_clip(map, clipmin, clipmax, w, h);
+    if (level)
+        hmg_level(map, level, w, h);
     if (normlast)
         hmg_normalize(map, normmin, normmax, w, h);
 

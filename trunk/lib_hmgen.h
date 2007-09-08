@@ -47,6 +47,8 @@ void hmg_crop(unsigned char **pmap,
               unsigned int left, unsigned int right,
               unsigned int top, unsigned int bottom);
 
+void hmg_level(unsigned char *map, int adjust, unsigned int w, unsigned int h);
+
 extern unsigned char hmg_colormap[256][3];
 
 typedef struct hmg_colormap_settings_s {

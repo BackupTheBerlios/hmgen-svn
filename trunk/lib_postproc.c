@@ -157,3 +157,22 @@ void hmg_crop(unsigned char **pmap,
     *pmap = realloc(*pmap, *width * *height);
     progress_meter(-1);
 }
+
+#undef  HMGEN_MODULE
+#define HMGEN_MODULE "Level"
+
+void hmg_level(unsigned char *map, int adjust, unsigned int w, unsigned int h){
+    unsigned int x, y;
+    int v;
+
+    for (y=0; y<h; y++) {
+        progress_meter((int)round(y*100.0/(h-1)));
+        for (x=0; x<w; x++) {
+            v = map[x] + adjust;
+            v = v > 255 ? 255 : v;
+            map[x] = v < 0 ? 0 : v;
+        }
+        map += w;
+    }
+    progress_meter(-1);
+}
