@@ -211,14 +211,17 @@ static void activate_save_buttons(void *args) {
     gdk_threads_leave();
 }
 
-static void activate_main_notebook(void *args, int to_2dview) {
+static void activate_main_notebook(void *args, int to_2dview HMG_ATTR_UNUSED) {
     GtkWidget *widget;
 
     gdk_threads_enter();
         widget = lookup_widget(GTK_WIDGET(args), "main_notebook");
         gtk_widget_set_sensitive (widget, TRUE);
+#ifndef __WIN32__
+        // this hangs under ming32 and probably other win32 environments
         if (to_2dview)
         gtk_notebook_set_current_page(GTK_NOTEBOOK(widget), 0);
+#endif
     gdk_threads_leave();
 }
 
