@@ -301,7 +301,7 @@ config-system:
 config-system-ldflags: config-system
 	@SYS_LDFLAGS= ; \
 	if grep -q SYSTEM=mingw config.mak ; then \
-		if greq -q CC_VENDOR=gnu config.mak ; then \
+		if grep -q CC_VENDOR=gnu config.mak ; then \
 			SYS_LDFLAGS=-mwindows ; \
 		fi ; \
 	fi ; \
