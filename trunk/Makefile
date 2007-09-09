@@ -139,7 +139,9 @@ define config-print-result
 	else \
 		col="$(Bon)" ; \
 	fi ; \
-	printf "%-16s : $$col%s$(Boff)\n" "$(1)" "$(2)"
+	if test -n "$(2)" ; then \
+		printf "%-16s : $$col%s$(Boff)\n" "$(1)" "$(2)" ; \
+	fi
 endef
 
 clean-config.mak:
@@ -296,7 +298,7 @@ config-system:
 	echo SYSTEM=$$SYSTEM >> config.mak ; \
 	$(call config-print-result,system,$$SYSTEM) ;
 
-config-system-ldflags:
+config-system-ldflags: config-system
 	@SYS_LDFLAGS= ; \
 	if grep -q SYSTEM=mingw config.mak ; then \
 		if greq -q CC_VENDOR=gnu config.mak ; then \
@@ -306,6 +308,14 @@ config-system-ldflags:
 	echo SYS_LDFLAGS=$$SYS_LDFLAGS >> config.mak ; \
 	$(call config-print-result,system ldflags,$$SYS_LDFLAGS) ;
 
+config-exe-suf: config-system
+	@EXESUF= ; \
+	if grep -q SYSTEM=mingw config.mak ; then \
+		EXESUF=.exe ; \
+	fi ; \
+	echo EXESUF=$$EXESUF >> config.mak ; \
+	$(call config-print-result,exe suffix,$$EXESUF) ;
+
 configure: clean-config.mak \
            config-cc-flags \
            config-gtk-flags \
@@ -313,11 +323,11 @@ configure: clean-config.mak \
            config-suncc-flags-fix \
            config-define-svnrev \
 		   config-system \
-		   config-system-ldflags
+		   config-system-ldflags \
+		   config-exe-suf
 	@echo AR?=ar >> config.mak
 	@echo RANLIB?=ranlib >> config.mak
 	@echo STRIP?=strip >> config.mak
-	@echo EXESUF= >> config.mak
 	@echo OBJSUF=.o >> config.mak
 	@echo AR_FLAGS=cru >> config.mak
 	@echo CONFIGURE_DONE=yes >> config.mak
