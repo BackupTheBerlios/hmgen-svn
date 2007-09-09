@@ -44,5 +44,5 @@ Or specify a different C compiler:
     make CC=suncc all
 
 Building on MingW/MSYS:
-    make CC=gcc STRIP=true
+    make CC=gcc
 
