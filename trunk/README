@@ -42,3 +42,7 @@ Or specify a different C compiler:
     make CC=suncc configure
     or
     make CC=suncc all
+
+Building on MingW/MSYS:
+    make CC=gcc STRIP=true
+
