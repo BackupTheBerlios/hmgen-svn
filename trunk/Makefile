@@ -273,11 +273,11 @@ config-define-none:
 
 config-define-svnrev: config-define-none
 	@svn_rev=`LC_ALL=C svn info * 2>/dev/null | grep ^Revision: \
-		| cut -d ' ' -f 2 | xargs -n 1 -I '{}' printf "%05i\n" '{}' \
+		| cut -d ' ' -f 2 | xargs -n 1 -iX printf "%05i\n" X \
 		| sort -r | head -n 1 | sed 's/^0//' | sed 's/^0//' \
 		| sed 's/^0//'` ; \
 	test $$svn_rev || svn_rev=`grep revision .svn/entries 2>/dev/null \
-		| cut -d '"' -f 2` | xargs -n 1 -I '{}' printf "%05i\n" '{}' \
+		| cut -d '"' -f 2` | xargs -n 1 -iX printf "%05i\n" X \
 		| sort -r | head -n 1 | sed 's/^0//' | sed 's/^0//' \
 		| sed 's/^0//' ; \
 	test $$svn_rev || svn_rev=`sed -n -e '/^dir$/{n;p;q;}' \
