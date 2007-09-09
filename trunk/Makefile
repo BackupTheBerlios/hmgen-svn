@@ -42,7 +42,7 @@ else
 .SUFFIXES: $(OBJSUF) .c
 
 DEF_CFLAGS = $(STD_FLAGS) $(WARN_FLAGS) $(OPT_FLAGS) $(DEBUG_FLAGS) $(DEFINES)
-DEF_LDFLAGS = -lm $(DEBUG_FLAGS)
+DEF_LDFLAGS = -lm $(DEBUG_FLAGS) $(SYS_LDFLAGS)
 
 CLI = hmgen$(EXESUF)
 CLIg = hmgen_g$(EXESUF)
@@ -285,12 +285,35 @@ config-define-svnrev: config-define-none
 	test $$svn_rev || svn_rev=0 ; \
 	echo DEFINES=-DSVN_REVISION=$$svn_rev >> config.mak
 
+config-system:
+	@SYSTEM=`uname -s` ; \
+	SYSTEM=`echo $$SYSTEM | tr '[A-Z]' '[a-z]'` ; \
+	case "$$SYSTEM" in \
+		linux*)     SYSTEM=linux ;; \
+		mingw*)     SYSTEM=mingw ;; \
+		*)          SYSTEM="$$SYSTEM_untested" ;; \
+	esac ; \
+	echo SYSTEM=$$SYSTEM >> config.mak ; \
+	$(call config-print-result,system,$$SYSTEM) ;
+
+config-system-ldflags:
+	@SYS_LDFLAGS= ; \
+	if grep -q SYSTEM=mingw config.mak ; then \
+		if greq -q CC_VENDOR=gnu config.mak ; then \
+			SYS_LDFLAGS=-mwindows ; \
+		fi ; \
+	fi ; \
+	echo SYS_LDFLAGS=$$SYS_LDFLAGS >> config.mak ; \
+	$(call config-print-result,system ldflags,$$SYS_LDFLAGS) ;
+
 configure: clean-config.mak \
            config-cc-flags \
            config-gtk-flags \
            config-gthread-flags \
            config-suncc-flags-fix \
-           config-define-svnrev
+           config-define-svnrev \
+		   config-system \
+		   config-system-ldflags
 	@echo AR?=ar >> config.mak
 	@echo RANLIB?=ranlib >> config.mak
 	@echo STRIP?=strip >> config.mak
