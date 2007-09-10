@@ -163,6 +163,9 @@ configure() {
         EXESUF=.exe
     fi
     result "exe suffix" $EXESUF
+
+    OBJSUF=.o
+    result "obj suffix" $OBJSUF
 }
 
 output_build_config() {
@@ -192,7 +195,7 @@ EXESUF="$EXESUF"
 AR=ar
 RANLIB=ranlib
 STRIP=strip
-OBJSUF=.o
+OBJSUF="$OBJSUF"
 AR_FLAGS=cru
 CONFIGURE_DONE=yes
 __EOF__
