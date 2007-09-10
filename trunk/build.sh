@@ -297,10 +297,7 @@ addsuffix() {
 
 up_to_date() {
     r=`ls -t1 $@ 2>/dev/null | head -1`
-    case $r in
-        $1) true ;;
-        *)  false ;;
-    esac
+    test "$r" = "$1"
 }
 
 mangle() {
