@@ -166,6 +166,18 @@ configure() {
 
     OBJSUF=.o
     result "obj suffix" $OBJSUF
+
+    AR=ar
+    result "ar" $AR
+
+    AR_FLAGS=cru
+    result "ar flags" $AR_FLAGS
+
+    RANLIB=ranlib
+    result "ranlib" $RANLIB
+
+    STRIP=strip
+    result "strip" $STRIP
 }
 
 output_build_config() {
@@ -192,11 +204,11 @@ DEFINES=-DSVN_REVISION="$SVN_REV"
 SYSTEM="$SYSTEM"
 SYS_LDFLAGS="$SYS_LDFLAGS"
 EXESUF="$EXESUF"
-AR=ar
-RANLIB=ranlib
-STRIP=strip
+AR="$AR"
+AR_FLAGS="$AR_FLAGS"
+RANLIB="$RANLIB"
+STRIP="$STRIP"
 OBJSUF="$OBJSUF"
-AR_FLAGS=cru
 CONFIGURE_DONE=yes
 __EOF__
 }
