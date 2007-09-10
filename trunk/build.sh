@@ -8,6 +8,8 @@
 # heavily on GNU make (which is bad) and recursive make (which is worse).
 # This experiment just needs a POSIX environment and nothing more.
 
+# FIXME head/tail -1/-n 1 stuff
+
 # ----------------------------------( INIT )-----------------------------------
 
 export LC_ALL=C
@@ -139,7 +141,7 @@ configure() {
         .svn/entries 2>/dev/null`
     test $SVN_REV || SVN_REV=0
 
-    SYSTEM=`uname -s`
+    SYSTEM=`uname -s 2>/dev/null`
     SYSTEM=`echo $SYSTEM | tr '[A-Z]' '[a-z]'`
     case "$SYSTEM" in
         linux*)     SYSTEM=linux ;;
@@ -196,7 +198,51 @@ CONFIGURE_DONE=yes
 __EOF__
 }
 
+# ----------------------------------( UTIL )-----------------------------------
+
+# unwrap lines --> sort --> uniq --> merge equal target lines and change syntax
+ccdeps_to_shdeps() {
+    awk '/[\\]$/ { $NF="" ; printf("%s",$0) ; next } { print }' |
+    sort |
+    uniq |
+    awk '
+        BEGIN { save="" }
+        {   if (save==$1) {
+                ORS="" ;
+                for (i=2; i <= NF; i++) {
+                    if (substr($i,1,1) != "/") { print " " $i }
+                }
+            } else {
+                if (save != "") { ORS="\"\n" ; print " " }
+                ORS="" ; save=$1
+                print "deps_"
+                for (i=1; i <= length($1) ; i++) {
+                    c=substr($1,i,1) ;
+                    if (c == ".") { c = "_" }
+                    if (c == "/") { c = "__" }
+                    if (c == ":") { c = "=\"" }
+                    print c
+                }
+                for (i=2; i <= NF; i++) {
+                    if (substr($i,1,1) != "/") { print " " $i }
+                }
+            }
+        }
+        END { if (save != "") { ORS="\"\n" ; print " " } }'
+}
+
 # ----------------------------------( MAKE )-----------------------------------
+
+# "docs":
+#
+# make_exec     "command"       "short text"    "short text argument"
+# make_c_to_o   filename.o
+# make_link     exefilename     filename.o      libraries ...
+# make_o_to_a   filename.a      object ...
+# addsuffix     suffix          basenames ...
+# up_to_date    target          deps ...
+#
+# make_init_object_deps objects ...
 
 make_init() {
     DEF_CFLAGS="$STD_FLAGS $WARN_FLAGS $OPT_FLAGS $DEBUG_FLAGS $DEFINES"
@@ -205,7 +251,6 @@ make_init() {
     LDFLAGS="$DEF_LDFLAGS"
 }
 
-# make_exec "command" "short text" "short text argument"
 make_exec() {
     if test "$V" = "0" ; then   printf "$Bon%s$Boff %s\n" "$2" "$3"
     else                        echo "$1"
@@ -213,34 +258,103 @@ make_exec() {
     eval "$1"
 }
 
-# make_c_to_o filename.o
 make_c_to_o() {
     c=`basename $1 $OBJSUF`.c
-    make_exec "$CC $DONT_LINK_FLAG $OBJ_OUT_FLAG $1 $c $CFLAGS" \
-        "compile" "$c"
+    make_exec "$CC $DONT_LINK_FLAG $OBJ_OUT_FLAG $1 $c $CFLAGS" "compile" "$c"
 }
 
-# make_link exefilename filename.o libraries ...
 make_link() {
     exe=$1$EXESUF ; shift 1
     make_exec "$CC $OBJ_OUT_FLAG $exe $@" "link" "$exe"
 }
 
-# make_o_to_a filename.a object ...
 make_o_to_a() {
     a=$1 ; shift 1
     make_exec "$AR $AR_FLAGS $a $@" "archive" "$a"
 }
 
+addsuffix() {
+    suf=$1 ; shift 1
+    for i in $@ ; do
+        echo $i$suf
+    done
+}
+
+up_to_date() {
+    r=`ls -t1 $@ 2>/dev/null | head -1`
+    case $r in
+        $1) true ;;
+        *)  false ;;
+    esac
+}
+
+mangle() {
+    echo $1 | sed 's/\./_/g; s/\//__/g;' # change . and / into _ and __
+}
+
+make_init_object_deps() {
+    for i in $@ ; do
+        j=`mangle $i`
+        defdep=`basename $i $OBJSUF`.c
+        eval deps_$j=$defdep
+    done
+}
+
+make_check_objects() {
+    for i in $@ ; do
+        j=`mangle $i`
+        eval deps=\"\$deps_$j\"
+        if up_to_date $i $deps ; then
+            :
+        else
+            make_c_to_o $i
+        fi
+    done
+}
+
+make_dep() {
+    make_exec "$CC_DEP $DEP_FLAGS $DEF_CFLAGS $GTK_CFLAGS $GTHREAD_CFLAGS `echo $@` | ccdeps_to_shdeps >> build.dep" "ccdep" "build.dep"
+}
+
+make_init_project() {
+    libhmgen_basenames="lib_algo_ff lib_algo_mpd lib_algo_forge lib_postproc \
+                        lib_util lib_hmgen lib_export"
+    libhmgen_objs=`addsuffix $OBJSUF $libhmgen_basenames`
+    libhmgen_srcs=`addsuffix .c $libhmgen_basenames`
+
+    cli_basenames="cli_main"
+    cli_objs=`addsuffix $OBJSUF $cli_basenames`
+    cli_srcs=`addsuffix .c $cli_basenames`
+
+    gui_basenames="gui_main gui_callbacks gui_interface gui_support"
+    gui_objs=`addsuffix $OBJSUF $gui_basenames`
+    gui_srcs=`addsuffix .c $gui_basenames`
+
+    make_init_object_deps $libhmgen_objs $cli_objs $gui_objs
+}
+
 # ----------------------------------( MAIN )-----------------------------------
 
 if grep -q CONFIGURE_DONE=yes build.config 2>/dev/null ; then
+    result "previous config" "build.config"
     . build.config
 else
-    >build.config
+    > build.config
     configure
     output_build_config
 fi
 
 make_init
+make_init_project
+
+if ! grep -q deps_done=yes build.dep 2>/dev/null ; then
+    > build.dep
+    make_dep $libhmgen_srcs $cli_srcs $gui_srcs
+    echo "deps_done=yes" >> build.dep
+fi
+
+. build.dep
+
+make_check_objects $libhmgen_objs
+make_check_objects $cli_objs
 
