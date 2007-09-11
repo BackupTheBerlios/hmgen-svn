@@ -286,6 +286,7 @@ make_link() {
 make_o_to_a() {
     a=$1 ; shift 1
     make_exec "$AR $AR_FLAGS $a `echo $@`" "archive" "$a"
+    make_exec "$RANLIB $a" "ranlib" "$a"
     touch $a
 }
 
