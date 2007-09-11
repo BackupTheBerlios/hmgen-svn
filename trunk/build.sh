@@ -389,7 +389,7 @@ make_init_project() {
 # ----------------------------------( MAIN )-----------------------------------
 
 if grep -q CONFIGURE_DONE=yes build.config 2>/dev/null ; then
-    result "previous config" "build.config"
+    result "reading config" "build.config"
     . build.config
 else
     > build.config
