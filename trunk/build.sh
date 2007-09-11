@@ -129,6 +129,7 @@ configure() {
         GTHREAD_LDFLAGS=`echo xXx $GTHREAD_LDFLAGS | sed 's/-pthread//; s/^xXx//'`
     fi
 
+    DEFINES=
     SVN_REV=`svn info * 2>/dev/null | grep ^Revision: \
         | cut -d ' ' -f 2 | xargs -n 1 -iX printf "%05i\n" X \
         | sort -r | head -n 1 | sed 's/^0//' | sed 's/^0//' \
@@ -140,6 +141,7 @@ configure() {
     test $SVN_REV || SVN_REV=`sed -n -e '/^dir$/{n;p;q;}' \
         .svn/entries 2>/dev/null`
     test $SVN_REV || SVN_REV=0
+    DEFINES="$DEFINES -DSVN_REVISION=$SVN_REV"
 
     SYSTEM=`uname -s 2>/dev/null`
     SYSTEM=`echo $SYSTEM | tr '[A-Z]' '[a-z]'`
@@ -201,7 +203,7 @@ GTK_CFLAGS="$GTK_CFLAGS"
 GTK_LDFLAGS="$GTK_LDFLAGS"
 GTHREAD_CFLAGS="$GTHREAD_CFLAGS"
 GTHREAD_LDFLAGS="$GTHREAD_LDFLAGS"
-DEFINES=-DSVN_REVISION="$SVN_REV"
+DEFINES="-DSVN_REVISION=$SVN_REV"
 SYSTEM="$SYSTEM"
 SYS_LDFLAGS="$SYS_LDFLAGS"
 EXESUF="$EXESUF"
