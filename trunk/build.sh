@@ -281,13 +281,16 @@ make_c_to_o() {
 make_link() {
     exe=$1$EXESUF ; shift 1
     make_exec "$CC $OBJ_OUT_FLAG $exe `echo $@` $LDFLAGS" "link" "$exe"
+    sleep 1
+    touch -c $exe
 }
 
 make_o_to_a() {
     a=$1 ; shift 1
     make_exec "$AR $AR_FLAGS $a `echo $@`" "archive" "$a"
     make_exec "$RANLIB $a" "ranlib" "$a"
-    touch $a
+    sleep 1
+    touch -c $a
 }
 
 addsuffix() {
