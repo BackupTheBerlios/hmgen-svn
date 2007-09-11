@@ -181,6 +181,7 @@ configure() {
 }
 
 output_build_config() {
+   echo writing build.config
     cat >> build.config << __EOF__
 CC="$CC"
 CC_DEP="$CC_DEP"
@@ -392,7 +393,7 @@ make_init_project() {
 # ----------------------------------( MAIN )-----------------------------------
 
 if grep -q CONFIGURE_DONE=yes build.config 2>/dev/null ; then
-    result "reading config" "build.config"
+    echo reading build.config
     . build.config
 else
     > build.config
@@ -409,6 +410,7 @@ if ! grep -q deps_done=yes build.dep 2>/dev/null ; then
     echo "deps_done=yes" >> build.dep
 fi
 
+echo reading build.dep
 . build.dep
 
 make_exe $cli_g_exe
