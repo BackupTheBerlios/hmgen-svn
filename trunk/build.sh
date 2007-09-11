@@ -280,7 +280,7 @@ make_c_to_o() {
 }
 
 make_link() {
-    exe=$1$EXESUF ; shift 1
+    exe=$1 ; shift 1
     make_exec "$CC $OBJ_OUT_FLAG $exe `echo $@` $LDFLAGS" "link" "$exe"
     sleep 1
     touch -c $exe
@@ -374,17 +374,19 @@ make_init_project() {
     cli_basenames="cli_main"
     cli_objs=`addsuffix $OBJSUF $cli_basenames`
     cli_srcs=`addsuffix .c $cli_basenames`
-    cli_exe=hmgen_g
+    cli_g_exe=hmgen_g$EXESUF
+    cli_exe=hmgen$EXESUF
 
     gui_basenames="gui_main gui_callbacks gui_interface gui_support"
     gui_objs=`addsuffix $OBJSUF $gui_basenames`
     gui_srcs=`addsuffix .c $gui_basenames`
-    gui_exe=hmgengui_g
+    gui_g_exe=hmgengui_g$EXESUF
+    gui_exe=hmgengui$EXESUF
 
     make_set_default_object_deps $libhmgen_objs $cli_objs $gui_objs
     make_set_deps $libhmgen $libhmgen_objs
-    make_set_deps $cli_exe $cli_objs $libhmgen
-    make_set_deps $gui_exe $gui_objs $libhmgen
+    make_set_deps $cli_g_exe $cli_objs $libhmgen
+    make_set_deps $gui_g_exe $gui_objs $libhmgen
 }
 
 # ----------------------------------( MAIN )-----------------------------------
@@ -409,19 +411,19 @@ fi
 
 . build.dep
 
-make_exe $cli_exe
+make_exe $cli_g_exe
 
 CFLAGS="$DEF_CFLAGS $GTK_CFLAGS $GTHREAD_CFLAGS"
 LDFLAGS="$DEF_LDFLAGS $GTK_LDFLAGS $GTHREAD_LDFLAGS"
-make_exe $gui_exe
+make_exe $gui_g_exe
 
-if ! up_to_date hmgen $cli_exe ; then
-    make_exec "cp $cli_exe hmgen" "copy" "$cli_exe hmgen"
-    make_exec "$STRIP hmgen" "strip" "hmgen"
+if ! up_to_date $cli_exe $cli_g_exe ; then
+    make_exec "cp $cli_g_exe $cli_exe" "copy" "$cli_g_exe $cli_exe"
+    make_exec "$STRIP $cli_exe" "strip" "$cli_exe"
 fi
-if ! up_to_date hmgengui $gui_exe ; then
-    make_exec "cp $gui_exe hmgengui" "copy" "$gui_exe hmgengui"
-    make_exec "$STRIP hmgengui" "strip" "hmgengui"
+if ! up_to_date $gui_exe $gui_g_exe ; then
+    make_exec "cp $gui_g_exe $gui_exe" "copy" "$gui_g_exe $gui_exe"
+    make_exec "$STRIP $gui_exe" "strip" "$gui_exe"
 fi
 
 echo "done"
