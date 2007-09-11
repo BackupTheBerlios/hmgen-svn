@@ -280,12 +280,12 @@ make_c_to_o() {
 
 make_link() {
     exe=$1$EXESUF ; shift 1
-    make_exec "$CC $OBJ_OUT_FLAG $exe $@" "link" "$exe"
+    make_exec "$CC $OBJ_OUT_FLAG $exe `echo $@` $LDFLAGS" "link" "$exe"
 }
 
 make_o_to_a() {
     a=$1 ; shift 1
-    make_exec "$AR $AR_FLAGS $a $@" "archive" "$a"
+    make_exec "$AR $AR_FLAGS $a `echo $@`" "archive" "$a"
 }
 
 addsuffix() {
@@ -304,7 +304,7 @@ mangle() {
     echo $1 | sed 's/\./_/g; s/\//__/g;' # change . and / into _ and __
 }
 
-make_init_object_deps() {
+make_set_default_object_deps() {
     for i in $@ ; do
         j=`mangle $i`
         defdep=`basename $i $OBJSUF`.c
@@ -312,16 +312,46 @@ make_init_object_deps() {
     done
 }
 
-make_check_objects() {
+make_set_deps() {
+    x=$1; shift 1
+    x=`mangle $x`
+    eval deps_$x=\"$@\"
+}
+
+make_objects() {
     for i in $@ ; do
         j=`mangle $i`
         eval deps=\"\$deps_$j\"
-        if up_to_date $i $deps ; then
-            :
-        else
+        if ! up_to_date $i $deps ; then
             make_c_to_o $i
         fi
     done
+}
+
+make_lib() {
+    lib=$1; shift
+    libm=`mangle $lib`
+    eval libdeps=\"\$deps_$libm\"
+    make_objects $libdeps
+    if ! up_to_date $lib $libdeps ; then
+        make_o_to_a $lib $libdeps
+    fi
+}
+
+make_exe() {
+    t=$1; shift
+    tm=`mangle $t`
+    eval exedeps=\"\$deps_$tm\"
+    for i in $exedeps ; do
+        case $i in
+            *$OBJSUF)   make_objects $i ;;
+            *.a)        make_lib $i ;;
+            *)          echo unknown dep $i !! ; exit 2 ;;
+        esac
+    done
+    if ! up_to_date $t $exedeps ; then
+        make_link $t $exedeps
+    fi
 }
 
 make_dep() {
@@ -333,16 +363,22 @@ make_init_project() {
                         lib_util lib_hmgen lib_export"
     libhmgen_objs=`addsuffix $OBJSUF $libhmgen_basenames`
     libhmgen_srcs=`addsuffix .c $libhmgen_basenames`
+    libhmgen=libhmgen.a
 
     cli_basenames="cli_main"
     cli_objs=`addsuffix $OBJSUF $cli_basenames`
     cli_srcs=`addsuffix .c $cli_basenames`
+    cli_exe=hmgen_g$EXESUF
 
     gui_basenames="gui_main gui_callbacks gui_interface gui_support"
     gui_objs=`addsuffix $OBJSUF $gui_basenames`
     gui_srcs=`addsuffix .c $gui_basenames`
+    gui_exe=hmgengui_g$EXESUF
 
-    make_init_object_deps $libhmgen_objs $cli_objs $gui_objs
+    make_set_default_object_deps $libhmgen_objs $cli_objs $gui_objs
+    make_set_deps $libhmgen $libhmgen_objs
+    make_set_deps $cli_exe $cli_objs $libhmgen
+    make_set_deps $gui_exe $gui_objs $libhmgen
 }
 
 # ----------------------------------( MAIN )-----------------------------------
@@ -367,6 +403,10 @@ fi
 
 . build.dep
 
-make_check_objects $libhmgen_objs
-make_check_objects $cli_objs
+make_exe $cli_exe
 
+CFLAGS="$DEF_CFLAGS $GTK_CFLAGS $GTHREAD_CFLAGS"
+LDFLAGS="$DEF_LDFLAGS $GTK_LDFLAGS $GTHREAD_LDFLAGS"
+make_exe $gui_exe
+
+echo "done"
