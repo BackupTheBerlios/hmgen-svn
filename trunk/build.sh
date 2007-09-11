@@ -373,12 +373,12 @@ make_init_project() {
     cli_basenames="cli_main"
     cli_objs=`addsuffix $OBJSUF $cli_basenames`
     cli_srcs=`addsuffix .c $cli_basenames`
-    cli_exe=hmgen_g$EXESUF
+    cli_exe=hmgen_g
 
     gui_basenames="gui_main gui_callbacks gui_interface gui_support"
     gui_objs=`addsuffix $OBJSUF $gui_basenames`
     gui_srcs=`addsuffix .c $gui_basenames`
-    gui_exe=hmgengui_g$EXESUF
+    gui_exe=hmgengui_g
 
     make_set_default_object_deps $libhmgen_objs $cli_objs $gui_objs
     make_set_deps $libhmgen $libhmgen_objs
