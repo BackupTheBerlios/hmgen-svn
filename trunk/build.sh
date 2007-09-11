@@ -217,6 +217,7 @@ __EOF__
 
 # unwrap lines --> sort --> uniq --> merge equal target lines and change syntax
 ccdeps_to_shdeps() {
+    tr -d '\015' |
     awk '/[\\]$/ { $NF="" ; printf("%s",$0) ; next } { print }' |
     sort |
     uniq |
