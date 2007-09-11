@@ -227,7 +227,9 @@ ccdeps_to_shdeps() {
         {   if (save==$1) {
                 ORS="" ;
                 for (i=2; i <= NF; i++) {
-                    if (substr($i,1,1) != "/") { print " " $i }
+                    if ((substr($i,1,1) != "/") && (substr($i,2,2) != ":/")) {
+                        print " " $i
+                    }
                 }
             } else {
                 if (save != "") { ORS="\"\n" ; print " " }
@@ -241,7 +243,9 @@ ccdeps_to_shdeps() {
                     print c
                 }
                 for (i=2; i <= NF; i++) {
-                    if (substr($i,1,1) != "/") { print " " $i }
+                    if ((substr($i,1,1) != "/") && (substr($i,2,2) != ":/")) {
+                        print " " $i
+                    }
                 }
             }
         }
