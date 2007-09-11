@@ -286,6 +286,7 @@ make_link() {
 make_o_to_a() {
     a=$1 ; shift 1
     make_exec "$AR $AR_FLAGS $a `echo $@`" "archive" "$a"
+    touch $a
 }
 
 addsuffix() {
@@ -408,5 +409,14 @@ make_exe $cli_exe
 CFLAGS="$DEF_CFLAGS $GTK_CFLAGS $GTHREAD_CFLAGS"
 LDFLAGS="$DEF_LDFLAGS $GTK_LDFLAGS $GTHREAD_LDFLAGS"
 make_exe $gui_exe
+
+if ! up_to_date hmgen $cli_exe ; then
+    make_exec "cp $cli_exe hmgen" "copy" "$cli_exe hmgen"
+    make_exec "$STRIP hmgen" "strip" "hmgen"
+fi
+if ! up_to_date hmgengui $gui_exe ; then
+    make_exec "cp $gui_exe hmgengui" "copy" "$gui_exe hmgengui"
+    make_exec "$STRIP hmgengui" "strip" "hmgengui"
+fi
 
 echo "done"
