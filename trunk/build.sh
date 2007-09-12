@@ -92,6 +92,8 @@ fi
 prefix=/usr/local
 CC=cc
 action=
+depsfile=build.deps
+configfile=build.config
 
 # --------------------------------( CONFIGURE )--------------------------------
 
@@ -258,8 +260,8 @@ configure() {
 }
 
 output_build_config() {
-   echo writing build.config
-    cat >> build.config << __EOF__
+   echo writing $configfile
+    cat >> $configfile << __EOF__
 CC="$CC"
 CC_DEP="$CC_DEP"
 CC_VENDOR="$CC_VENDOR"
@@ -431,11 +433,37 @@ make_exe() {
     fi
 }
 
-make_dep() {
-    make_exec "$CC_DEP $DEP_FLAGS $DEF_CFLAGS $GTK_CFLAGS $GTHREAD_CFLAGS `echo $@` | ccdeps_to_shdeps >> build.dep" "ccdep" "build.dep"
+_make_deps() {
+    make_exec "$CC_DEP $DEP_FLAGS $DEF_CFLAGS $GTK_CFLAGS $GTHREAD_CFLAGS `echo $@` 2>/dev/null | ccdeps_to_shdeps >> $depsfile" "ccdep" "$depsfile"
 }
 
+make_deps() {
+    if not grep -q deps_done=yes $depsfile 2>/dev/null ; then
+        > $depsfile
+        _make_deps $libhmgen_srcs $cli_srcs $gui_srcs
+        echo "deps_done=yes" >> $depsfile
+    fi
+
+    echo reading $depsfile
+    . $depsfile
+}
+
+make_configure() {
+    if grep -q CONFIGURE_DONE=yes $configfile 2>/dev/null ; then
+        echo reading $configfile
+        . $configfile
+    else
+        > $configfile
+        configure
+        output_build_config
+    fi
+}
+
+# ---------------------------------( PROJECT )---------------------------------
+
 make_init_project() {
+    make_init_default
+
     libhmgen_basenames="lib_algo_ff lib_algo_mpd lib_algo_forge lib_postproc \
                         lib_util lib_hmgen lib_export"
     libhmgen_objs=`addsuffix $OBJSUF $libhmgen_basenames`
@@ -460,36 +488,7 @@ make_init_project() {
     make_set_deps $gui_g_exe $gui_objs $libhmgen
 }
 
-# ----------------------------------( MAIN )-----------------------------------
-
-do_configure() {
-    if grep -q CONFIGURE_DONE=yes build.config 2>/dev/null ; then
-        echo reading build.config
-        . build.config
-    else
-        > build.config
-        configure
-        output_build_config
-    fi
-}
-
-do_make_init() {
-    make_init_default
-    make_init_project
-}
-
-do_deps() {
-    if not grep -q deps_done=yes build.dep 2>/dev/null ; then
-        > build.dep
-        make_dep $libhmgen_srcs $cli_srcs $gui_srcs
-        echo "deps_done=yes" >> build.dep
-    fi
-
-    echo reading build.dep
-    . build.dep
-}
-
-do_make_cli() {
+make_cli() {
     make_exe $cli_g_exe
     if not up_to_date $cli_exe $cli_g_exe ; then
         make_exec "cp $cli_g_exe $cli_exe" "copy" "$cli_g_exe $cli_exe"
@@ -497,7 +496,7 @@ do_make_cli() {
     fi
 }
 
-do_make_gui() {
+make_gui() {
     CFLAGS="$DEF_CFLAGS $GTK_CFLAGS $GTHREAD_CFLAGS"
     LDFLAGS="$DEF_LDFLAGS $GTK_LDFLAGS $GTHREAD_LDFLAGS"
     make_exe $gui_g_exe
@@ -507,14 +506,72 @@ do_make_gui() {
     fi
 }
 
+make_all() {
+    make_configure
+    make_init_project
+    make_deps
+    make_cli
+    make_gui
+}
+
+# ----------------------------------( MAIN )-----------------------------------
+
+optarg() {
+    echo $1 | cut -d '=' -f 2
+}
+
 for i in $@ ; do
     case "$i" in --help|-help|-h|-?) help ; exit ;; esac
 done
 
-do_configure
-do_make_init
-do_deps
-do_make_cli
-do_make_gui
+for i in $@ ; do
+    case "$i" in
+        --cc=*)         CC=`optarg $i`      ;;
+        --prefix=*)     prefix=`optarg $i`  ;;
+        configure)
+            action=1
+            >$configfile
+            make_configure
+            ;;
+        deps)
+            action=1
+            >$depsfile
+            make_configure
+            make_init_project
+            make_deps
+            ;;
+        cli)
+            action=1
+            make_configure
+            make_init_project
+            make_deps
+            make_cli
+            ;;
+        gui)
+            action=1
+            make_configure
+            make_init_project
+            make_deps
+            make_gui
+            ;;
+        lib)
+            action=1
+            make_configure
+            make_init_project
+            make_deps
+            make_lib $libhmgen
+            ;;
+        all)
+            action=1
+            make_all
+            ;;
+        --*)
+            echo unknown option ; exit 1 ;;
+        *)
+            echo unknown action ; exit 1 ;;
+    esac
+done
+
+if test -z "$action" ; then make_all ; fi
 
 echo "done"
