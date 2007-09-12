@@ -9,6 +9,36 @@
 # This experiment just needs a POSIX environment and nothing more.
 # Or perhaps not even POSIX ;)
 
+# ----------------------------------( USAGE )----------------------------------
+
+help() {
+    cat << __EOF__
+
+usage: ./build.sh [options] [actions]
+
+options:
+
+--cc=CC             specify C compiler
+--prefix=PREFIX     installation prefix [default: $prefix]
+--help              print this message
+
+actions:
+
+all                 build all
+cli                 build cli version only
+gui                 build gui version only
+lib                 build (static) library only
+install             install all programs
+install-cli         install cli version only
+install-gui         install gui version only
+configure           perform configure only
+deps                determine dependencies only
+clean               clean up
+distclean           cleaner up
+
+__EOF__
+}
+
 # ----------------------------------( INIT )-----------------------------------
 
 # Be a nice shell
@@ -56,6 +86,11 @@ test -z "$C" && C=1
 if test "$C" -ne 1 ; then Bon= ; Boff= ; Red= ; Green=
 else Bon="[1m" ; Boff="[0m" ; Red="[31m" ; Green="[32m"
 fi
+
+# Defaults
+
+prefix=/usr/local
+CC=cc
 
 # --------------------------------( CONFIGURE )--------------------------------
 
@@ -436,6 +471,10 @@ make_init_project() {
 }
 
 # ----------------------------------( MAIN )-----------------------------------
+
+for i in $@ ; do
+    case "$i" in --help|-help|-h|-?) help ; exit ;; esac
+done
 
 if grep -q CONFIGURE_DONE=yes build.config 2>/dev/null ; then
     echo reading build.config
