@@ -20,8 +20,11 @@ options:
 
 --cc=CC             specify C compiler
 --prefix=PREFIX     installation prefix [default: $prefix]
+--destdir=DESTDIR   installation destination directory [default: $destdir]
 --verbose           verbose compilation
 --nocolor           disable colors for terminals w/o VT100 capabilities
+--configfile=FILE   specify alternative config file
+--depsfile=FILE     specify alternative dependencies file
 --help              print this message
 
 actions:
@@ -97,6 +100,7 @@ init_colors
 # Defaults
 
 prefix=/usr/local
+destdir=/
 CC=cc
 action=
 depsfile=build.deps
