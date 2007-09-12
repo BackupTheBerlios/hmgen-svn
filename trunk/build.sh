@@ -293,7 +293,7 @@ output_build_config() {
         CC_VERSION_SUBMINOR WARN_FLAGS OPT_FLAGS STD_FLAGS DEBUG_FLAGS \
         DEP_FLAGS OBJ_OUT_FLAG DONT_LINK_FLAG GTK_CFLAGS GTK_LDFLAGS \
         GTHREAD_CFLAGS GTHREAD_LDFLAGS DEFINES SYSTEM SYS_LDFLAGS EXESUF AR \
-        AR_FLAGS RANLIB STRIP OBJSUF CONFIGURE_DONE ; do
+        AR_FLAGS RANLIB STRIP OBJSUF AWK CONFIGURE_DONE ; do
         eval echo "$i=\\\"\$$i\\\"" >> $configfile
     done
 }
@@ -303,7 +303,7 @@ output_build_config() {
 # unwrap lines --> sort --> uniq --> merge equal target lines and change syntax
 ccdeps_to_shdeps() {
     tr -d '\015' |
-    $AWK '/[\\]$/ { $NF="" ; printf("%s",$0) ; next } { print }' |
+    $AWK '/[\\]$/ { $NF="" ; ORS="" ; print ; next} { ORS="\n" ; print }' |
     sort |
     uniq |
     $AWK '
