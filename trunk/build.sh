@@ -274,7 +274,7 @@ output_build_config() {
         DEP_FLAGS OBJ_OUT_FLAG DONT_LINK_FLAG GTK_CFLAGS GTK_LDFLAGS \
         GTHREAD_CFLAGS GTHREAD_LDFLAGS DEFINES SYSTEM SYS_LDFLAGS EXESUF AR \
         AR_FLAGS RANLIB STRIP OBJSUF CONFIGURE_DONE ; do
-        eval echo "$i=\"\$$i\"" >> $configfile
+        eval echo "$i=\\\"\$$i\\\"" >> $configfile
     done
 }
 
@@ -525,6 +525,8 @@ for i in $@ ; do
         --prefix=*)     prefix=`optarg $i`  ;;
         --verbose)      V=1                 ;;
         --nocolor)      C=0 ; init_colors   ;;
+        --configfile=*) configfile=`optarg $i`  ;;
+        --depsfile=*)   depsfile=`optarg $i`    ;;
         configure)
             action=1
             >$configfile
