@@ -218,10 +218,7 @@ configure() {
     result "object out" $OBJ_OUT_FLAG
     result "do not link" $DONT_LINK_FLAG
 
-    question pkg-config
-    RES=`pkg-config --version 2>/dev/null 1>&2 && echo yes || echo no`
-    answer $RES
-    test "$RES" != "yes" && die "pkg-config is mandatory"
+    find_program pkg-config PKGCONFIG mandatory $PKGCONFIG pkg-config
 
     my_pkg_config gtk+-2.0 GTK_CFLAGS GTK_LDFLAGS 2.0
     my_pkg_config gthread-2.0 GTHREAD_CFLAGS GTHREAD_LDFLAGS 2.0
@@ -455,7 +452,7 @@ make_deps() {
 }
 
 make_configure() {
-    if grep -q CONFIGURE_DONE=yes $configfile 2>/dev/null ; then
+    if grep -q CONFIGURE_DONE=\"yes\" $configfile 2>/dev/null ; then
         echo reading $configfile
         . $configfile
     else
