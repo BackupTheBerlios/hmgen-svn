@@ -108,6 +108,11 @@ configfile=build.config
 
 # --------------------------------( CONFIGURE )--------------------------------
 
+die() {
+    echo "$1" >&2
+    exit 1
+}
+
 question() {
     printf "%-16s : " "$1"
 }
@@ -129,18 +134,14 @@ my_pkg_config() {
     question $1
     RES=`pkg-config --atleast-version=$4 $1 2>/dev/null && echo yes || echo no`
     answer $RES
-    if test "$RES" != "yes" ; then
-        echo "$1, at least version $4, not found."
-        echo "Perhaps you need to install the dev(el) packages?"
-        exit 1
-    fi
+    test "$RES" != yes && die "at least version $4 not found"
     eval $2=\"`pkg-config --cflags $1 2>/dev/null`\"
     eval $3=\"`pkg-config --static --libs $1 2>/dev/null`\"
 }
 
 configure() {
     question compiler
-    for i in $CC cc gcc suncc icc tcc ; do
+    for i in $CC cc gcc suncc icc tcc NONE; do
         if which $i 2>/dev/null 1>&2 ; then
             break
         fi
@@ -148,6 +149,8 @@ configure() {
     CC=$i
     CC_DEP=$i
     answer $CC
+
+    test "$CC" = "NONE" && die "a c compiler is mandatory"
 
     question vendor
     CC_VENDOR=`$CC --help 2>/dev/null | grep -q gcc && echo gnu`
@@ -215,10 +218,7 @@ configure() {
     question pkg-config
     RES=`pkg-config --version 2>/dev/null 1>&2 && echo yes || echo no`
     answer $RES
-    if test "$RES" != "yes" ; then
-        echo "pkg-config not found"
-        exit 1
-    fi
+    test "$RES" != "yes" && die "pkg-config is mandatory"
 
     my_pkg_config gtk+-2.0 GTK_CFLAGS GTK_LDFLAGS 2.0
     my_pkg_config gthread-2.0 GTHREAD_CFLAGS GTHREAD_LDFLAGS 2.0
