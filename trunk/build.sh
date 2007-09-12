@@ -138,16 +138,20 @@ my_pkg_config() {
     eval $3=\"`pkg-config --static --libs $1 2>/dev/null`\"
 }
 
-configure() {
-    question compiler
-    for i in $CC cc gcc suncc icc tcc NONE; do
-        if which $i 2>/dev/null 1>&2 ; then
-            break
-        fi
+find_program() {
+    prog=$1; shift
+    var=$1; shift
+    question $prog
+    for i in $@ NONE ; do
+        if which $i 2>/dev/null 1>&2 ; then break ; fi
     done
-    CC=$i
-    CC_DEP=$i
-    answer $CC
+    eval $var=$i
+    answer $i
+}
+
+configure() {
+    find_program compiler CC $CC cc gcc suncc icc tcc
+    CC_DEP=$CC
 
     test "$CC" = "NONE" && die "a c compiler is mandatory"
 
