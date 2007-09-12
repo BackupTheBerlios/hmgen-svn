@@ -33,6 +33,11 @@ not() {
     test $? -ne 0
 }
 
+case `echo -n` in
+    -n)     _echo_n=        _echo_c='\c'    ;; # SysV
+    *)      _echo_n='-n '   _echo_c=        ;; # BSD
+esac
+
 # --------------------------------( CONFIGURE )--------------------------------
 
 result() {
