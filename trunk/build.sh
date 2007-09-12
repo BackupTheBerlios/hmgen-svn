@@ -20,6 +20,8 @@ options:
 
 --cc=CC             specify C compiler
 --prefix=PREFIX     installation prefix [default: $prefix]
+--verbose           verbose compilation
+--nocolor           disable colors for terminals w/o VT100 capabilities
 --help              print this message
 
 actions:
@@ -83,9 +85,14 @@ esac
 
 test -z "$V" && V=0
 test -z "$C" && C=1
-if test "$C" -ne 1 ; then Bon= ; Boff= ; Red= ; Green=
-else Bon="[1m" ; Boff="[0m" ; Red="[31m" ; Green="[32m"
-fi
+
+init_colors() {
+    if test "$C" -ne 1 ; then Bon= ; Boff= ; Red= ; Green=
+    else Bon="[1m" ; Boff="[0m" ; Red="[31m" ; Green="[32m"
+    fi
+}
+
+init_colors
 
 # Defaults
 
@@ -538,6 +545,8 @@ for i in $@ ; do
     case "$i" in
         --cc=*)         CC=`optarg $i`      ;;
         --prefix=*)     prefix=`optarg $i`  ;;
+        --verbose)      V=1                 ;;
+        --nocolor)      C=0 ; init_colors   ;;
         configure)
             action=1
             >$configfile
