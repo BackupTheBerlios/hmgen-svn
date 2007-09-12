@@ -15,34 +15,19 @@ Building:
 =========
 
 One-time build:
-    make all
+    ./build.sh
 
 To build without the GTK+-2.0 GUI, type:
-    make hmgen
-
-Developer build:
-    make dep
-    make verbose
-    or
-    make dep
-    make hmgen-verbose
-    etc...
+    ./build.sh cli
 
 Clean up:
-    make clean
+    ./build.sh clean
 
 Cleaner up:
-    make distclean
-    make mrproper
+    ./build.sh distclean
 
 Just configure:
-    make configure
+    ./build.sh configure
 
-Or specify a different C compiler:
-    make CC=suncc configure
-    or
-    make CC=suncc all
-
-Building on MingW/MSYS:
-    make CC=gcc
-
+Et cetera. For all build actions and options like --cc and --prefix:
+    ./build.sh --help
