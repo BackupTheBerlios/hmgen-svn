@@ -514,6 +514,16 @@ make_all() {
     make_gui
 }
 
+make_clean() {
+    rm -f $libhmgen_objs $cli_objs $gui_objs $libhmgen
+    rm -f $cli_g_exe $cli_exe $gui_g_exe $gui_exe
+    rm -f *~
+}
+
+make_distclean() {
+    make_clean
+    rm -f $configfile $depsfile
+}
 # ----------------------------------( MAIN )-----------------------------------
 
 optarg() {
@@ -564,6 +574,18 @@ for i in $@ ; do
         all)
             action=1
             make_all
+            ;;
+        clean)
+            action=1
+            make_configure
+            make_init_project
+            make_clean
+            ;;
+        distclean)
+            action=1
+            make_configure
+            make_init_project
+            make_distclean
             ;;
         --*)
             echo unknown option ; exit 1 ;;
