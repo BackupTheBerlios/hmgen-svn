@@ -108,19 +108,27 @@ configfile=build.config
 
 # --------------------------------( CONFIGURE )--------------------------------
 
-result() {
-    if test "$2" = "no" ; then      col="$Bon$Red"
-    elif test "$2" = "yes" ; then   col="$Bon$Green"
+question() {
+    printf "%-16s : " "$1"
+}
+
+answer() {
+    if test "$1" = "no" ; then      col="$Bon$Red"
+    elif test "$1" = "yes" ; then   col="$Bon$Green"
     else                            col="$Bon"
     fi
-    if test -n "$2" ; then
-        printf "%-16s : $col%s$Boff\n" "$1" "$2"
-    fi
+    test -n "$1" && printf "$col%s$Boff\n" "$1" || printf "<none>\n"
+}
+
+result() {
+    question "$1"
+    answer "$2"
 }
 
 my_pkg_config() {
+    question $1
     RES=`pkg-config --atleast-version=$4 $1 2>/dev/null && echo yes || echo no`
-    result $1 $RES
+    answer $RES
     if test "$RES" != "yes" ; then
         echo "$1, at least version $4, not found."
         echo "Perhaps you need to install the dev(el) packages?"
@@ -131,6 +139,7 @@ my_pkg_config() {
 }
 
 configure() {
+    question compiler
     for i in $CC cc gcc suncc icc tcc ; do
         if which $i 2>/dev/null 1>&2 ; then
             break
@@ -138,8 +147,9 @@ configure() {
     done
     CC=$i
     CC_DEP=$i
-    result compiler $CC
+    answer $CC
 
+    question vendor
     CC_VENDOR=`$CC --help 2>/dev/null | grep -q gcc && echo gnu`
     if test "$CC_VENDOR" = "gnu" ; then
         CC_VERSION=`$CC -dumpversion`
@@ -155,7 +165,7 @@ configure() {
     CC_VERSION_MAJOR=`echo $CC_VERSION | cut -d '.' -f 1`
     CC_VERSION_MINOR=`echo $CC_VERSION | cut -d '.' -f 2`
     CC_VERSION_SUBMINOR=`echo $CC_VERSION | cut -d '.' -f 3`
-    result vendor $CC_VENDOR
+    answer $CC_VENDOR
     result version $CC_VERSION
 
     if test "$CC_VENDOR" = gnu ; then
@@ -202,8 +212,9 @@ configure() {
     result "object out" $OBJ_OUT_FLAG
     result "do not link" $DONT_LINK_FLAG
 
+    question pkg-config
     RES=`pkg-config --version 2>/dev/null 1>&2 && echo yes || echo no`
-    result pkg-config $RES
+    answer $RES
     if test "$RES" != "yes" ; then
         echo "pkg-config not found"
         exit 1
@@ -217,6 +228,7 @@ configure() {
         GTHREAD_LDFLAGS=`echo xXx $GTHREAD_LDFLAGS | sed 's/-pthread//; s/^xXx//'`
     fi
 
+    question "version info"
     DEFINES=
     SVN_REV=`svn info * 2>/dev/null | grep ^Revision: \
         | cut -d ' ' -f 2 | xargs -n 1 -iX printf "%05i\n" X \
@@ -230,6 +242,7 @@ configure() {
         .svn/entries 2>/dev/null`
     test $SVN_REV || SVN_REV=0
     DEFINES="$DEFINES -DSVN_REVISION=$SVN_REV"
+    answer done
 
     SYSTEM=`uname -s 2>/dev/null`
     SYSTEM=`echo $SYSTEM | tr '[A-Z]' '[a-z]'`
