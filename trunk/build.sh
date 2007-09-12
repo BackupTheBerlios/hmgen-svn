@@ -228,8 +228,12 @@ configure() {
         GTHREAD_LDFLAGS=`echo xXx $GTHREAD_LDFLAGS | sed 's/-pthread//; s/^xXx//'`
     fi
 
-    question "version info"
+    question "hmgen version"
     DEFINES=
+    X="#define HMG_VERSION_MAJOR"
+    VERMAJ=`grep "$X" version.h | sed "s/$X//"`
+    X="#define HMG_VERSION_MINOR"
+    VERMIN=`grep "$X" version.h | sed "s/$X//"`
     SVN_REV=`svn info * 2>/dev/null | grep ^Revision: \
         | cut -d ' ' -f 2 | xargs -n 1 -iX printf "%05i\n" X \
         | sort -r | _head 1 | sed 's/^0//' | sed 's/^0//' \
@@ -242,7 +246,7 @@ configure() {
         .svn/entries 2>/dev/null`
     test $SVN_REV || SVN_REV=0
     DEFINES="$DEFINES -DSVN_REVISION=$SVN_REV"
-    answer done
+    answer `echo $VERMAJ`.`echo $VERMIN`.$SVN_REV
 
     SYSTEM=`uname -s 2>/dev/null`
     SYSTEM=`echo $SYSTEM | tr '[A-Z]' '[a-z]'`
