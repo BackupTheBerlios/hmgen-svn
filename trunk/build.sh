@@ -126,8 +126,7 @@ answer() {
 }
 
 result() {
-    question "$1"
-    answer "$2"
+    test -n "$2" && question "$1" && answer "$2"
 }
 
 my_pkg_config() {
