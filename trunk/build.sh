@@ -141,19 +141,19 @@ my_pkg_config() {
 find_program() {
     prog=$1; shift
     var=$1; shift
+    mand=$1; shift
     question $prog
     for i in $@ NONE ; do
         if which $i 2>/dev/null 1>&2 ; then break ; fi
     done
     eval $var=$i
     answer $i
+    test "$mand" = "mandatory" -a "$i" = "NONE" && die "$prog is $mand"
 }
 
 configure() {
-    find_program compiler CC $CC cc gcc suncc icc tcc
+    find_program compiler CC mandatory $CC cc gcc suncc icc tcc
     CC_DEP=$CC
-
-    test "$CC" = "NONE" && die "a c compiler is mandatory"
 
     question vendor
     CC_VENDOR=`$CC --help 2>/dev/null | grep -q gcc && echo gnu`
@@ -277,17 +277,14 @@ configure() {
     OBJSUF=.o
     result "obj suffix" $OBJSUF
 
-    AR=ar
-    result "ar" $AR
+    find_program ar AR mandatory $AR ar gar
 
     AR_FLAGS=cru
     result "ar flags" $AR_FLAGS
 
-    RANLIB=ranlib
-    result "ranlib" $RANLIB
+    find_program ranlib RANLIB optional $RANLIB ranlib true
 
-    STRIP=strip
-    result "strip" $STRIP
+    find_program strip STRIP optional $STRIP strip true
 }
 
 output_build_config() {
