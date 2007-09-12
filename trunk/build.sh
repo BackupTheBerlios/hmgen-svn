@@ -7,6 +7,7 @@
 # experiment needed a POSIX environment anyway and on top of that, it depended
 # heavily on GNU make (which is bad) and recursive make (which is worse).
 # This experiment just needs a POSIX environment and nothing more.
+# Or perhaps not not POSIX ;)
 
 # ----------------------------------( INIT )-----------------------------------
 
