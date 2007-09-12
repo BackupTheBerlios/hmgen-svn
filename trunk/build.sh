@@ -94,8 +94,8 @@ init_colors
 
 # Defaults
 
-prefix=/usr/local
-destdir=/
+PREFIX=/usr/local
+DESTDIR=
 CC=cc
 action=
 depsfile=build.deps
@@ -284,6 +284,9 @@ configure() {
     find_program ranlib RANLIB  optional $RANLIB    ranlib true
     find_program strip  STRIP   optional $STRIP     strip true
     find_program awk    AWK     optional $AWK       mawk gawk nawk awk true
+
+    result "install prefix" "$PREFIX"
+    result "install destdir" "$DESTDIR"
 }
 
 output_build_config() {
@@ -293,7 +296,7 @@ output_build_config() {
         CC_VERSION_SUBMINOR WARN_FLAGS OPT_FLAGS STD_FLAGS DEBUG_FLAGS \
         DEP_FLAGS OBJ_OUT_FLAG DONT_LINK_FLAG GTK_CFLAGS GTK_LDFLAGS \
         GTHREAD_CFLAGS GTHREAD_LDFLAGS DEFINES SYSTEM SYS_LDFLAGS EXESUF AR \
-        AR_FLAGS RANLIB STRIP OBJSUF AWK CONFIGURE_DONE ; do
+        AR_FLAGS RANLIB STRIP OBJSUF AWK PREFIX DESTDIR CONFIGURE_DONE ; do
         eval echo "$i=\\\"\$$i\\\"" >> $configfile
     done
 }
@@ -542,7 +545,8 @@ done
 for i in $@ ; do
     case "$i" in
         --cc=*)         CC=`optarg $i`      ;;
-        --prefix=*)     prefix=`optarg $i`  ;;
+        --prefix=*)     PREFIX=`optarg $i`  ;;
+        --destdir=*)    DESTDIR=`optarg $i` ;;
         --verbose)      V=1                 ;;
         --nocolor)      C=0 ; init_colors   ;;
         --configfile=*) configfile=`optarg $i`  ;;
