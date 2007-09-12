@@ -91,6 +91,7 @@ fi
 
 prefix=/usr/local
 CC=cc
+action=
 
 # --------------------------------( CONFIGURE )--------------------------------
 
@@ -330,18 +331,7 @@ ccdeps_to_shdeps() {
 
 # ----------------------------------( MAKE )-----------------------------------
 
-# "docs":
-#
-# make_exec     "command"       "short text"    "short text argument"
-# make_c_to_o   filename.o
-# make_link     exefilename     filename.o      libraries ...
-# make_o_to_a   filename.a      object ...
-# addsuffix     suffix          basenames ...
-# up_to_date    target          deps ...
-#
-# make_init_object_deps objects ...
-
-make_init() {
+make_init_default() {
     DEF_CFLAGS="$STD_FLAGS $WARN_FLAGS $OPT_FLAGS $DEBUG_FLAGS $DEFINES"
     DEF_LDFLAGS="-lm $DEBUG_FLAGS $SYS_LDFLAGS"
     CFLAGS="$DEF_CFLAGS"
@@ -472,44 +462,59 @@ make_init_project() {
 
 # ----------------------------------( MAIN )-----------------------------------
 
+do_configure() {
+    if grep -q CONFIGURE_DONE=yes build.config 2>/dev/null ; then
+        echo reading build.config
+        . build.config
+    else
+        > build.config
+        configure
+        output_build_config
+    fi
+}
+
+do_make_init() {
+    make_init_default
+    make_init_project
+}
+
+do_deps() {
+    if not grep -q deps_done=yes build.dep 2>/dev/null ; then
+        > build.dep
+        make_dep $libhmgen_srcs $cli_srcs $gui_srcs
+        echo "deps_done=yes" >> build.dep
+    fi
+
+    echo reading build.dep
+    . build.dep
+}
+
+do_make_cli() {
+    make_exe $cli_g_exe
+    if not up_to_date $cli_exe $cli_g_exe ; then
+        make_exec "cp $cli_g_exe $cli_exe" "copy" "$cli_g_exe $cli_exe"
+        make_exec "$STRIP $cli_exe" "strip" "$cli_exe"
+    fi
+}
+
+do_make_gui() {
+    CFLAGS="$DEF_CFLAGS $GTK_CFLAGS $GTHREAD_CFLAGS"
+    LDFLAGS="$DEF_LDFLAGS $GTK_LDFLAGS $GTHREAD_LDFLAGS"
+    make_exe $gui_g_exe
+    if not up_to_date $gui_exe $gui_g_exe ; then
+        make_exec "cp $gui_g_exe $gui_exe" "copy" "$gui_g_exe $gui_exe"
+        make_exec "$STRIP $gui_exe" "strip" "$gui_exe"
+    fi
+}
+
 for i in $@ ; do
     case "$i" in --help|-help|-h|-?) help ; exit ;; esac
 done
 
-if grep -q CONFIGURE_DONE=yes build.config 2>/dev/null ; then
-    echo reading build.config
-    . build.config
-else
-    > build.config
-    configure
-    output_build_config
-fi
-
-make_init
-make_init_project
-
-if not grep -q deps_done=yes build.dep 2>/dev/null ; then
-    > build.dep
-    make_dep $libhmgen_srcs $cli_srcs $gui_srcs
-    echo "deps_done=yes" >> build.dep
-fi
-
-echo reading build.dep
-. build.dep
-
-make_exe $cli_g_exe
-
-CFLAGS="$DEF_CFLAGS $GTK_CFLAGS $GTHREAD_CFLAGS"
-LDFLAGS="$DEF_LDFLAGS $GTK_LDFLAGS $GTHREAD_LDFLAGS"
-make_exe $gui_g_exe
-
-if not up_to_date $cli_exe $cli_g_exe ; then
-    make_exec "cp $cli_g_exe $cli_exe" "copy" "$cli_g_exe $cli_exe"
-    make_exec "$STRIP $cli_exe" "strip" "$cli_exe"
-fi
-if not up_to_date $gui_exe $gui_g_exe ; then
-    make_exec "cp $gui_g_exe $gui_exe" "copy" "$gui_g_exe $gui_exe"
-    make_exec "$STRIP $gui_exe" "strip" "$gui_exe"
-fi
+do_configure
+do_make_init
+do_deps
+do_make_cli
+do_make_gui
 
 echo "done"
