@@ -267,7 +267,7 @@ configure() {
 }
 
 output_build_config() {
-   echo writing $configfile
+    echo writing $configfile
     cat >> $configfile << __EOF__
 CC="$CC"
 CC_DEP="$CC_DEP"
