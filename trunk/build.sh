@@ -27,6 +27,11 @@ else
     _tail() { tail -n $1 2>/dev/null ; }
 fi
 
+not() {
+    eval "$@"
+    test $? -ne 0
+}
+
 # --------------------------------( CONFIGURE )--------------------------------
 
 result() {
@@ -344,7 +349,7 @@ make_objects() {
     for i in $@ ; do
         j=`mangle $i`
         eval deps=\"\$deps_$j\"
-        if ! up_to_date $i $deps ; then
+        if not up_to_date $i $deps ; then
             make_c_to_o $i
         fi
     done
@@ -355,7 +360,7 @@ make_lib() {
     libm=`mangle $lib`
     eval libdeps=\"\$deps_$libm\"
     make_objects $libdeps
-    if ! up_to_date $lib $libdeps ; then
+    if not up_to_date $lib $libdeps ; then
         make_o_to_a $lib $libdeps
     fi
 }
@@ -368,10 +373,10 @@ make_exe() {
         case $i in
             *$OBJSUF)   make_objects $i ;;
             *.a)        make_lib $i ;;
-            *)          echo unknown dep $i !! ; exit 2 ;;
+            *)          echo unknown dep $i ; exit 2 ;;
         esac
     done
-    if ! up_to_date $t $exedeps ; then
+    if not up_to_date $t $exedeps ; then
         make_link $t $exedeps
     fi
 }
@@ -419,7 +424,7 @@ fi
 make_init
 make_init_project
 
-if ! grep -q deps_done=yes build.dep 2>/dev/null ; then
+if not grep -q deps_done=yes build.dep 2>/dev/null ; then
     > build.dep
     make_dep $libhmgen_srcs $cli_srcs $gui_srcs
     echo "deps_done=yes" >> build.dep
@@ -434,11 +439,11 @@ CFLAGS="$DEF_CFLAGS $GTK_CFLAGS $GTHREAD_CFLAGS"
 LDFLAGS="$DEF_LDFLAGS $GTK_LDFLAGS $GTHREAD_LDFLAGS"
 make_exe $gui_g_exe
 
-if ! up_to_date $cli_exe $cli_g_exe ; then
+if not up_to_date $cli_exe $cli_g_exe ; then
     make_exec "cp $cli_g_exe $cli_exe" "copy" "$cli_g_exe $cli_exe"
     make_exec "$STRIP $cli_exe" "strip" "$cli_exe"
 fi
-if ! up_to_date $gui_exe $gui_g_exe ; then
+if not up_to_date $gui_exe $gui_g_exe ; then
     make_exec "cp $gui_g_exe $gui_exe" "copy" "$gui_g_exe $gui_exe"
     make_exec "$STRIP $gui_exe" "strip" "$gui_exe"
 fi
