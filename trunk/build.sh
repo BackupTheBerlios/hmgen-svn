@@ -11,11 +11,24 @@
 
 # ----------------------------------( INIT )-----------------------------------
 
-export LC_ALL=C
-if test "$NOCOLOR" ; then Bon= ; Boff= ; Red= ; Green=
-else Bon="[1m" ; Boff="[0m" ; Red="[31m" ; Green="[32m"
+# Be a nice shell
+
+LC_ALL=C ; export LC_ALL
+if test -n "$ZSH_VERSION" && (emulate sh) 2>/dev/null 1>&2 ; then
+    emulate sh
+    NULLCMD=:
+else
+    case `(set -o) 2>/dev/null` in *posix*) set -o posix ;; esac
 fi
-test -z "$V" && V=0
+BIN_SH=xpg4 ; export BIN_SH
+DUALCASE=1 ; export DUALCASE
+unset ENV MAIL MAILPATH
+PS1='$ ' ; PS2='> ' ; PS4='+ '
+nl='
+'
+IFS=" 	$nl"
+
+# Portable functions
 
 if test "`(echo first ; echo last) | head -1 2>/dev/null`" = "first" ; then
     _head() { head -$1 2>/dev/null ; }
@@ -37,6 +50,12 @@ case `echo -n` in
     -n)     _echo_n=        _echo_c='\c'    ;; # SysV
     *)      _echo_n='-n '   _echo_c=        ;; # BSD
 esac
+
+test -z "$V" && V=0
+test -z "$C" && C=1
+if test "$C" -ne 1 ; then Bon= ; Boff= ; Red= ; Green=
+else Bon="[1m" ; Boff="[0m" ; Red="[31m" ; Green="[32m"
+fi
 
 # --------------------------------( CONFIGURE )--------------------------------
 
