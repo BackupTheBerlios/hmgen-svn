@@ -8,8 +8,6 @@
 # heavily on GNU make (which is bad) and recursive make (which is worse).
 # This experiment just needs a POSIX environment and nothing more.
 
-# FIXME head/tail -1/-n 1 stuff
-
 # ----------------------------------( INIT )-----------------------------------
 
 export LC_ALL=C
@@ -17,6 +15,17 @@ if test "$NOCOLOR" ; then Bon= ; Boff= ; Red= ; Green=
 else Bon="[1m" ; Boff="[0m" ; Red="[31m" ; Green="[32m"
 fi
 test -z "$V" && V=0
+
+if test "`(echo first ; echo last) | head -1 2>/dev/null`" = "first" ; then
+    _head() { head -$1 2>/dev/null ; }
+else
+    _head() { head -n $1 2>/dev/null ; }
+fi
+if test "`(echo first ; echo last) | tail -1 2>/dev/null`" = "last" ; then
+    _tail() { tail -$1 2>/dev/null ; }
+else
+    _tail() { tail -n $1 2>/dev/null ; }
+fi
 
 # --------------------------------( CONFIGURE )--------------------------------
 
@@ -132,11 +141,11 @@ configure() {
     DEFINES=
     SVN_REV=`svn info * 2>/dev/null | grep ^Revision: \
         | cut -d ' ' -f 2 | xargs -n 1 -iX printf "%05i\n" X \
-        | sort -r | head -n 1 | sed 's/^0//' | sed 's/^0//' \
+        | sort -r | _head 1 | sed 's/^0//' | sed 's/^0//' \
         | sed 's/^0//'`
     test $SVN_REV || SVN_REV=`grep revision .svn/entries 2>/dev/null \
         | cut -d '"' -f 2` | xargs -n 1 -iX printf "%05i\n" X \
-        | sort -r | head -n 1 | sed 's/^0//' | sed 's/^0//' \
+        | sort -r | _head 1 | sed 's/^0//' | sed 's/^0//' \
         | sed 's/^0//'
     test $SVN_REV || SVN_REV=`sed -n -e '/^dir$/{n;p;q;}' \
         .svn/entries 2>/dev/null`
@@ -309,7 +318,7 @@ addsuffix() {
 }
 
 up_to_date() {
-    r=`ls -t1 $@ 2>/dev/null | head -1`
+    r=`ls -t1 $@ 2>/dev/null | _head 1`
     test "$r" = "$1"
 }
 
