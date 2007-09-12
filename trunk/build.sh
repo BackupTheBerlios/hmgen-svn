@@ -1,13 +1,8 @@
 #! /bin/sh
 
-# Experiment #2
-#
-# Instead of putting configure inside the Makefile, which is basically calling
-# sh all the time, put 'make' functionality inside configure :) The previous
-# experiment needed a POSIX environment anyway and on top of that, it depended
-# heavily on GNU make (which is bad) and recursive make (which is worse).
-# This experiment just needs a POSIX environment and nothing more.
-# Or perhaps not even POSIX ;)
+# Experimental configure/make script
+# Copyright (C) 2007 Ivo van Poorten
+# See LICENSE for licensing details
 
 # ----------------------------------( USAGE )----------------------------------
 
@@ -152,6 +147,13 @@ find_program() {
 }
 
 configure() {
+    echo $_echo_n"tools            : $_echo_c"
+    for i in which printf sed grep tr sort uniq cat test ; do
+        (which $i) 2>/dev/null 1>&2 || die "$i is mandatory"
+        echo $_echo_n"$i $_echo_c"
+    done
+    echo
+
     find_program compiler CC mandatory $CC cc gcc suncc icc tcc
     CC_DEP=$CC
 
@@ -279,9 +281,9 @@ configure() {
     AR_FLAGS=cru
     result "ar flags" $AR_FLAGS
 
-    find_program ranlib RANLIB optional $RANLIB ranlib true
-
-    find_program strip STRIP optional $STRIP strip true
+    find_program ranlib RANLIB  optional $RANLIB    ranlib true
+    find_program strip  STRIP   optional $STRIP     strip true
+    find_program awk    AWK     optional $AWK       mawk gawk nawk awk true
 }
 
 output_build_config() {
@@ -301,10 +303,10 @@ output_build_config() {
 # unwrap lines --> sort --> uniq --> merge equal target lines and change syntax
 ccdeps_to_shdeps() {
     tr -d '\015' |
-    awk '/[\\]$/ { $NF="" ; printf("%s",$0) ; next } { print }' |
+    $AWK '/[\\]$/ { $NF="" ; printf("%s",$0) ; next } { print }' |
     sort |
     uniq |
-    awk '
+    $AWK '
         BEGIN { save="" }
         {   if (save==$1) {
                 ORS="" ;
