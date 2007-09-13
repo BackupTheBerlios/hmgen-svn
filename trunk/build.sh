@@ -523,6 +523,8 @@ make_all() {
 }
 
 make_clean() {
+    make_configure
+    make_init_project
     rm -f $libhmgen_objs $cli_objs $gui_objs $libhmgen
     rm -f $cli_g_exe $cli_exe $gui_g_exe $gui_exe
     rm -f *~
@@ -590,14 +592,10 @@ for i in $@ ; do
             ;;
         clean)
             action=1
-            make_configure
-            make_init_project
             make_clean
             ;;
         distclean)
             action=1
-            make_configure
-            make_init_project
             make_distclean
             ;;
         --*)
