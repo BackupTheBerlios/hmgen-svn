@@ -496,6 +496,12 @@ make_init_project() {
     make_set_deps $gui_g_exe $gui_objs $libhmgen
 }
 
+make_conf_init_deps() {
+    make_configure
+    make_init_project
+    make_deps
+}
+
 make_cli() {
     make_exe $cli_g_exe
     if not up_to_date $cli_exe $cli_g_exe ; then
@@ -561,29 +567,21 @@ for i in $@ ; do
         deps)
             action=1
             >$depsfile
-            make_configure
-            make_init_project
-            make_deps
+            make_conf_init_deps
             ;;
         cli)
             action=1
-            make_configure
-            make_init_project
-            make_deps
+            make_conf_init_deps
             make_cli
             ;;
         gui)
             action=1
-            make_configure
-            make_init_project
-            make_deps
+            make_conf_init_deps
             make_gui
             ;;
         lib)
             action=1
-            make_configure
-            make_init_project
-            make_deps
+            make_conf_init_deps
             make_lib $libhmgen
             ;;
         all)
