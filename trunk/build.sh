@@ -9,7 +9,7 @@
 help() {
     cat << __EOF__
 
-usage: ./build.sh [options] [actions]
+usage: ./build.sh [option(s)] [action(s)] [option(s)] [action(s)] ...
 
 options:
 
