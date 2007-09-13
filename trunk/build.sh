@@ -525,7 +525,6 @@ make_gui() {
 }
 
 make_all() {
-    make_conf_init_deps
     make_cli
     make_gui
 }
@@ -606,6 +605,6 @@ for arg in $@ ; do
     esac
 done
 
-if test -z "$action" ; then make_all ; fi
+if test -z "$action" ; then make_conf_init_deps ; make_all ; fi
 
 echo "done"
