@@ -521,16 +521,12 @@ make_gui() {
 }
 
 make_all() {
-    make_configure
-    make_init_project
-    make_deps
+    make_conf_init_deps
     make_cli
     make_gui
 }
 
 make_clean() {
-    make_configure
-    make_init_project
     rm -f $libhmgen_objs $cli_objs $gui_objs $libhmgen
     rm -f $cli_g_exe $cli_exe $gui_g_exe $gui_exe
     rm -f *~
@@ -550,15 +546,15 @@ for i in $@ ; do
     case "$i" in --help|-help|-h|-?) help ; exit ;; esac
 done
 
-for i in $@ ; do
-    case "$i" in
-        --cc=*)         CC=`optarg $i`      ;;
-        --prefix=*)     PREFIX=`optarg $i`  ;;
-        --destdir=*)    DESTDIR=`optarg $i` ;;
+for arg in $@ ; do
+    case "$arg" in
+        --cc=*)         CC=`optarg $arg`      ;;
+        --prefix=*)     PREFIX=`optarg $arg`  ;;
+        --destdir=*)    DESTDIR=`optarg $arg` ;;
         --verbose)      V=1                 ;;
         --nocolor)      C=0 ; init_colors   ;;
-        --configfile=*) configfile=`optarg $i`  ;;
-        --depsfile=*)   depsfile=`optarg $i`    ;;
+        --configfile=*) configfile=`optarg $arg`  ;;
+        --depsfile=*)   depsfile=`optarg $arg`    ;;
         configure)
             action=1
             >$configfile
@@ -569,32 +565,15 @@ for i in $@ ; do
             >$depsfile
             make_conf_init_deps
             ;;
-        cli)
-            action=1
-            make_conf_init_deps
-            make_cli
-            ;;
-        gui)
-            action=1
-            make_conf_init_deps
-            make_gui
-            ;;
         lib)
             action=1
             make_conf_init_deps
             make_lib $libhmgen
             ;;
-        all)
+        cli|gui|all|clean|distclean)
             action=1
-            make_all
-            ;;
-        clean)
-            action=1
-            make_clean
-            ;;
-        distclean)
-            action=1
-            make_distclean
+            make_conf_init_deps
+            make_$arg
             ;;
         -*)
             echo unknown option ; exit 1 ;;
