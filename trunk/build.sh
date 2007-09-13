@@ -352,7 +352,7 @@ make_exec() {
     if test "$V" = "0" ; then   printf "$Bon%s$Boff %s\n" "$2" "$3"
     else                        echo "$1"
     fi
-    eval "$1"
+    eval "$1" || die "build failed"
 }
 
 make_c_to_o() {
