@@ -29,8 +29,8 @@ cli                 build cli version only
 gui                 build gui version only
 lib                 build (static) library only
 install             install all programs
-install-cli         install cli version only
-install-gui         install gui version only
+install_cli         install cli version only
+install_gui         install gui version only
 configure           perform configure only
 deps                determine dependencies only
 clean               clean up
@@ -355,6 +355,10 @@ make_exec() {
     eval "$1" || die "build failed"
 }
 
+make_exec2() {
+    make_exec "$1" "$2" "$1"
+}
+
 make_c_to_o() {
     c=`basename $1 $OBJSUF`.c
     make_exec "$CC $DONT_LINK_FLAG $OBJ_OUT_FLAG $1 $c $CFLAGS" "compile" "$c"
@@ -536,6 +540,26 @@ make_distclean() {
     make_clean
     rm -f $configfile $depsfile
 }
+
+make_install_cli() {
+    make_cli
+    make_exec2 "mkdir -p \"$DESTDIR/$PREFIX/bin\"" "install:"
+    make_exec2 "cp $cli_exe \"$DESTDIR/$PREFIX/bin\"" "install:"
+    make_exec2 "chmod 755 \"$DESTDIR/$PREFIX/bin/$cli_exe\"" "install:"
+}
+
+make_install_gui() {
+    make_gui
+    make_exec2 "mkdir -p \"$DESTDIR/$PREFIX/bin\"" "install:"
+    make_exec2 "cp $gui_exe \"$DESTDIR/$PREFIX/bin\"" "install:"
+    make_exec2 "chmod 755 \"$DESTDIR/$PREFIX/bin/$gui_exe\"" "install:"
+}
+
+make_install() {
+    make_install_cli
+    make_install_gui
+}
+
 # ----------------------------------( MAIN )-----------------------------------
 
 optarg() {
@@ -570,7 +594,7 @@ for arg in $@ ; do
             make_conf_init_deps
             make_lib $libhmgen
             ;;
-        cli|gui|all|clean|distclean)
+        cli|gui|all|clean|distclean|install_cli|install_gui|install)
             action=1
             make_conf_init_deps
             make_$arg
