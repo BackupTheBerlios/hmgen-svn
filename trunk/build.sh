@@ -598,7 +598,7 @@ for i in $@ ; do
             action=1
             make_distclean
             ;;
-        --*)
+        -*)
             echo unknown option ; exit 1 ;;
         *)
             echo unknown action ; exit 1 ;;
