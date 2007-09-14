@@ -28,6 +28,8 @@
 #include "gui_support.h"
 #include "lib_hmgen.c"
 
+char *about_image_filename = "share/hmgen/hmgen.png";
+
 int main(int argc, char *argv[]) {
     GtkWidget *hmgengui;
     char *show_stderr;

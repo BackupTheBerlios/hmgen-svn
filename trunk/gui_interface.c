@@ -31,6 +31,8 @@
 #include "gui_support.h"
 #include "version.h"
 
+extern char *about_image_filename;
+
 #define GLADE_HOOKUP_OBJECT(component,widget,name) \
   g_object_set_data_full (G_OBJECT (component), name, \
     gtk_widget_ref (widget), (GDestroyNotify) gtk_widget_unref)
@@ -1340,7 +1342,7 @@ GtkWidget * create_hmgengui(void) {
   gtk_widget_show (vbox4);
   gtk_container_add (GTK_CONTAINER (main_notebook), vbox4);
 
-  image3 = create_pixmap (hmgengui, "hmgen.png");
+  image3 = create_pixmap (hmgengui, about_image_filename);
   gtk_widget_show (image3);
   gtk_box_pack_start (GTK_BOX (vbox4), image3, FALSE, FALSE, 64);
 
