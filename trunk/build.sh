@@ -146,9 +146,38 @@ find_program() {
     test "$mand" = "mandatory" -a "$i" = "NONE" && die "$prog is $mand"
 }
 
+pad_with_zeroes() {
+    while true; do
+        read A
+        case "$A" in
+            ?)      echo 0000$A ;;
+            ??)     echo 000$A  ;;
+            ???)    echo 00$A   ;;
+            ????)   echo 0$A    ;;
+            ?????)  echo $A     ;;
+            *)      break       ;;
+        esac
+    done
+}
+
+get_svn_revision() {
+    SVN_REV=`svn info * 2>/dev/null | grep ^Revision: \
+        | cut -d ' ' -f 2 | pad_with_zeroes \
+        | sort -r | _head 1 | sed 's/^0//' | sed 's/^0//' \
+        | sed 's/^0//'`
+    test $SVN_REV || SVN_REV=`grep revision .svn/entries 2>/dev/null \
+        | cut -d '"' -f 2` | pad_with_zeroes \
+        | sort -r | _head 1 | sed 's/^0//' | sed 's/^0//' \
+        | sed 's/^0//'
+    test $SVN_REV || SVN_REV=`sed -n -e '/^dir$/{n;p;q;}' \
+        .svn/entries 2>/dev/null`
+    test $SVN_REV || SVN_REV=0
+    echo $SVN_REV
+}
+
 configure() {
     echo $_echo_n"tools            : $_echo_c"
-    for i in which printf sed grep tr sort uniq cat test cut cp rm chmod xargs ; do
+    for i in which printf sed grep tr sort uniq cat test cut cp rm chmod ; do
         (which $i) 2>/dev/null 1>&2 || die "$i is mandatory"
         echo $_echo_n"$i $_echo_c"
     done
@@ -236,17 +265,7 @@ configure() {
     VERMAJ=`grep "$X" version.h | sed "s/$X//"`
     X="#define HMG_VERSION_MINOR"
     VERMIN=`grep "$X" version.h | sed "s/$X//"`
-    SVN_REV=`svn info * 2>/dev/null | grep ^Revision: \
-        | cut -d ' ' -f 2 | xargs -n 1 -iX printf "%05i\n" X \
-        | sort -r | _head 1 | sed 's/^0//' | sed 's/^0//' \
-        | sed 's/^0//'`
-    test $SVN_REV || SVN_REV=`grep revision .svn/entries 2>/dev/null \
-        | cut -d '"' -f 2` | xargs -n 1 -iX printf "%05i\n" X \
-        | sort -r | _head 1 | sed 's/^0//' | sed 's/^0//' \
-        | sed 's/^0//'
-    test $SVN_REV || SVN_REV=`sed -n -e '/^dir$/{n;p;q;}' \
-        .svn/entries 2>/dev/null`
-    test $SVN_REV || SVN_REV=0
+    SVN_REV=`get_svn_revision`
     DEFINES="$DEFINES -DSVN_REVISION=$SVN_REV"
     answer `echo $VERMAJ`.`echo $VERMIN`.$SVN_REV
 
