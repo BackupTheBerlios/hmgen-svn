@@ -164,12 +164,10 @@ pad_with_zeroes() {
 get_svn_revision() {
     SVN_REV=`svn info * 2>/dev/null | grep ^Revision: \
         | cut -d ' ' -f 2 | pad_with_zeroes \
-        | sort -r | _head 1 | sed 's/^0//' | sed 's/^0//' \
-        | sed 's/^0//'`
+        | sort -r | _head 1 | sed 's/^0//' | sed 's/^0//' | sed 's/^0//'`
     test $SVN_REV || SVN_REV=`grep revision .svn/entries 2>/dev/null \
         | cut -d '"' -f 2` | pad_with_zeroes \
-        | sort -r | _head 1 | sed 's/^0//' | sed 's/^0//' \
-        | sed 's/^0//'
+        | sort -r | _head 1 | sed 's/^0//' | sed 's/^0//' | sed 's/^0//'
     test $SVN_REV || SVN_REV=`sed -n -e '/^dir$/{n;p;q;}' \
         .svn/entries 2>/dev/null`
     test $SVN_REV || SVN_REV=0
