@@ -71,10 +71,7 @@ else
     _tail() { tail -n $1 2>/dev/null ; }
 fi
 
-not() {
-    eval "$@"
-    test $? -ne 0
-}
+not() { eval "$@" ; test $? -ne 0 ; }
 
 case `echo -n` in
     -n)     _echo_n=        _echo_c='\c'    _echo_e=        ;; # SysV
@@ -89,7 +86,6 @@ init_colors() {
     else Bon="[1m" ; Boff="[0m" ; Red="[31m" ; Green="[32m"
     fi
 }
-
 init_colors
 
 # Defaults
@@ -103,10 +99,7 @@ configfile=build.config
 
 # --------------------------------( CONFIGURE )--------------------------------
 
-die() {
-    echo "$1" >&2
-    exit 1
-}
+die() { echo "$1" >&2 ; exit 1 ; }
 
 question() {
     case "$1" in
@@ -130,16 +123,14 @@ question() {
 }
 
 answer() {
-    if test "$1" = "no" ; then      col="$Bon$Red"
+    if   test "$1" = "no" ;  then   col="$Bon$Red"
     elif test "$1" = "yes" ; then   col="$Bon$Green"
     else                            col="$Bon"
     fi
     test -n "$1" && echo "$col$1$Boff" || echo "<none>"
 }
 
-result() {
-    test -n "$2" && question "$1" && answer "$2"
-}
+result() { test -n "$2" && question "$1" && answer "$2" }
 
 my_pkg_config() {
     question $1
@@ -415,9 +406,7 @@ make_o_to_a() {
 
 addsuffix() {
     suf=$1 ; shift 1
-    for i in $@ ; do
-        echo $i$suf
-    done
+    for i in $@ ; do echo $i$suf ; done
 }
 
 up_to_date() {
