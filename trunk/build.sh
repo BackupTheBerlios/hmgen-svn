@@ -148,7 +148,7 @@ find_program() {
 
 configure() {
     echo $_echo_n"tools            : $_echo_c"
-    for i in which printf sed grep tr sort uniq cat test cut cp rm chmod ; do
+    for i in which printf sed grep tr sort uniq cat test cut cp rm chmod xargs ; do
         (which $i) 2>/dev/null 1>&2 || die "$i is mandatory"
         echo $_echo_n"$i $_echo_c"
     done
