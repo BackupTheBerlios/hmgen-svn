@@ -77,8 +77,8 @@ not() {
 }
 
 case `echo -n` in
-    -n)     _echo_n=        _echo_c='\c'    ;; # SysV
-    *)      _echo_n='-n '   _echo_c=        ;; # BSD
+    -n)     _echo_n=        _echo_c='\c'    _echo_e=        ;; # SysV
+    *)      _echo_n='-n '   _echo_c=        _echo_e='-e '   ;; # BSD
 esac
 
 test -z "$V" && V=0
@@ -109,7 +109,8 @@ die() {
 }
 
 question() {
-    printf "%-16s : " "$1"
+    TMP=`echo $_echo_e"$1\r                 :" | col`
+    echo $_echo_n"$TMP $_echo_c"
 }
 
 answer() {
@@ -176,8 +177,8 @@ get_svn_revision() {
 }
 
 configure() {
-    echo $_echo_n"tools            : $_echo_c"
-    for i in which printf sed grep tr sort uniq cat test cut cp rm chmod ; do
+    question tools
+    for i in which col sed grep tr sort uniq cat test cut cp rm chmod ; do
         (which $i) 2>/dev/null 1>&2 || die "$i is mandatory"
         echo $_echo_n"$i $_echo_c"
     done
