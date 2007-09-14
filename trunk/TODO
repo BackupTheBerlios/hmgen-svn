@@ -1,0 +1,12 @@
+CLI+GUI
+-------
+
+* More algorithms (circle formation, hills, et cetera)
+
+GUI
+---
+
+* Edit functions (draw roads, elevate lines, circles, squares, etc. )
+* Isometric 3D view
+* OpenGL 3D view, perhaps export as a mesh, manual texturing, etc.
+
