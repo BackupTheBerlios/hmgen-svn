@@ -117,7 +117,7 @@ answer() {
     elif test "$1" = "yes" ; then   col="$Bon$Green"
     else                            col="$Bon"
     fi
-    test -n "$1" && printf "$col%s$Boff\n" "$1" || printf "<none>\n"
+    test -n "$1" && echo "$col$1$Boff" || echo "<none>"
 }
 
 result() {
@@ -368,7 +368,7 @@ make_init_default() {
 }
 
 make_exec() {
-    if test "$V" = "0" ; then   printf "$Bon%s$Boff %s\n" "$2" "$3"
+    if test "$V" = "0" ; then   echo "$Bon$2$Boff $3"
     else                        echo "$1"
     fi
     eval "$1" || die "build failed"
