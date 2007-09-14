@@ -92,9 +92,6 @@ init_colors() {
 
 init_colors
 
-test `which col 2>/dev/null` && _col=yes
-test `which printf 2>/dev/null` && _printf=yes
-
 # Defaults
 
 PREFIX=/usr/local
@@ -112,14 +109,24 @@ die() {
 }
 
 question() {
-    if test "$_col" = yes ; then
-        TMP=`echo $_echo_e"$1\r                 :" | col`
-        echo $_echo_n"$TMP $_echo_c"
-    elif test "$_printf" = yes ; then
-        printf "%-16s : " "$1"
-    else
-        echo $_echo_n"$1 : $_echo_c"
-    fi
+    case "$1" in
+        ?) echo $_echo_n"$1                : $_echo_c" ;;
+        ??) echo $_echo_n"$1               : $_echo_c" ;;
+        ???) echo $_echo_n"$1              : $_echo_c" ;;
+        ????) echo $_echo_n"$1             : $_echo_c" ;;
+        ?????) echo $_echo_n"$1            : $_echo_c" ;;
+        ??????) echo $_echo_n"$1           : $_echo_c" ;;
+        ???????) echo $_echo_n"$1          : $_echo_c" ;;
+        ????????) echo $_echo_n"$1         : $_echo_c" ;;
+        ?????????) echo $_echo_n"$1        : $_echo_c" ;;
+        ??????????) echo $_echo_n"$1       : $_echo_c" ;;
+        ???????????) echo $_echo_n"$1      : $_echo_c" ;;
+        ????????????) echo $_echo_n"$1     : $_echo_c" ;;
+        ?????????????) echo $_echo_n"$1    : $_echo_c" ;;
+        ??????????????) echo $_echo_n"$1   : $_echo_c" ;;
+        ???????????????) echo $_echo_n"$1  : $_echo_c" ;;
+        ???????????????*) echo $_echo_n"$1 : $_echo_c" ;;
+    esac
 }
 
 answer() {
