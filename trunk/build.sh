@@ -92,6 +92,9 @@ init_colors() {
 
 init_colors
 
+test `which col 2>/dev/null` && _col=yes
+test `which printf 2>/dev/null` && _printf=yes
+
 # Defaults
 
 PREFIX=/usr/local
@@ -109,8 +112,14 @@ die() {
 }
 
 question() {
-    TMP=`echo $_echo_e"$1\r                 :" | col`
-    echo $_echo_n"$TMP $_echo_c"
+    if test "$_col" = yes ; then
+        TMP=`echo $_echo_e"$1\r                 :" | col`
+        echo $_echo_n"$TMP $_echo_c"
+    elif test "$_printf" = yes ; then
+        printf "%-16s : " "$1"
+    else
+        echo $_echo_n"$1 : $_echo_c"
+    fi
 }
 
 answer() {
@@ -176,7 +185,7 @@ get_svn_revision() {
 
 configure() {
     question tools
-    for i in which col sed grep tr sort uniq cat test cut cp rm chmod ; do
+    for i in which sed grep tr sort uniq cat test cut cp rm chmod ; do
         (which $i) 2>/dev/null 1>&2 || die "$i is mandatory"
         echo $_echo_n"$i $_echo_c"
     done
