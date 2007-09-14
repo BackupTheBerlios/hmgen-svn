@@ -14,8 +14,8 @@ usage: ./build.sh [option(s)] [action(s)] [option(s)] [action(s)] ...
 options:
 
 --cc=CC             specify C compiler
---prefix=PREFIX     installation prefix [default: $prefix]
---destdir=DESTDIR   installation destination directory [default: $destdir]
+--prefix=PREFIX     installation prefix [default: $PREFIX]
+--destdir=DESTDIR   installation destination directory [default: $DESTDIR]
 --verbose           verbose compilation
 --nocolor           disable colors for terminals w/o VT100 capabilities
 --configfile=FILE   specify alternative config file
