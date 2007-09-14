@@ -130,7 +130,7 @@ answer() {
     test -n "$1" && echo "$col$1$Boff" || echo "<none>"
 }
 
-result() { test -n "$2" && question "$1" && answer "$2" }
+result() { test -n "$2" && question "$1" && answer "$2" ; }
 
 my_pkg_config() {
     question $1
