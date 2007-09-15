@@ -24,11 +24,45 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <string.h>
 #include "gui_interface.h"
 #include "gui_support.h"
 #include "lib_hmgen.c"
 
-char *about_image_filename = "share/hmgen/hmgen.png";
+char *about_image_filename = NULL; 
+
+static int malloced = 0;
+static const char * const about_img = "/share/hmgen/hmgen.png";
+
+static void assemble_about_image_filename(char *argv0) {
+    int x, y;
+    char *p;
+
+    x = strlen(argv0) - 1;
+
+    if (x<=0) {
+        about_image_filename = "nothing";
+        return;
+    }
+
+    while (x>0 && argv0[x] != '/' && argv0[x] != '\\') x--;
+
+    y = x - 1;
+    while (y>0 && argv0[y] != '/' && argv0[y] != '\\') y--;
+    if (y) y++;
+    if (!strncmp(&argv0[y], "bin", 3)) x = y;
+
+    p = malloc(x + strlen(about_img) + 1);
+    if (!p) {
+        fprintf(stderr, "out of memory\n");
+        exit(-1);
+    }
+
+    memcpy(p, argv0, x);
+    snprintf(p+x, strlen(about_img) + 1, about_img);
+    about_image_filename = p;
+    malloced = 1;
+}
 
 int main(int argc, char *argv[]) {
     GtkWidget *hmgengui;
@@ -45,6 +79,8 @@ int main(int argc, char *argv[]) {
     gtk_disable_setlocale();
     setlocale(LC_ALL, "C");
 
+    assemble_about_image_filename(argv[0]);
+
     hmg_init_colormap(NULL);
 
     g_thread_init(NULL);
@@ -60,6 +96,8 @@ int main(int argc, char *argv[]) {
 
     gtk_main ();
     gdk_threads_leave();
+
+    if (malloced) free(about_image_filename);
 
     return 0;
 }
