@@ -233,13 +233,13 @@ configure() {
         sun)     cc_conf "" "-xO5" "-Xc" "-g" "-xM" "-o" "-c" ;;
         unknown) cc_conf "" "-O" "" "-g" "" "-o" "-c" ;;
     esac
-    result warnings $WARN_FLAGS
-    result optimize $OPT_FLAGS
-    result standards $STD_FLAGS
-    result debug $DEBUG_FLAGS
-    result dependencies $DEP_FLAGS
-    result "object out" $OBJ_OUT_FLAG
-    result "do not link" $DONT_LINK_FLAG
+    result warnings "$WARN_FLAGS"
+    result optimize "$OPT_FLAGS"
+    result standards "$STD_FLAGS"
+    result debug "$DEBUG_FLAGS"
+    result dependencies "$DEP_FLAGS"
+    result "object out" "$OBJ_OUT_FLAG"
+    result "do not link" "$DONT_LINK_FLAG"
 
     find_program pkg-config PKGCONFIG mandatory $PKGCONFIG pkg-config
 
