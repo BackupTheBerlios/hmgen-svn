@@ -236,8 +236,8 @@ configure() {
         unknown) cc_conf "" "-O" "" "-g" "" "-o" "-c" ;;
     esac
     results warnings "$WARN_FLAGS" optimize "$OPT_FLAGS" standards "$STD_FLAGS"
-    result debug "$DEBUG_FLAGS" dependencies "$DEP_FLAGS"
-    result "object out" "$OBJ_OUT_FLAG" "do not link" "$DONT_LINK_FLAG"
+    results debug "$DEBUG_FLAGS" dependencies "$DEP_FLAGS"
+    results "object out" "$OBJ_OUT_FLAG" "do not link" "$DONT_LINK_FLAG"
 
     find_program pkg-config PKGCONFIG mandatory $PKGCONFIG pkg-config
 
@@ -294,7 +294,7 @@ configure() {
     find_program strip  STRIP   optional $STRIP     strip true
     find_program awk    AWK     optional $AWK       mawk gawk nawk awk true
 
-    result "install prefix" "$PREFIX" "install destdir" "$DESTDIR"
+    results "install prefix" "$PREFIX" "install destdir" "$DESTDIR"
 }
 
 output_build_config() {
