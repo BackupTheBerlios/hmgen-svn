@@ -132,6 +132,8 @@ answer() {
 
 result() { test -n "$2" && question "$1" && answer "$2" ; }
 
+results() { while test -n "$1" ; do result "$1" "$2" ; shift 2 ; done ; }
+
 my_pkg_config() {
     question $1
     RES=`pkg-config --atleast-version=$4 $1 2>/dev/null && echo yes || echo no`
@@ -233,13 +235,9 @@ configure() {
         sun)     cc_conf "" "-xO5" "-Xc" "-g" "-xM" "-o" "-c" ;;
         unknown) cc_conf "" "-O" "" "-g" "" "-o" "-c" ;;
     esac
-    result warnings "$WARN_FLAGS"
-    result optimize "$OPT_FLAGS"
-    result standards "$STD_FLAGS"
-    result debug "$DEBUG_FLAGS"
-    result dependencies "$DEP_FLAGS"
-    result "object out" "$OBJ_OUT_FLAG"
-    result "do not link" "$DONT_LINK_FLAG"
+    results warnings "$WARN_FLAGS" optimize "$OPT_FLAGS" standards "$STD_FLAGS"
+    result debug "$DEBUG_FLAGS" dependencies "$DEP_FLAGS"
+    result "object out" "$OBJ_OUT_FLAG" "do not link" "$DONT_LINK_FLAG"
 
     find_program pkg-config PKGCONFIG mandatory $PKGCONFIG pkg-config
 
@@ -296,8 +294,7 @@ configure() {
     find_program strip  STRIP   optional $STRIP     strip true
     find_program awk    AWK     optional $AWK       mawk gawk nawk awk true
 
-    result "install prefix" "$PREFIX"
-    result "install destdir" "$DESTDIR"
+    result "install prefix" "$PREFIX" "install destdir" "$DESTDIR"
 }
 
 output_build_config() {
