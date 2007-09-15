@@ -17,7 +17,7 @@ options:
 --prefix=PREFIX     installation prefix [default: $PREFIX]
 --destdir=DESTDIR   installation destination directory [default: $DESTDIR]
 --verbose           verbose compilation
---nocolor           disable colors for terminals w/o VT100 capabilities
+--nocolor           disable colors for terminals w/o ANSI capabilities
 --configfile=FILE   specify alternative config file
 --depsfile=FILE     specify alternative dependencies file
 --help              print this message
