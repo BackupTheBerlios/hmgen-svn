@@ -181,6 +181,16 @@ get_svn_revision() {
     echo $SVN_REV
 }
 
+cc_conf() {
+    WARN_FLAGS="$1"
+    OPT_FLAGS="$2"
+    STD_FLAGS="$3"
+    DEBUG_FLAGS="$4"
+    DEP_FLAGS="$5"
+    OBJ_OUT_FLAG="$6"
+    DONT_LINK_FLAG="$7"
+}
+
 configure() {
     question tools
     for i in which sed grep tr sort uniq cat test cut cp rm chmod ; do
@@ -219,33 +229,9 @@ configure() {
     fi
 
     case $CC_VENDOR in
-        gnu)
-            WARN_FLAGS="-Wall -W"
-            OPT_FLAGS="-O3"
-            STD_FLAGS="-std=c99"
-            DEBUG_FLAGS="-g"
-            DEP_FLAGS="-MM"
-            OBJ_OUT_FLAG="-o"
-            DONT_LINK_FLAG="-c"
-            ;;
-        sun)
-            WARN_FLAGS=
-            OPT_FLAGS="-xO5"
-            STD_FLAGS="-Xc"
-            DEBUG_FLAGS="-g"
-            DEP_FLAGS="-xM"
-            OBJ_OUT_FLAG="-o"
-            DONT_LINK_FLAG="-c"
-            ;;
-        unknown)
-            WARN_FLAGS=
-            OPT_FLAGS="-O"
-            STD_FLAGS=
-            DEBUG_FLAGS="-g"
-            DEP_FLAGS=
-            OBJ_OUT_FLAG="-o"
-            DONT_LINK_FLAG="-c"
-            ;;
+        gnu)     cc_conf "-Wall -W" "-O3" "-std=c99" "-g" "-MM" "-o" "-c" ;;
+        sun)     cc_conf "" "-xO5" "-Xc" "-g" "-xM" "-o" "-c" ;;
+        unknown) cc_conf "" "-O" "" "-g" "" "-o" "-c" ;;
     esac
     result warnings $WARN_FLAGS
     result optimize $OPT_FLAGS
