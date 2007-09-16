@@ -45,5 +45,5 @@ cp -a /mingw/etc .
 
 copy libpixbufloader-png.dll to lib/gtk-2.0/2.10.0.loaders/
 copy all gtk+, pango and cairo DLL's to bin
-package bin, etc and lib with e.g. installjammer
+package bin, share, etc and lib with e.g. installjammer
 
