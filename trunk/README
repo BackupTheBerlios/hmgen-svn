@@ -37,14 +37,14 @@ Deployment on mingw/msys
 ========================
 
 cd <root-of-sources>
-mkdir bin
-mkdir -p lib/gtk-2.0/2.10.0/loaders/
-cp -a /mingw/etc .
+mkdir -p destdir/bin
+mkdir -p destdir/lib/gtk-2.0/2.10.0/loaders/
+cp -a /mingw/etc destdir
 
-./build --prefix=/ --destdir=`pwd` install
+./build --prefix=/ --destdir=`pwd`/destdir install
 
-copy libpixbufloader-png.dll to lib/gtk-2.0/2.10.0.loaders/
-copy all gtk+, pango and cairo DLL's to bin
+copy libpixbufloader-png.dll to destdir/lib/gtk-2.0/2.10.0.loaders/
+copy all gtk+, pango and cairo DLL's to destdir/bin
 package bin, share, etc and lib with e.g. installjammer
 
 
