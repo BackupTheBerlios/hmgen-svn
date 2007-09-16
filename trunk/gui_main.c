@@ -29,19 +29,18 @@
 #include "gui_support.h"
 #include "lib_hmgen.c"
 
-char *about_image_filename = NULL; 
-
+static char *image_path = NULL; 
 static int malloced = 0;
-static const char * const about_img = "/share/hmgen/hmgen.png";
+static const char * const about_img = "/share/hmgen/";
 
-static void assemble_about_image_filename(char *argv0) {
+static void assemble_image_path(char *argv0) {
     int x, y;
     char *p;
 
     x = strlen(argv0) - 1;
 
     if (x<=0) {
-        about_image_filename = "nothing";
+        image_path = "nothing";
         return;
     }
 
@@ -60,7 +59,7 @@ static void assemble_about_image_filename(char *argv0) {
 
     memcpy(p, argv0, x);
     snprintf(p+x, strlen(about_img) + 1, about_img);
-    about_image_filename = p;
+    image_path = p;
     malloced = 1;
 }
 
@@ -79,7 +78,7 @@ int main(int argc, char *argv[]) {
     gtk_disable_setlocale();
     setlocale(LC_ALL, "C");
 
-    assemble_about_image_filename(argv[0]);
+    assemble_image_path(argv[0]);
 
     hmg_init_colormap(NULL);
 
@@ -89,7 +88,7 @@ int main(int argc, char *argv[]) {
 
     gtk_init(&argc, &argv);
 
-    add_pixmap_directory (".");
+    add_pixmap_directory (image_path);
 
     hmgengui = create_hmgengui();
     gtk_widget_show(hmgengui);
@@ -97,7 +96,7 @@ int main(int argc, char *argv[]) {
     gtk_main ();
     gdk_threads_leave();
 
-    if (malloced) free(about_image_filename);
+    if (malloced) free(image_path);
 
     return 0;
 }
