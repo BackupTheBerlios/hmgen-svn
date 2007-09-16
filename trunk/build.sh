@@ -558,6 +558,8 @@ make_install_gui() {
     make_exec2 "mkdir -p \"$DESTDIR/$PREFIX/bin\"" "install:"
     make_exec2 "cp $gui_exe \"$DESTDIR/$PREFIX/bin\"" "install:"
     make_exec2 "chmod 755 \"$DESTDIR/$PREFIX/bin/$gui_exe\"" "install:"
+    make_exec2 "mkdir -p \"$DESTDIR/$PREFIX/share/hmgen\"" "install:"
+    make_exec2 "cp -a share/hmgen/* \"$DESTDIR/$PREFIX/share/hmgen\"" "install:"
 }
 
 make_install() {
