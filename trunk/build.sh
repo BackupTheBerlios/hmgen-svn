@@ -20,6 +20,10 @@ options:
 --nocolor           disable colors for terminals w/o ANSI capabilities
 --configfile=FILE   specify alternative config file
 --depsfile=FILE     specify alternative dependencies file
+--ar=AR             specify archiver
+--ranlib=RANLIB     specify ranlib
+--strip=STRIP       specify strip
+--awk=AWK           specify awk
 --help              print this message
 
 actions:
@@ -580,6 +584,10 @@ done
 for arg in $@ ; do
     case "$arg" in
         --cc=*)         CC=`optarg $arg`      ;;
+        --ar=*)         AR=`optarg $arg`      ;;
+        --ranlib=*)     RANLIB=`optarg $arg`  ;;
+        --strip=*)      STRIP=`optarg $arg`   ;;
+        --awk=*)        AWK=`optarg $arg`     ;;
         --prefix=*)     PREFIX=`optarg $arg`  ;;
         --destdir=*)    DESTDIR=`optarg $arg` ;;
         --verbose)      V=1                 ;;
