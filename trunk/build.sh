@@ -183,8 +183,7 @@ get_svn_revision() {
         | sort -r | _head 1 | sed 's/^0//; s/^0//; s/^0//;'
     test $SVN_REV || SVN_REV=`sed -n -e '/^dir$/{n;p;q;}' \
         .svn/entries 2>/dev/null`
-    test $SVN_REV || SVN_REV=0
-    echo $SVN_REV
+    test $SVN_REV && echo $SVN_REV || echo 0
 }
 
 cc_conf() {
