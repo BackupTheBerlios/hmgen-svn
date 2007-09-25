@@ -98,8 +98,8 @@ PREFIX=/usr/local
 DESTDIR=
 CC=cc
 action=
-depsfile=build.deps
-configfile=build.config
+depsfile=./build.deps
+configfile=./build.config
 
 # --------------------------------( CONFIGURE )--------------------------------
 
