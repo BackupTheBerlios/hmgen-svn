@@ -3,6 +3,7 @@
 # Experimental configure/make script
 # Copyright (C) 2007 Ivo van Poorten
 # See LICENSE for licensing details
+# Tested with: bash 3.1.17, zsh 4.3.4 and pdksh 5.2.14
 
 # ----------------------------------( USAGE )----------------------------------
 
