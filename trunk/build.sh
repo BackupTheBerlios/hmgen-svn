@@ -3,7 +3,7 @@
 # Experimental configure/make script
 # Copyright (C) 2007 Ivo van Poorten
 # See LICENSE for licensing details
-# Tested with: bash 3.1.17, zsh 4.3.4 and pdksh 5.2.14
+# Tested with: bash 3.1.17, zsh 4.3.4, pdksh 5.2.14, posh 0.5.7
 
 # ----------------------------------( USAGE )----------------------------------
 
@@ -158,7 +158,7 @@ find_program() {
     done
     eval $var=$i
     answer $i
-    test "$mand" = "mandatory" -a "$i" = "NONE" && die "$prog is $mand"
+    test "$mand" = "mandatory" && test "$i" = "NONE" && die "$prog is $mand"
 }
 
 pad_with_zeroes() {
