@@ -51,14 +51,12 @@ package bin, share, etc and lib with e.g. installjammer
 Version numbering scheme
 ========================
 
-0.8.x   alpha release(s)
-0.9.x   beta release(s)
+0.9.x   alpha/beta release(s)
 1.0.0   first stable release
-1.0.x
-1.1.0   second stable release
+1.0.x   bug fix releases
+1.1.0   first unstable release
+1.1.x   bug fix releases
+1.2.0   second stable release
 et cetera
 
-For in-between, bug-fix releases, x will be < 10
-For Subversion builds, developer builds, unstable releases, x will be the
-subversion revision number.
-
+Developer builds will have r<REV> postpended to the actual version number

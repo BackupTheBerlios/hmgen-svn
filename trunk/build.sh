@@ -261,9 +261,15 @@ configure() {
     VERMAJ=`grep "$X" version.h | sed "s/$X//"`
     X="#define HMG_VERSION_MINOR"
     VERMIN=`grep "$X" version.h | sed "s/$X//"`
+    X="#define HMG_VERSION_MICRO"
+    VERMIC=`grep "$X" version.h | sed "s/$X//"`
     SVN_REV=`get_svn_revision`
     DEFINES="$DEFINES -DSVN_REVISION=$SVN_REV"
-    answer `echo $VERMAJ`.`echo $VERMIN`.$SVN_REV
+    if test "$SVN_REV" -ne 0 ; then
+        answer `echo $VERMAJ`.`echo $VERMIN`.`echo $VERMIC`r$SVN_REV
+    else
+        answer `echo $VERMAJ`.`echo $VERMIN`.`echo $VERMIC`r$SVN_REV
+    fi
 
     SYSTEM=`uname -s 2>/dev/null`
     SYSTEM=`echo $SYSTEM | tr '[A-Z]' '[a-z]'`
