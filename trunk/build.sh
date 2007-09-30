@@ -176,7 +176,7 @@ pad_with_zeroes() {
 }
 
 get_svn_revision() {
-    SVN_REV=`svn info * 2>/dev/null | grep ^Revision: \
+    SVN_REV=`svn info * 2>/dev/null | grep '^Revision:' \
         | cut -d ' ' -f 2 | pad_with_zeroes \
         | sort -r | _head 1 | sed 's/^0//; s/^0//; s/^0//;'`
     test $SVN_REV || SVN_REV=`grep revision .svn/entries 2>/dev/null \
