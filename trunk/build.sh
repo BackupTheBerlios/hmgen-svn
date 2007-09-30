@@ -4,7 +4,8 @@
 # Copyright (C) 2007 Ivo van Poorten
 # See LICENSE for licensing details
 # Tested with:
-# bash 3.1.17, zsh 4.3.4, pdksh 5.2.14, posh 0.5.7, heirloom-sh-050706
+# Shells: bash 3.1.17, zsh 4.3.4, pdksh 5.2.14, posh 0.5.7, heirloom-sh-050706
+# Awk: gawk 3.1.5, bwk's One True Awk May 2007
 
 # ----------------------------------( USAGE )----------------------------------
 
