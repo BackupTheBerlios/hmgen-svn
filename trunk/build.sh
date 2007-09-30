@@ -3,7 +3,8 @@
 # Experimental configure/make script
 # Copyright (C) 2007 Ivo van Poorten
 # See LICENSE for licensing details
-# Tested with: bash 3.1.17, zsh 4.3.4, pdksh 5.2.14, posh 0.5.7
+# Tested with:
+# bash 3.1.17, zsh 4.3.4, pdksh 5.2.14, posh 0.5.7, heirloom-sh-050706
 
 # ----------------------------------( USAGE )----------------------------------
 
