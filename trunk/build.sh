@@ -199,13 +199,17 @@ cc_conf() {
     DONT_LINK_FLAG="$7"
 }
 
-configure() {
+mandatory_tools() {
     question tools
-    for i in which sed grep tr sort uniq cat test cut cp rm chmod ; do
+    for i in $@ ; do
         (which $i) 2>/dev/null 1>&2 || die "$i is mandatory"
         echo $_echo_n"$i $_echo_c"
     done
     echo
+}
+
+configure() {
+    mandatory_tools which sed grep tr sort uniq cat test cut cp rm chmod
 
     find_program compiler CC mandatory $CC cc gcc suncc icc tcc
     CC_DEP=$CC
