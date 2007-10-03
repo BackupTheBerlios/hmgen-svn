@@ -580,7 +580,7 @@ make_install() {
 
 make_srcdist() {
     mandatory_tools svn tar cp mv rm
-    find_program gzip GZIP optional gzp
+    find_program gzip GZIP optional gzip
     find_program bzip2 BZIP2 optional bzip2
     test "$GZIP" = "NONE" && test "$BZIP2" = "NONE" && die "unable to comply"
 
