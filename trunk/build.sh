@@ -587,7 +587,7 @@ make_srcdist() {
     base=hmgen-$VERBASE
     set -e
     make_exec "svn export -q http://svn.berlios.de/svnroot/repos/hmgen/trunk $base" "svn" "export"
-    chown noody:nogroup $base 2>/dev/null && make_exec "chown -R nobody:nogroup $base" "chown" "nobody:nogroup"
+    chown nobody:nogroup $base 2>/dev/null && make_exec "chown -R nobody:nogroup $base" "chown" "nobody:nogroup"
     if test "$GZIP" != "NONE" ; then
         make_exec "tar cf - $base | $GZIP -9 > $base.tar.gz" "targzip" "$base"
     fi
