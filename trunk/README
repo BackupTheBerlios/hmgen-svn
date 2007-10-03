@@ -59,4 +59,4 @@ Version numbering scheme
 1.2.0   second stable release
 et cetera
 
-Developer builds will have r<REV> postpended to the actual version number
+Developer builds will have r<REV> appended to the actual version number
