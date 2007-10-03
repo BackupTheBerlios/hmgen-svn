@@ -586,12 +586,13 @@ make_srcdist() {
 
     base=hmgen-$VERBASE
     set -e
-    svn export http://svn.berlios.de/svnroot/repos/hmgen/trunk $base
+    make_exec "svn export -q http://svn.berlios.de/svnroot/repos/hmgen/trunk $base" "svn" "export"
+    chown noody:nogroup $base 2>/dev/null && make_exec "chown -R nobody:nogroup $base" "chown" "nobody:nogroup"
     if test "$GZIP" != "NONE" ; then
-        tar cvf - $base | $GZIP -9 > $base.tar.gz
+        make_exec "tar cf - $base | $GZIP -9 > $base.tar.gz" "targzip" "$base"
     fi
     if test "$GZIP" != "NONE" ; then
-        tar cvf - $base | $BZIP2 -9 > $base.tar.bz2
+        make_exec "tar cf - $base | $BZIP2 -9 > $base.tar.bz2" "tarbzip2" "$base"
     fi
     rm -rf $base temp.tar
     set +e
