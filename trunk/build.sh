@@ -463,14 +463,10 @@ make_exe() {
     fi
 }
 
-_make_deps() {
-    make_exec "$CC_DEP $DEP_FLAGS $DEF_CFLAGS $GTK_CFLAGS $GTHREAD_CFLAGS `echo $@` 2>/dev/null | ccdeps_to_shdeps >> $depsfile" "ccdep" "$depsfile"
-}
-
 make_deps() {
     if not grep -q deps_done=yes $depsfile 2>/dev/null ; then
         > $depsfile
-        _make_deps $libhmgen_srcs $cli_srcs $gui_srcs
+        make_exec "$CC_DEP $DEP_FLAGS $DEF_CFLAGS $GTK_CFLAGS $GTHREAD_CFLAGS `echo $libhmgen_srcs $cli_srcs $gui_srcs` 2>/dev/null | ccdeps_to_shdeps >> $depsfile" "ccdep" "$depsfile"
         echo "deps_done=yes" >> $depsfile
     fi
 
