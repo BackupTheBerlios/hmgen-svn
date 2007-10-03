@@ -554,7 +554,7 @@ make_clean() {
 
 make_distclean() {
     make_clean
-    rm -f $configfile $depsfile
+    rm -f $configfile $depsfile hmgen-$VERBASE.tar.*
 }
 
 make_install_cli() {
@@ -576,6 +576,25 @@ make_install_gui() {
 make_install() {
     make_install_cli
     make_install_gui
+}
+
+make_srcdist() {
+    mandatory_tools svn tar cp mv rm
+    find_program gzip GZIP optional gzp
+    find_program bzip2 BZIP2 optional bzip2
+    test "$GZIP" = "NONE" && test "$BZIP2" = "NONE" && die "unable to comply"
+
+    base=hmgen-$VERBASE
+    set -e
+    svn export http://svn.berlios.de/svnroot/repos/hmgen/trunk $base
+    if test "$GZIP" != "NONE" ; then
+        tar cvf - $base | $GZIP -9 > $base.tar.gz
+    fi
+    if test "$GZIP" != "NONE" ; then
+        tar cvf - $base | $BZIP2 -9 > $base.tar.bz2
+    fi
+    rm -rf $base temp.tar
+    set +e
 }
 
 # ----------------------------------( MAIN )-----------------------------------
@@ -616,7 +635,7 @@ for arg in $@ ; do
             make_conf_init_deps
             make_lib $libhmgen
             ;;
-        cli|gui|all|clean|distclean|install_cli|install_gui|install)
+        cli|gui|all|clean|distclean|install_cli|install_gui|install|srcdist)
             action=1
             make_conf_init_deps
             make_$arg
